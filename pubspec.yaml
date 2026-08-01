@@ -1,11 +1,12 @@
 name: hornbill
 description: "A new Flutter plugin project."
 version: 0.0.1
-homepage:
+# homepage:
+repository: https://gitlab.knoxxbox.in/nahnah/hornbill
 
 environment:
   sdk: ^3.12.2
-  flutter: '>=3.3.0'
+  flutter: ">=3.3.0"
 
 dependencies:
   flutter:
