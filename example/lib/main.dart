@@ -51,8 +51,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: HornbillUiTheme().lightTheme(),
-      darkTheme: HornbillUiTheme().darkTheme(),
+      theme: HornbillTheme().lightTheme(),
+      darkTheme: HornbillTheme().darkTheme(),
       home: Scaffold(
         appBar: AppBar(title: const Text('Plugin example app')),
         // body: Center(child: Text('Running on: $_platformVersion\n')),

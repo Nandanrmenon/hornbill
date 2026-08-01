@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 
-class RSExtendedDataTable extends StatelessWidget {
+class ExtendedDataTable extends StatelessWidget {
   final List<DataColumn> columns;
   final List<DataRow> rows;
   final bool showCheckbox;
   final DataRow? header;
   final DataRow? footer;
 
-  const RSExtendedDataTable({
+  const ExtendedDataTable({
     super.key,
     required this.columns,
     required this.rows,

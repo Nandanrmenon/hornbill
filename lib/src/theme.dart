@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 
-class HornbillUiTheme {
-  const HornbillUiTheme({this.seedColor = const Color(0xFF33C11D)});
+class HornbillTheme {
+  const HornbillTheme({this.seedColor = const Color(0xFF33C11D)});
 
   final Color seedColor;
 
