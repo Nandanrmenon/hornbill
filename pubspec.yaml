@@ -1,7 +1,6 @@
 name: hornbill
-description: "A new Flutter plugin project."
-version: 0.0.1
-# homepage:
+description: "A lightweight Flutter UI component package."
+version: 1.0.0
 repository: https://gitlab.knoxxbox.in/nahnah/hornbill
 
 environment:

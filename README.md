@@ -1,15 +1,15 @@
-# hornbill
+Hornbill UI is a lightweight Flutter component package starter for building a consistent design system.
 
-A new Flutter plugin project.
+## Features
 
-## Getting Started
+- Material 3 theme helper with a seeded color palette.
+- Reusable button variants for primary, secondary, and text-style actions.
+- A simple card wrapper for content sections and surfaces.
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+## Usage
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+See `lib/hornbill.dart` for the public exports.
 
+## Additional information
+
+The package is intentionally small so you can extend it with your own tokens, widgets, and layout primitives.
