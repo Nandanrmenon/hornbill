@@ -14,7 +14,7 @@ class HornbillTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: seedColor,
       brightness: brightness,
-    ).copyWith(primary: seedColor, secondary: seedColor);
+    );
 
     return ThemeData(
       useMaterial3: true,
