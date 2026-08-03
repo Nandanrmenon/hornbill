@@ -13,6 +13,8 @@ before_script:
 
 build_web:
   stage: build
+  tags:
+    - flutter-runner
   script:
     - flutter build web --release --base-href "/$CI_PROJECT_NAME/"
   artifacts:
