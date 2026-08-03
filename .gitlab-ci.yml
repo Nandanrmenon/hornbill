@@ -7,6 +7,8 @@ stages:
 build_web:
   stage: build
   when: manual
+  tags:
+    - flutter-runner
   script:
     - cd example
     - flutter --version
