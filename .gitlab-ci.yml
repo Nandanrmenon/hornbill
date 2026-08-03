@@ -7,11 +7,10 @@ stages:
 build_web:
   stage: build
   when: manual
-  tags:
-    - flutter-runner
   script:
     - cd example
     - flutter --version
+    - flutter config --enable-web
     - flutter pub get
     - flutter build web --release --base-href "/$CI_PROJECT_NAME/"
   artifacts:
