@@ -4,30 +4,27 @@ stages:
   - build
   - deploy
 
-variables:
-  GIT_STRATEGY: clone
-
-before_script:
-  - flutter --version
-  - flutter pub get
-
 build_web:
   stage: build
-  tags:
-    - flutter-runner
+  when: manual
   script:
+    - cd example
+    - flutter --version
+    - flutter pub get
     - flutter build web --release --base-href "/$CI_PROJECT_NAME/"
   artifacts:
     paths:
-      - build/web
-    expire_in: 1 week
+      - example/build/web
 
-deploy_pages:
+pages:
   stage: deploy
+  when: manual
   needs:
-    - build_web
+    - job: build_web
+      artifacts: true
   script:
-    - cp -r build/web public
+    - cp -r example/build/web public
+  artifacts:
+    paths:
+      - public
   pages: true
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
