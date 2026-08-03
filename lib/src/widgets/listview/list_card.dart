@@ -1,10 +1,10 @@
 part of 'package:hornbill/src/widgets/m_list_widgets.dart';
 
 /// Corner radius applied to the first and last item in a grouped list.
-const double _kOuterRadius = 16.0;
+const double _kOuterRadius = 12.0;
 
 /// Corner radius applied to items in the middle of a grouped list.
-const double _kInnerRadius = 8.0;
+const double _kInnerRadius = 4.0;
 
 /// Vertical gap rendered between consecutive items by `ListView.separated`.
 const double _kItemSpacing = 4.0;

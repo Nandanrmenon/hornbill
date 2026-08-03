@@ -115,6 +115,9 @@ class MListView extends StatelessWidget {
           itemCount: count,
           color: item.color?.withValues(alpha: 0.2),
           child: ListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0.0),
+            ),
             contentPadding: EdgeInsets.only(
               left: 16.0,
               right: 16.0,

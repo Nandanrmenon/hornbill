@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 
 class HornbillTheme {
-  const HornbillTheme({this.seedColor = const Color(0xFF33C11D)});
+  const HornbillTheme({
+    this.seedColor = const Color(0xFF591DC1),
+    this.dynamicSchemeVariant = DynamicSchemeVariant.tonalSpot,
+  });
 
   final Color seedColor;
+  final DynamicSchemeVariant dynamicSchemeVariant;
 
   ThemeData lightTheme() => _buildTheme(Brightness.light);
 
@@ -14,6 +18,7 @@ class HornbillTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: seedColor,
       brightness: brightness,
+      dynamicSchemeVariant: dynamicSchemeVariant,
     );
 
     return ThemeData(
@@ -120,7 +125,7 @@ IconButtonThemeData iconButtonTheme(ColorScheme scheme) {
     style: ButtonStyle(
       shape: WidgetStateProperty.resolveWith<OutlinedBorder>((states) {
         return RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(kBorderRadius),
+          borderRadius: BorderRadius.circular(kBorderRadiusRounded),
         );
       }),
     ),

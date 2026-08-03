@@ -7,6 +7,7 @@ export 'src/widgets/hornbill_card.dart';
 export 'src/widgets/inputfield/dropdown_input_field.dart';
 export 'src/widgets/inputfield/text_input_field.dart';
 export 'src/widgets/m_list_widgets.dart';
+export 'src/widgets/scaffold/scaffold.dart';
 
 class Hornbill {
   Future<String?> getPlatformVersion() {

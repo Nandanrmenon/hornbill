@@ -124,6 +124,9 @@ class MRadioListView<T> extends StatelessWidget {
           index: index,
           itemCount: count,
           child: RadioListTile<T>(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0.0),
+            ),
             contentPadding: const EdgeInsets.only(left: 16.0, right: 18.0),
             title: Text(item.title),
             subtitle: item.subtitle.isNotEmpty

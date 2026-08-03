@@ -124,6 +124,9 @@ class MCheckboxListView extends StatelessWidget {
           index: index,
           itemCount: count,
           child: CheckboxListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0.0),
+            ),
             contentPadding: const EdgeInsets.only(left: 16.0, right: 4.0),
             title: Text(item.title),
             subtitle: item.subtitle.isNotEmpty
