@@ -27,12 +27,18 @@ The `HornbillCard` widget is a simple wrapper for content sections and surfaces.
 
 ### ListView
 
+> [!WARNING]
+> If you are updating to 1.2.0, please note that the `MListView` widget has been renamed to `HListView`. Please update your imports accordingly.
+
 Material 3 ListView with headers and spacing. The `HListHeader` widget can be used to create section headers in your list.
 `HListView` is a wrapper around `ListView` that provides a consistent look and feel for your app's UI.
 
 ### TextInputField
 
-The `TextInputField` widget provides a simpler way to create text input fields with consistent styling and behavior. It supports various input types, validation, and customization options.
+> [!WARNING]
+> If you are updating to 1.2.0, please note that the `TextInputField` widget has been renamed to `HornbillTextField`. Please update your imports accordingly.
+
+The `HornbillTextField` widget provides a simpler way to create text input fields with consistent styling and behavior. It supports various input types, validation, and customization options.
 
 ### Scaffold
 

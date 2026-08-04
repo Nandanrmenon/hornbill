@@ -1,3 +1,9 @@
+## 1.2.0
+
+- Added `HornbillDataTable` widget for displaying tabular data with sorting with customisation options.
+- Added `HornbillPageNavigation` to navigate through pages of data in a paginated view.
+- Renamed a bunch of widgets to remove the `M` prefix and replace it with `H` for consistency and clarity.
+
 ## 1.1.0
 
 - Theme improvements: Updated the theme to use a seeded color palette for better consistency and customization.
