@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class DropDownInputField extends StatefulWidget {
+class HornbillDropDownField extends StatefulWidget {
   final String? label;
   final String? hintText;
   final TextEditingController? controller;
@@ -14,7 +14,7 @@ class DropDownInputField extends StatefulWidget {
   final List<DropdownMenuEntry<String>>? dropdownMenuEntries;
   final String? initialSelection;
   final void Function(String?)? onSelected;
-  const DropDownInputField({
+  const HornbillDropDownField({
     super.key,
     this.label,
     this.hintText,
@@ -32,10 +32,10 @@ class DropDownInputField extends StatefulWidget {
   });
 
   @override
-  State<DropDownInputField> createState() => _DropDownInputFieldState();
+  State<HornbillDropDownField> createState() => _HornbillDropDownFieldState();
 }
 
-class _DropDownInputFieldState extends State<DropDownInputField> {
+class _HornbillDropDownFieldState extends State<HornbillDropDownField> {
   @override
   Widget build(BuildContext context) {
     final themeColor = Theme.of(context).colorScheme;

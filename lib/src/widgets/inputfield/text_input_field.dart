@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TextInputField extends StatefulWidget {
+class HornbillTextField extends StatefulWidget {
   final String? label;
   final String? hintText;
   final TextEditingController? controller;
@@ -11,7 +11,7 @@ class TextInputField extends StatefulWidget {
   final void Function(String)? onFieldSubmitted;
   final Icon? icon;
   final Widget? trailingWidget;
-  const TextInputField({
+  const HornbillTextField({
     super.key,
     this.label,
     this.hintText,
@@ -26,10 +26,10 @@ class TextInputField extends StatefulWidget {
   });
 
   @override
-  State<TextInputField> createState() => _TextInputFieldState();
+  State<HornbillTextField> createState() => _HornbillTextFieldState();
 }
 
-class _TextInputFieldState extends State<TextInputField> {
+class _HornbillTextFieldState extends State<HornbillTextField> {
   @override
   Widget build(BuildContext context) {
     final themeColor = Theme.of(context).colorScheme;

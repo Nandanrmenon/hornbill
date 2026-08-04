@@ -22,18 +22,18 @@ class _TextinputfieldScreenState extends State<TextinputfieldScreen> {
             child: Column(
               spacing: 16.0,
               children: [
-                TextInputField(
+                HornbillTextField(
                   label: 'Label',
                   hintText: 'Hint Text',
                   onFieldSubmitted: (p0) {},
                 ),
-                TextInputField(
+                HornbillTextField(
                   label: 'Label with obscure text',
                   hintText: 'This one has obscure text',
                   obscureText: true,
                   onFieldSubmitted: (p0) {},
                 ),
-                TextInputField(
+                HornbillTextField(
                   label: 'Label w/ trailing widget',
                   hintText: 'Hint Text',
                   trailingWidget: IconButton(
