@@ -1,7 +1,8 @@
 import 'hornbill_platform_interface.dart';
 
 export 'src/theme.dart';
-export 'src/widgets/extended_datatable.dart';
+export 'src/widgets/data/data_table.dart';
+export 'src/widgets/data/page_navigation.dart';
 export 'src/widgets/hornbill_button.dart';
 export 'src/widgets/hornbill_card.dart';
 export 'src/widgets/inputfield/dropdown_input_field.dart';

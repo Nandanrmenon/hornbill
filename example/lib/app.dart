@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/screens/buttons_screen.dart';
+import 'package:hornbill_example/screens/datatable_screen.dart';
 import 'package:hornbill_example/screens/listview_screen.dart';
 import 'package:hornbill_example/screens/textinputfield_screen.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -45,6 +46,14 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ButtonsScreen()),
+                ),
+              ),
+              MListItemData(
+                leading: Icon(Symbols.table_rows_rounded),
+                title: 'Buttons',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DataTableScreen()),
                 ),
               ),
             ],
