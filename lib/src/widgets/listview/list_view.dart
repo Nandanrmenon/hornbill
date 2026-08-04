@@ -1,35 +1,35 @@
-part of 'package:hornbill/src/widgets/m_list_widgets.dart';
+part of 'package:hornbill/src/widgets/list_widgets.dart';
 
-/// A grouped, rounded-corner list of [MListItemData] rows.
+/// A grouped, rounded-corner list of [HListItemData] rows.
 ///
 /// Mirrors [ListView] / [ListView.builder]'s two construction styles:
 ///
-///  * Use the default constructor, [MListView.new], when you already have
+///  * Use the default constructor, [HListView.new], when you already have
 ///    the full list of items available:
 ///    ```dart
-///    MListView(
+///    HListView(
 ///      items: [
-///        MListItemData(title: 'Wi-Fi', onTap: () {}),
-///        MListItemData(title: 'Bluetooth', onTap: () {}),
+///        HListItemData(title: 'Wi-Fi', onTap: () {}),
+///        HListItemData(title: 'Bluetooth', onTap: () {}),
 ///      ],
 ///    )
 ///    ```
-///  * Use [MListView.builder] when items are generated on demand (e.g. from
+///  * Use [HListView.builder] when items are generated on demand (e.g. from
 ///    a large or dynamic data source):
 ///    ```dart
-///    MListView.builder(
+///    HListView.builder(
 ///      itemCount: users.length,
-///      itemBuilder: (index) => MListItemData(title: users[index].name),
+///      itemBuilder: (index) => HListItemData(title: users[index].name),
 ///    )
 ///    ```
 ///
 /// Both constructors produce an identical visual result; only how items
 /// are supplied differs.
-class MListView extends StatelessWidget {
+class HListView extends StatelessWidget {
   /// Creates a grouped list from an eagerly-built [items] list.
-  const MListView({
+  const HListView({
     super.key,
-    required List<MListItemData> this.items,
+    required List<HListItemData> this.items,
     this.enableScroll,
     this.shrinkWrap,
     this.dense,
@@ -38,31 +38,31 @@ class MListView extends StatelessWidget {
 
   /// Creates a grouped list that builds its [itemCount] rows lazily via
   /// [itemBuilder], analogous to [ListView.builder].
-  const MListView.builder({
+  const HListView.builder({
     super.key,
     required int this.itemCount,
-    required MListItemData Function(int index) this.itemBuilder,
+    required HListItemData Function(int index) this.itemBuilder,
     this.enableScroll,
     this.shrinkWrap,
     this.dense,
   }) : items = null;
 
-  /// The rows to render, when constructed via [MListView.new].
+  /// The rows to render, when constructed via [HListView.new].
   ///
-  /// Null when constructed via [MListView.builder]; use [itemBuilder] and
+  /// Null when constructed via [HListView.builder]; use [itemBuilder] and
   /// [itemCount] instead.
-  final List<MListItemData>? items;
+  final List<HListItemData>? items;
 
-  /// The number of rows to render, when constructed via [MListView.builder].
+  /// The number of rows to render, when constructed via [HListView.builder].
   ///
-  /// Null when constructed via [MListView.new]; use [items].length instead.
+  /// Null when constructed via [HListView.new]; use [items].length instead.
   final int? itemCount;
 
   /// Builds the row at the given index, when constructed via
-  /// [MListView.builder].
+  /// [HListView.builder].
   ///
-  /// Null when constructed via [MListView.new].
-  final MListItemData Function(int index)? itemBuilder;
+  /// Null when constructed via [HListView.new].
+  final HListItemData Function(int index)? itemBuilder;
 
   /// Whether the list can be scrolled independently of its parent.
   ///
@@ -91,7 +91,7 @@ class MListView extends StatelessWidget {
   int get _count => items?.length ?? itemCount!;
 
   /// The row data at [index], regardless of which constructor was used.
-  MListItemData _itemAt(int index) =>
+  HListItemData _itemAt(int index) =>
       items != null ? items![index] : itemBuilder!(index);
 
   @override

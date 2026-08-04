@@ -1,10 +1,10 @@
-part of 'package:hornbill/src/widgets/m_list_widgets.dart';
+part of 'package:hornbill/src/widgets/list_widgets.dart';
 
-/// The data for a single row rendered by [MListView].
+/// The data for a single row rendered by [HListView].
 ///
 /// Example:
 /// ```dart
-/// MListItemData(
+/// HListItemData(
 ///   title: 'Notifications',
 ///   subtitle: 'On',
 ///   leading: const Icon(Icons.notifications_outlined),
@@ -12,9 +12,9 @@ part of 'package:hornbill/src/widgets/m_list_widgets.dart';
 /// )
 /// ```
 @immutable
-class MListItemData {
-  /// Creates the data for one [MListView] row.
-  const MListItemData({
+class HListItemData {
+  /// Creates the data for one [HListView] row.
+  const HListItemData({
     required this.title,
     this.subtitle,
     this.onTap,

@@ -20,9 +20,9 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       appBar: SliverAppBar.large(title: Text('Hornbill Example App')),
       slivers: [
         SliverToBoxAdapter(
-          child: MListView(
+          child: HListView(
             items: [
-              MListItemData(
+              HListItemData(
                 leading: Icon(Symbols.text_fields_alt_rounded),
                 title: 'Text Input Field',
                 onTap: () => Navigator.push(
@@ -32,7 +32,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                   ),
                 ),
               ),
-              MListItemData(
+              HListItemData(
                 leading: Icon(Symbols.event_list_rounded),
                 title: 'List View',
                 onTap: () => Navigator.push(
@@ -40,7 +40,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                   MaterialPageRoute(builder: (context) => ListViewScreen()),
                 ),
               ),
-              MListItemData(
+              HListItemData(
                 leading: Icon(Symbols.web_traffic_rounded),
                 title: 'Buttons',
                 onTap: () => Navigator.push(
@@ -48,7 +48,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                   MaterialPageRoute(builder: (context) => ButtonsScreen()),
                 ),
               ),
-              MListItemData(
+              HListItemData(
                 leading: Icon(Symbols.table_rows_rounded),
                 title: 'Buttons',
                 onTap: () => Navigator.push(

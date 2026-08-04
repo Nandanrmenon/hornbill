@@ -8,23 +8,23 @@
 ///
 /// ## Widgets
 ///
-///  * [MListHeader] — a small section header (title, optional subtitle,
+///  * [HListHeader] — a small section header (title, optional subtitle,
 ///    icon, and trailing widget) to place above a grouped list.
-///  * [MListView] — a grouped list of arbitrary rows. Construct eagerly
-///    with [MListView.new] and a `List<MListItemData>`, or lazily with
-///    [MListView.builder] and an `itemCount` + item builder callback.
-///  * [MRadioListView] — a grouped, single-select radio list. Also
-///    supports both [MRadioListView.new] and [MRadioListView.builder].
-///  * [MCheckboxListView] — a grouped, multi-select checkbox list. Also
-///    supports both [MCheckboxListView.new] and [MCheckboxListView.builder].
+///  * [HListView] — a grouped list of arbitrary rows. Construct eagerly
+///    with [HListView.new] and a `List<HListItemData>`, or lazily with
+///    [HListView.builder] and an `itemCount` + item builder callback.
+///  * [HRadioListView] — a grouped, single-select radio list. Also
+///    supports both [HRadioListView.new] and [HRadioListView.builder].
+///  * [HCheckboxListView] — a grouped, multi-select checkbox list. Also
+///    supports both [HCheckboxListView.new] and [HCheckboxListView.builder].
 ///
 /// ## Example
 ///
 /// ```dart
-/// MListView(
+/// HListView(
 ///   items: [
-///     MListItemData(title: 'Wi-Fi', subtitle: 'Connected', onTap: () {}),
-///     MListItemData(title: 'Bluetooth', onTap: () {}),
+///     HListItemData(title: 'Wi-Fi', subtitle: 'Connected', onTap: () {}),
+///     HListItemData(title: 'Bluetooth', onTap: () {}),
 ///   ],
 /// )
 /// ```

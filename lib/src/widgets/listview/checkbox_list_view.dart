@@ -1,10 +1,10 @@
-part of 'package:hornbill/src/widgets/m_list_widgets.dart';
+part of 'package:hornbill/src/widgets/list_widgets.dart';
 
-/// The data for a single row rendered by [MCheckboxListView].
+/// The data for a single row rendered by [HCheckboxListView].
 @immutable
-class MCheckboxListItemData {
-  /// Creates the data for one [MCheckboxListView] row.
-  const MCheckboxListItemData({
+class HCheckboxListItemData {
+  /// Creates the data for one [HCheckboxListView] row.
+  const HCheckboxListItemData({
     required this.title,
     required this.subtitle,
     required this.value,
@@ -32,21 +32,21 @@ class MCheckboxListItemData {
 
 /// A grouped, rounded-corner, multi-select checkbox list.
 ///
-/// Mirrors [MListView]'s two construction styles:
+/// Mirrors [HListView]'s two construction styles:
 ///
-///  * [MCheckboxListView.new] for an eagerly-built `items` list.
-///  * [MCheckboxListView.builder] for lazily-built rows.
+///  * [HCheckboxListView.new] for an eagerly-built `items` list.
+///  * [HCheckboxListView.builder] for lazily-built rows.
 ///
 /// [onChanged] is called with the toggled row's index and its new value —
 /// callers are expected to own and update the underlying data (e.g. in a
-/// `List<MCheckboxListItemData>` held in state).
+/// `List<HCheckboxListItemData>` held in state).
 ///
 /// Example:
 /// ```dart
-/// MCheckboxListView(
+/// HCheckboxListView(
 ///   items: options,
 ///   onChanged: (index, value) => setState(() {
-///     options[index] = MCheckboxListItemData(
+///     options[index] = HCheckboxListItemData(
 ///       title: options[index].title,
 ///       subtitle: options[index].subtitle,
 ///       value: value,
@@ -54,11 +54,11 @@ class MCheckboxListItemData {
 ///   }),
 /// )
 /// ```
-class MCheckboxListView extends StatelessWidget {
+class HCheckboxListView extends StatelessWidget {
   /// Creates a grouped checkbox list from an eagerly-built [items] list.
-  const MCheckboxListView({
+  const HCheckboxListView({
     super.key,
-    required List<MCheckboxListItemData> this.items,
+    required List<HCheckboxListItemData> this.items,
     required this.onChanged,
     this.enableScroll,
     this.shrinkWrap,
@@ -67,25 +67,25 @@ class MCheckboxListView extends StatelessWidget {
 
   /// Creates a grouped checkbox list that builds its [itemCount] rows
   /// lazily via [itemBuilder], analogous to [ListView.builder].
-  const MCheckboxListView.builder({
+  const HCheckboxListView.builder({
     super.key,
     required int this.itemCount,
-    required MCheckboxListItemData Function(int index) this.itemBuilder,
+    required HCheckboxListItemData Function(int index) this.itemBuilder,
     required this.onChanged,
     this.enableScroll,
     this.shrinkWrap,
   }) : items = null;
 
-  /// The rows to render, when constructed via [MCheckboxListView.new].
-  final List<MCheckboxListItemData>? items;
+  /// The rows to render, when constructed via [HCheckboxListView.new].
+  final List<HCheckboxListItemData>? items;
 
   /// The number of rows to render, when constructed via
-  /// [MCheckboxListView.builder].
+  /// [HCheckboxListView.builder].
   final int? itemCount;
 
   /// Builds the row at the given index, when constructed via
-  /// [MCheckboxListView.builder].
-  final MCheckboxListItemData Function(int index)? itemBuilder;
+  /// [HCheckboxListView.builder].
+  final HCheckboxListItemData Function(int index)? itemBuilder;
 
   /// Called with a row's index and its new checked state when the user
   /// toggles it.
@@ -93,12 +93,12 @@ class MCheckboxListView extends StatelessWidget {
 
   /// Whether the list can be scrolled independently of its parent.
   ///
-  /// See [MListView.enableScroll] for details; the default is the same.
+  /// See [HListView.enableScroll] for details; the default is the same.
   final bool? enableScroll;
 
   /// Whether the list should size itself to its content.
   ///
-  /// See [MListView.shrinkWrap] for details; the default is the same.
+  /// See [HListView.shrinkWrap] for details; the default is the same.
   final bool? shrinkWrap;
 
   /// The number of rows this list will render, regardless of which
@@ -106,7 +106,7 @@ class MCheckboxListView extends StatelessWidget {
   int get _count => items?.length ?? itemCount!;
 
   /// The row data at [index], regardless of which constructor was used.
-  MCheckboxListItemData _itemAt(int index) =>
+  HCheckboxListItemData _itemAt(int index) =>
       items != null ? items![index] : itemBuilder!(index);
 
   @override

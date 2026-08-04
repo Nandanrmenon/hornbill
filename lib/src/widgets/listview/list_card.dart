@@ -1,4 +1,4 @@
-part of 'package:hornbill/src/widgets/m_list_widgets.dart';
+part of 'package:hornbill/src/widgets/list_widgets.dart';
 
 /// Corner radius applied to the first and last item in a grouped list.
 const double _kOuterRadius = 12.0;
@@ -32,7 +32,7 @@ BorderRadius _cardRadius(int index, int itemCount) {
 /// package.
 ///
 /// Centralizing this avoids repeating the same `ClipRRect` + `Material`
-/// boilerplate in [MListView], [MRadioListView], and [MCheckboxListView],
+/// boilerplate in [HListView], [HRadioListView], and [HCheckboxListView],
 /// which previously drifted out of sync with one another.
 class _ListCard extends StatelessWidget {
   /// Creates the shared card chrome for one list item.

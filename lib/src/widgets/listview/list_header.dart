@@ -1,19 +1,19 @@
-part of 'package:hornbill/src/widgets/m_list_widgets.dart';
+part of 'package:hornbill/src/widgets/list_widgets.dart';
 
-/// A small section header, typically placed above an [MListView],
-/// [MRadioListView], or [MCheckboxListView] to label the group below it.
+/// A small section header, typically placed above an [HListView],
+/// [HRadioListView], or [HCheckboxListView] to label the group below it.
 ///
 /// Example:
 /// ```dart
-/// const MListHeader(
+/// const HListHeader(
 ///   title: 'Account',
 ///   subtitle: 'Manage your profile and security',
 ///   icon: Icons.person_outline,
 /// )
 /// ```
-class MListHeader extends StatelessWidget {
+class HListHeader extends StatelessWidget {
   /// Creates a section header.
-  const MListHeader({
+  const HListHeader({
     super.key,
     required this.title,
     this.icon,

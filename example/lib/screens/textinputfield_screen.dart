@@ -15,7 +15,7 @@ class _TextinputfieldScreenState extends State<TextinputfieldScreen> {
     return HornbillScaffold(
       appBar: SliverAppBar(title: Text('Text Input Field')),
       slivers: [
-        SliverToBoxAdapter(child: MListHeader(title: 'Text Input Field')),
+        SliverToBoxAdapter(child: HListHeader(title: 'Text Input Field')),
         SliverToBoxAdapter(
           child: HornbillCard(
             margin: EdgeInsets.all(16.0),

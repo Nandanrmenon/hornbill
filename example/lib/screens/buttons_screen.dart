@@ -15,7 +15,7 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
     return HornbillScaffold(
       appBar: SliverAppBar(title: Text('Buttons')),
       slivers: [
-        SliverToBoxAdapter(child: MListHeader(title: 'Text')),
+        SliverToBoxAdapter(child: HListHeader(title: 'Text')),
         SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.all(16.0),
@@ -32,7 +32,7 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
             ),
           ),
         ),
-        SliverToBoxAdapter(child: MListHeader(title: 'Outlined')),
+        SliverToBoxAdapter(child: HListHeader(title: 'Outlined')),
         SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.all(16.0),
@@ -49,7 +49,7 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
             ),
           ),
         ),
-        SliverToBoxAdapter(child: MListHeader(title: 'Filled')),
+        SliverToBoxAdapter(child: HListHeader(title: 'Filled')),
         SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.all(16.0),
@@ -73,7 +73,7 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
           ),
         ),
 
-        SliverToBoxAdapter(child: MListHeader(title: 'Filled')),
+        SliverToBoxAdapter(child: HListHeader(title: 'Filled')),
         SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.all(16.0),

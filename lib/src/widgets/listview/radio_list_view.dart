@@ -1,10 +1,10 @@
-part of 'package:hornbill/src/widgets/m_list_widgets.dart';
+part of 'package:hornbill/src/widgets/list_widgets.dart';
 
-/// The data for a single row rendered by [MRadioListView].
+/// The data for a single row rendered by [HRadioListView].
 @immutable
-class MRadioListItemData<T> {
-  /// Creates the data for one [MRadioListView] row.
-  const MRadioListItemData({
+class HRadioListItemData<T> {
+  /// Creates the data for one [HRadioListView] row.
+  const HRadioListItemData({
     required this.title,
     required this.subtitle,
     required this.value,
@@ -19,7 +19,7 @@ class MRadioListItemData<T> {
   final String subtitle;
 
   /// The value this row represents. Selected when it equals
-  /// `MRadioListView.groupValue`.
+  /// `HRadioListView.groupValue`.
   final T value;
 
   /// Reserved for a future leading widget. Not currently rendered — see
@@ -33,27 +33,27 @@ class MRadioListItemData<T> {
 
 /// A grouped, rounded-corner, single-select radio list.
 ///
-/// Mirrors [MListView]'s two construction styles:
+/// Mirrors [HListView]'s two construction styles:
 ///
-///  * [MRadioListView.new] for an eagerly-built `items` list.
-///  * [MRadioListView.builder] for lazily-built rows.
+///  * [HRadioListView.new] for an eagerly-built `items` list.
+///  * [HRadioListView.builder] for lazily-built rows.
 ///
 /// Example:
 /// ```dart
-/// MRadioListView<String>(
+/// HRadioListView<String>(
 ///   groupValue: selected,
 ///   onChanged: (value) => setState(() => selected = value),
 ///   items: const [
-///     MRadioListItemData(title: 'Small', subtitle: '', value: 's'),
-///     MRadioListItemData(title: 'Large', subtitle: '', value: 'l'),
+///     HRadioListItemData(title: 'Small', subtitle: '', value: 's'),
+///     HRadioListItemData(title: 'Large', subtitle: '', value: 'l'),
 ///   ],
 /// )
 /// ```
-class MRadioListView<T> extends StatelessWidget {
+class HRadioListView<T> extends StatelessWidget {
   /// Creates a grouped radio list from an eagerly-built [items] list.
-  const MRadioListView({
+  const HRadioListView({
     super.key,
-    required List<MRadioListItemData<T>> this.items,
+    required List<HRadioListItemData<T>> this.items,
     required this.groupValue,
     required this.onChanged,
     this.enableScroll,
@@ -63,29 +63,29 @@ class MRadioListView<T> extends StatelessWidget {
 
   /// Creates a grouped radio list that builds its [itemCount] rows lazily
   /// via [itemBuilder], analogous to [ListView.builder].
-  const MRadioListView.builder({
+  const HRadioListView.builder({
     super.key,
     required int this.itemCount,
-    required MRadioListItemData<T> Function(int index) this.itemBuilder,
+    required HRadioListItemData<T> Function(int index) this.itemBuilder,
     required this.groupValue,
     required this.onChanged,
     this.enableScroll,
     this.shrinkWrap,
   }) : items = null;
 
-  /// The rows to render, when constructed via [MRadioListView.new].
-  final List<MRadioListItemData<T>>? items;
+  /// The rows to render, when constructed via [HRadioListView.new].
+  final List<HRadioListItemData<T>>? items;
 
   /// The number of rows to render, when constructed via
-  /// [MRadioListView.builder].
+  /// [HRadioListView.builder].
   final int? itemCount;
 
   /// Builds the row at the given index, when constructed via
-  /// [MRadioListView.builder].
-  final MRadioListItemData<T> Function(int index)? itemBuilder;
+  /// [HRadioListView.builder].
+  final HRadioListItemData<T> Function(int index)? itemBuilder;
 
   /// The currently-selected value. The row whose
-  /// `MRadioListItemData.value` equals this is rendered as selected.
+  /// `HRadioListItemData.value` equals this is rendered as selected.
   final T groupValue;
 
   /// Called with the newly-selected value when the user picks a row.
@@ -93,12 +93,12 @@ class MRadioListView<T> extends StatelessWidget {
 
   /// Whether the list can be scrolled independently of its parent.
   ///
-  /// See [MListView.enableScroll] for details; the default is the same.
+  /// See [HListView.enableScroll] for details; the default is the same.
   final bool? enableScroll;
 
   /// Whether the list should size itself to its content.
   ///
-  /// See [MListView.shrinkWrap] for details; the default is the same.
+  /// See [HListView.shrinkWrap] for details; the default is the same.
   final bool? shrinkWrap;
 
   /// The number of rows this list will render, regardless of which
@@ -106,7 +106,7 @@ class MRadioListView<T> extends StatelessWidget {
   int get _count => items?.length ?? itemCount!;
 
   /// The row data at [index], regardless of which constructor was used.
-  MRadioListItemData<T> _itemAt(int index) =>
+  HRadioListItemData<T> _itemAt(int index) =>
       items != null ? items![index] : itemBuilder!(index);
 
   @override
