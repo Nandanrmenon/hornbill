@@ -22,11 +22,12 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
             child: Row(
               spacing: 16.0,
               children: [
-                TextButton(onPressed: () {}, child: Text('Button')),
-                TextButton.icon(
+                HButton.text(label: 'Button', onPressed: () {}),
+                HButton.text(
+                  label: 'Button',
                   onPressed: () {},
-                  label: Text('Button'),
-                  icon: Icon(Symbols.add_rounded),
+                  showIcon: true,
+                  icon: Symbols.add_rounded,
                 ),
               ],
             ),
@@ -39,11 +40,12 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
             child: Row(
               spacing: 16.0,
               children: [
-                OutlinedButton(onPressed: () {}, child: Text('Button')),
-                OutlinedButton.icon(
+                HButton.outlined(label: 'Button', onPressed: () {}),
+                HButton.outlined(
+                  label: 'Button',
                   onPressed: () {},
-                  label: Text('Button'),
-                  icon: Icon(Symbols.add_rounded),
+                  showIcon: true,
+                  icon: Symbols.add_rounded,
                 ),
               ],
             ),
@@ -56,17 +58,30 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
             child: Row(
               spacing: 16.0,
               children: [
-                FilledButton.tonal(onPressed: () {}, child: Text('Button')),
-                FilledButton.tonalIcon(
+                HButton.tonal(label: 'Button', onPressed: () {}),
+                HButton.tonal(
+                  label: 'Button',
                   onPressed: () {},
-                  label: Text('Button'),
-                  icon: Icon(Symbols.add_rounded),
+                  showIcon: true,
+                  icon: Symbols.add_rounded,
                 ),
-                FilledButton(onPressed: () {}, child: Text('Button')),
-                FilledButton.icon(
+              ],
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(child: HListHeader(title: 'Filled')),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Row(
+              spacing: 16.0,
+              children: [
+                HButton.filled(label: 'Button', onPressed: () {}),
+                HButton.filled(
+                  label: 'Button',
                   onPressed: () {},
-                  label: Text('Button'),
-                  icon: Icon(Symbols.add_rounded),
+                  showIcon: true,
+                  icon: Symbols.add_rounded,
                 ),
               ],
             ),
@@ -80,25 +95,25 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
             child: Row(
               spacing: 16.0,
               children: [
-                IconButton(
+                HIconButton.filled(
+                  icon: Symbols.android_rounded,
                   onPressed: () {},
                   tooltip: 'Button',
-                  icon: Icon(Symbols.android_rounded),
                 ),
-                IconButton.outlined(
+                HIconButton.outlined(
+                  icon: Symbols.android_rounded,
                   onPressed: () {},
                   tooltip: 'Button',
-                  icon: Icon(Symbols.android_rounded),
                 ),
-                IconButton.filledTonal(
+                HIconButton.tonal(
+                  icon: Symbols.android_rounded,
                   onPressed: () {},
                   tooltip: 'Button',
-                  icon: Icon(Symbols.android_rounded),
                 ),
-                IconButton.filled(
+                HIconButton.text(
+                  icon: Symbols.android_rounded,
                   onPressed: () {},
                   tooltip: 'Button',
-                  icon: Icon(Symbols.android_rounded),
                 ),
               ],
             ),
