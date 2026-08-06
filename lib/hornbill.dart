@@ -12,6 +12,7 @@ export 'src/widgets/inputfield/text_input_field.dart';
 export 'src/widgets/list_widgets.dart';
 export 'src/widgets/scaffold/navigation_bar.dart';
 export 'src/widgets/scaffold/scaffold.dart';
+export 'src/widgets/scaffold/appbar.dart';
 
 class Hornbill {
   Future<String?> getPlatformVersion() {

@@ -116,9 +116,11 @@ class _HIconButtonState extends State<HIconButton> {
       case _HIconButtonVariant.filled:
         return Theme.of(context).colorScheme.onPrimary;
       case _HIconButtonVariant.tonal:
-      case _HIconButtonVariant.outlined:
-      case _HIconButtonVariant.text:
         return _baseColor;
+      case _HIconButtonVariant.outlined:
+        return _baseColor;
+      case _HIconButtonVariant.text:
+        return Theme.of(context).colorScheme.onSurface;
     }
   }
 
@@ -144,8 +146,9 @@ class _HIconButtonState extends State<HIconButton> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           curve: Curves.easeOut,
-          width: widget.size,
-          height: widget.size,
+          // width: widget.size,
+          // height: widget.size,
+          padding: EdgeInsets.all((widget.size - widget.iconSize) / 2),
           decoration: BoxDecoration(
             color: _backgroundColor,
             borderRadius: BorderRadius.circular(kBorderRadiusRounded),

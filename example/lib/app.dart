@@ -19,7 +19,12 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      appBar: SliverAppBar.large(title: Text('Hornbill Example App')),
+      // appBar: SliverAppBar.large(title: Text('Hornbill Example App')),
+      appBar: HAppBar.large(
+        title: 'Hornbill Example App',
+        actions: [HIconButton.tonal(icon: Symbols.code, onPressed: () {})],
+        
+      ),
       slivers: [
         SliverToBoxAdapter(
           child: HListView(
