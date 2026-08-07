@@ -4,6 +4,7 @@ import 'package:hornbill_example/screens/buttons_screen.dart';
 import 'package:hornbill_example/screens/datatable_screen.dart';
 import 'package:hornbill_example/screens/listview_screen.dart';
 import 'package:hornbill_example/screens/navigationbar_screen.dart';
+import 'package:hornbill_example/screens/progressindicator_screen.dart';
 import 'package:hornbill_example/screens/switch.dart';
 import 'package:hornbill_example/screens/textinputfield_screen.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -78,6 +79,16 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => NavigationbarScreen(),
+                  ),
+                ),
+              ),
+              HListItemData(
+                leading: Icon(Symbols.percent),
+                title: Text('Progress Indicators'),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProgressIndicatorScreen(),
                   ),
                 ),
               ),
