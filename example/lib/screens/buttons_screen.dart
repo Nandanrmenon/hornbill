@@ -13,7 +13,7 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      appBar: SliverAppBar(title: Text('Buttons')),
+      appBar: SliverAppBar.large(title: Text('Buttons')),
       slivers: [
         SliverToBoxAdapter(child: HListHeader(title: 'Text')),
         SliverToBoxAdapter(

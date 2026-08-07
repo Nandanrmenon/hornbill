@@ -14,8 +14,8 @@ class _NavigationbarScreenState extends State<NavigationbarScreen> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      // appBar: SliverAppBar.large(title: Text('Navigation Bar')),
-      appBar: HAppBar.large(title: 'Navigation Bar'),
+      appBar: SliverAppBar.large(title: Text('Navigation Bar')),
+      // appBar: HAppBar.large(title: 'Navigation Bar'),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

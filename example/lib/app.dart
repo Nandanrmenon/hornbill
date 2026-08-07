@@ -19,19 +19,19 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      // appBar: SliverAppBar.large(title: Text('Hornbill Example App')),
-      appBar: HAppBar.large(
-        title: 'Hornbill Example App',
-        actions: [HIconButton.tonal(icon: Symbols.code, onPressed: () {})],
-        
-      ),
+      appBar: SliverAppBar.large(title: Text('Hornbill Example App')),
+      // appBar: HAppBar.large(
+      //   title: 'Hornbill Example App',
+      //   actions: [HIconButton.tonal(icon: Symbols.code, onPressed: () {})],
+
+      // ),
       slivers: [
         SliverToBoxAdapter(
           child: HListView(
             items: [
               HListItemData(
                 leading: Icon(Symbols.text_fields_alt_rounded),
-                title: 'Text Input Field',
+                title: Text('Text Input Field'),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -41,7 +41,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
               ),
               HListItemData(
                 leading: Icon(Symbols.event_list_rounded),
-                title: 'List View',
+                title: Text('List View'),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ListViewScreen()),
@@ -49,7 +49,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
               ),
               HListItemData(
                 leading: Icon(Symbols.web_traffic_rounded),
-                title: 'Buttons',
+                title: Text('Buttons'),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ButtonsScreen()),
@@ -57,7 +57,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
               ),
               HListItemData(
                 leading: Icon(Symbols.table_rows_rounded),
-                title: 'Data Table',
+                title: Text('Data Table'),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => DataTableScreen()),
@@ -65,7 +65,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
               ),
               HListItemData(
                 leading: Icon(Symbols.toggle_on_rounded),
-                title: 'Switch',
+                title: Text('Switch'),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => SwitchScreen()),
@@ -73,7 +73,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
               ),
               HListItemData(
                 leading: Icon(Symbols.menu_rounded),
-                title: 'Navigation Bar',
+                title: Text('Navigation Bar'),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(

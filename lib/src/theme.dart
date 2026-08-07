@@ -5,10 +5,14 @@ class HornbillTheme {
   const HornbillTheme({
     this.seedColor = const Color(0xFF591DC1),
     this.dynamicSchemeVariant = DynamicSchemeVariant.tonalSpot,
+    this.appBarFontFamily,
+    this.fontFamily,
   });
 
   final Color seedColor;
   final DynamicSchemeVariant dynamicSchemeVariant;
+  final String? appBarFontFamily;
+  final String? fontFamily;
 
   ThemeData lightTheme() => _buildTheme(Brightness.light);
 
@@ -24,9 +28,10 @@ class HornbillTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
+      fontFamily: fontFamily,
       splashFactory: NoSplash.splashFactory,
       pageTransitionsTheme: pageTransitionTheme(),
-      appBarTheme: appBarTheme(colorScheme),
+      appBarTheme: appBarTheme(colorScheme, fontFamily: appBarFontFamily),
       cardTheme: cardTheme(colorScheme),
       filledButtonTheme: filledButtonTheme(colorScheme),
       outlinedButtonTheme: outlinedButtonTheme(colorScheme),
@@ -61,12 +66,14 @@ PageTransitionsTheme pageTransitionTheme() {
   );
 }
 
-AppBarTheme appBarTheme(ColorScheme scheme) {
+AppBarTheme appBarTheme(ColorScheme scheme, {String? fontFamily}) {
   return AppBarTheme(
     centerTitle: false,
+    scrolledUnderElevation: 0,
+    backgroundColor: scheme.surface,
     titleTextStyle: TextStyle(
-      fontFamily: 'Google Sans Flex',
-      fontSize: 20,
+      fontFamily: fontFamily,
+      fontSize: 22,
       fontVariations: [FontVariation('wght', 600), FontVariation('ROND', 100)],
       color: scheme.onSurface,
     ),

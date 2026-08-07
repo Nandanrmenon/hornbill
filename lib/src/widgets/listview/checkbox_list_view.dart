@@ -13,7 +13,7 @@ class HCheckboxListItemData {
   });
 
   /// The row's primary text.
-  final String title;
+  final Widget title;
 
   /// The row's secondary text. Pass an empty string to omit it.
   final String subtitle;
@@ -128,7 +128,7 @@ class HCheckboxListView extends StatelessWidget {
               borderRadius: BorderRadius.circular(0.0),
             ),
             contentPadding: const EdgeInsets.only(left: 16.0, right: 4.0),
-            title: Text(item.title),
+            title: item.title,
             subtitle: item.subtitle.isNotEmpty
                 ? Text(
                     item.subtitle,

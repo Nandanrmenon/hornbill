@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/app.dart';
 
@@ -14,9 +15,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: HornbillTheme(
         // dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
+        appBarFontFamily: GoogleFonts.bodoniModa().fontFamily,
       ).lightTheme(),
       darkTheme: HornbillTheme(
         // dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
+        appBarFontFamily: GoogleFonts.bodoniModa().fontFamily,
       ).darkTheme(),
       home: const HornbilExampleApp(),
     );

@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
-/// Internal size variant. Set via constructors below.
 enum _HAppBarVariant { large, medium, regular }
 
-/// A custom [SliverAppBar]-based app bar with explicit size variants:
-/// [HAppBar] (defaults to regular/single-line), [HAppBar.large], [HAppBar.medium],
-/// and [HAppBar.regular].
+/// A custom [SliverAppBar]-based app bar with smooth interpolation controls.
 class HAppBar extends StatelessWidget {
   final String title;
   final Widget? leading;
@@ -40,9 +37,9 @@ class HAppBar extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.collapsedBackgroundColor,
-    this.pinned = true,
-    this.floating = false,
-    this.snap = false,
+    this.pinned = false,
+    this.floating = true,
+    this.snap = true,
     this.automaticallyImplyLeading = true,
     this.centerTitleWhenCollapsed = false,
     this.expandedTitleStyle,
@@ -59,9 +56,9 @@ class HAppBar extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.collapsedBackgroundColor,
-    this.pinned = true,
-    this.floating = false,
-    this.snap = false,
+    this.pinned = false,
+    this.floating = true,
+    this.snap = true,
     this.automaticallyImplyLeading = true,
     this.centerTitleWhenCollapsed = false,
     this.expandedTitleStyle,
@@ -78,9 +75,9 @@ class HAppBar extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.collapsedBackgroundColor,
-    this.pinned = true,
-    this.floating = false,
-    this.snap = false,
+    this.pinned = false,
+    this.floating = true,
+    this.snap = true,
     this.automaticallyImplyLeading = true,
     this.centerTitleWhenCollapsed = false,
     this.expandedTitleStyle,
@@ -97,9 +94,9 @@ class HAppBar extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.collapsedBackgroundColor,
-    this.pinned = true,
-    this.floating = false,
-    this.snap = false,
+    this.pinned = false,
+    this.floating = true,
+    this.snap = true,
     this.automaticallyImplyLeading = true,
     this.centerTitleWhenCollapsed = false,
     this.expandedTitleStyle,
@@ -115,7 +112,7 @@ class HAppBar extends StatelessWidget {
       case _HAppBarVariant.medium:
         return 112;
       case _HAppBarVariant.regular:
-        return 64; // Regular matches toolbar standard height
+        return 64;
     }
   }
 
@@ -136,21 +133,17 @@ class HAppBar extends StatelessWidget {
       _HAppBarVariant.regular => 16.0,
     };
 
-    final expandedStyle =
-        expandedTitleStyle ??
+    final expandedStyle = expandedTitleStyle ??
         TextStyle(
           color: fg,
           fontSize: defaultFontSize,
           fontWeight: isRegular ? FontWeight.w500 : FontWeight.w600,
-          // height: 1.15,
         );
 
-    final collapsedStyle =
-        collapsedTitleStyle ??
+    final collapsedStyle = collapsedTitleStyle ??
         TextStyle(color: fg, fontSize: 18, fontWeight: FontWeight.w500);
 
-    final resolvedLeading =
-        leading ??
+    final resolvedLeading = leading ??
         (automaticallyImplyLeading && Navigator.canPop(context)
             ? UnconstrainedBox(
                 child: SizedBox(
@@ -181,7 +174,6 @@ class HAppBar extends StatelessWidget {
       expandedHeight: _expandedHeight,
       collapsedHeight: _collapsedHeight,
       toolbarHeight: _collapsedHeight,
-      // For Regular mode: render title directly on the single bar row
       title: isRegular
           ? Text(
               title,
@@ -194,47 +186,88 @@ class HAppBar extends StatelessWidget {
               style: collapsedStyle,
               centered: centerTitleWhenCollapsed,
             ),
-      centerTitle: isRegular
-          ? centerTitleWhenCollapsed
-          : centerTitleWhenCollapsed,
-      // Flexible expanded space is only needed for medium & large collapsible headers
+      centerTitle: centerTitleWhenCollapsed,
       flexibleSpace: isRegular
           ? FlexibleSpaceBar(background: Container(color: bg))
-          : LayoutBuilder(
-              builder: (context, constraints) {
-                final settings = context
-                    .dependOnInheritedWidgetOfExactType<
-                      FlexibleSpaceBarSettings
-                    >();
-                final deltaExtent = _expandedHeight - _collapsedHeight;
-                final t = settings == null || deltaExtent <= 0
-                    ? 1.0
-                    : (1.0 -
-                              ((settings.currentExtent - settings.minExtent) /
-                                      deltaExtent)
-                                  .clamp(0.0, 1.0))
-                          .clamp(0.0, 1.0);
-
-                return Container(
-                  color: bg,
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
-                      padding: titlePadding,
-                      child: Opacity(
-                        opacity: (1.0 - t * 1.5).clamp(0.0, 1.0),
-                        child: Text(
-                          title,
-                          style: expandedStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
+          : _HAppBarFlexibleSpace(
+              bg: bg,
+              title: title,
+              titlePadding: titlePadding,
+              expandedStyle: expandedStyle,
+              expandedHeight: _expandedHeight,
+              collapsedHeight: _collapsedHeight,
             ),
+    );
+  }
+}
+
+/// Custom flexible space that uses a [NotificationListener] to smoothly interpolate
+/// the header height, scale, and opacity using non-linear animation curves.
+class _HAppBarFlexibleSpace extends StatelessWidget {
+  final Color bg;
+  final String title;
+  final EdgeInsetsGeometry titlePadding;
+  final TextStyle expandedStyle;
+  final double expandedHeight;
+  final double collapsedHeight;
+
+  const _HAppBarFlexibleSpace({
+    required this.bg,
+    required this.title,
+    required this.titlePadding,
+    required this.expandedStyle,
+    required this.expandedHeight,
+    required this.collapsedHeight,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: bg,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final settings = context.dependOnInheritedWidgetOfExactType<
+              FlexibleSpaceBarSettings>();
+          final deltaExtent = expandedHeight - collapsedHeight;
+
+          // Standard raw factor (0 = fully expanded, 1 = fully collapsed)
+          final rawT = settings == null || deltaExtent <= 0
+              ? 1.0
+              : (1.0 -
+                        ((settings.currentExtent - settings.minExtent) /
+                                deltaExtent)
+                            .clamp(0.0, 1.0))
+                    .clamp(0.0, 1.0);
+
+          // Smooth curved interpolation factors
+          final CurvedAnimation opacityAnimation = CurvedAnimation(
+            parent: AlwaysStoppedAnimation(1.0 - rawT),
+            curve: Curves.easeOut,
+          );
+
+          // Subtle downward push effect as it collapses
+          final double slideTranslation = 12.0 * rawT;
+
+          return Transform.translate(
+            offset: Offset(0, slideTranslation),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: titlePadding,
+                child: FadeTransition(
+                  opacity: opacityAnimation,
+                  child: Text(
+                    title,
+                    style: expandedStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -266,7 +299,9 @@ class _CollapsedTitle extends StatelessWidget {
                         .clamp(0.0, 1.0))
                 .clamp(0.0, 1.0);
 
-      opacity = ((t - 0.80) / 0.20).clamp(0.0, 1.0);
+      // Interpolates non-linearly using easeIn during the last 20% of the collapse
+      final curvedT = Curves.easeIn.transform(((t - 0.80) / 0.20).clamp(0.0, 1.0));
+      opacity = curvedT;
     }
 
     return Opacity(

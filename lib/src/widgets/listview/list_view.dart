@@ -125,7 +125,7 @@ class HListView extends StatelessWidget {
               top: hasSubtitle ? 0.0 : 8.0,
             ),
             dense: dense,
-            title: Text(item.title),
+            title: item.title,
             leading: item.leading,
             selectedColor: item.color ?? Theme.of(context).colorScheme.primary,
             subtitle: hasSubtitle

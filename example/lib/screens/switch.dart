@@ -13,33 +13,18 @@ class _SwitchScreenState extends State<SwitchScreen> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      appBar: SliverAppBar(title: Text('List View')),
+      appBar: SliverAppBar.large(title: Text('Switch')),
       slivers: [
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: .start,
-              children: [
-                HListHeader(title: 'List View - Normal'),
-                Switch(
-                  value: switchValue,
-                  onChanged: (value) {
-                    setState(() {
-                      switchValue = value;
-                    });
-                  },
-                ),
-                HornbillSwitch(
-                  showCheckIcon: true,
-                  value: switchValue,
-                  onChanged: (value) {
-                    setState(() {
-                      switchValue = value;
-                    });
-                  },
-                ),
-              ],
+        SliverFillRemaining(
+          child: Center(
+            child: HornbillSwitch(
+              showCheckIcon: true,
+              value: switchValue,
+              onChanged: (value) {
+                setState(() {
+                  switchValue = value;
+                });
+              },
             ),
           ),
         ),

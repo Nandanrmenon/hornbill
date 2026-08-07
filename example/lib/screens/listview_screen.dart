@@ -13,18 +13,23 @@ class _ListViewScreenState extends State<ListViewScreen> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      appBar: SliverAppBar(title: Text('List View')),
+      appBar: SliverAppBar.large(title: Text('List View')),
       slivers: [
         SliverToBoxAdapter(
           child: Column(
             children: [
               HListHeader(title: 'List View - Normal'),
-              HListView(
-                items: [
-                  HListItemData(title: 'Item 1'),
-                  HListItemData(title: 'Item 2'),
-                  HListItemData(title: 'Item 3'),
-                ],
+              HListView.builder(
+                itemCount: 20,
+                itemBuilder: (index) {
+                  return HListItemData(
+                    title: Text('Item $index'),
+                    subtitle: 'Subtitle $index',
+                    leading: Icon(Symbols.star_rounded),
+                    suffix: Icon(Symbols.arrow_forward_rounded),
+                    onTap: () {},
+                  );
+                },
               ),
             ],
           ),
@@ -35,9 +40,9 @@ class _ListViewScreenState extends State<ListViewScreen> {
               HListHeader(title: 'List View - Normal w/ subtitle'),
               HListView(
                 items: [
-                  HListItemData(title: 'Item 1', subtitle: 'Subtitle 1'),
-                  HListItemData(title: 'Item 2', subtitle: 'Subtitle 2'),
-                  HListItemData(title: 'Item 3', subtitle: 'Subtitle 3'),
+                  HListItemData(title: Text('Item 1'), subtitle: 'Subtitle 1'),
+                  HListItemData(title: Text('Item 2'), subtitle: 'Subtitle 2'),
+                  HListItemData(title: Text('Item 3'), subtitle: 'Subtitle 3'),
                 ],
               ),
             ],
@@ -50,30 +55,30 @@ class _ListViewScreenState extends State<ListViewScreen> {
               HListView(
                 items: [
                   HListItemData(
-                    title: 'Item 1',
+                    title: Text('Item 1'),
                     subtitle: 'Subtitle 1',
                     leading: Icon(Symbols.star_rounded),
                     suffix: Icon(Symbols.arrow_forward_rounded),
                   ),
                   HListItemData(
-                    title: 'Item 2',
+                    title: Text('Item 2'),
                     subtitle: 'Subtitle 2',
                     suffix: Icon(Symbols.arrow_forward_rounded),
                   ),
                   HListItemData(
-                    title: 'Item 3',
+                    title: Text('Item 3'),
                     subtitle: 'Subtitle 3',
                     leading: Icon(Symbols.star_rounded),
                   ),
                   HListItemData(
-                    title: 'Item 4',
+                    title: Text('Item 4'),
                     subtitle: 'Subtitle 4',
                     leading: Icon(Symbols.star_rounded),
                     selected: true,
                     onTap: () {},
                   ),
                   HListItemData(
-                    title: 'Item 5',
+                    title: Text('Item 5'),
                     subtitle: 'Subtitle 5',
                     leading: Icon(Symbols.star_rounded),
                     selected: true,
@@ -93,12 +98,12 @@ class _ListViewScreenState extends State<ListViewScreen> {
                 onChanged: (index, value) {},
                 items: [
                   HCheckboxListItemData(
-                    title: '12312',
+                    title: Text('12312'),
                     subtitle: 'asd',
                     value: false,
                   ),
                   HCheckboxListItemData(
-                    title: '123234',
+                    title: Text('123234'),
                     subtitle: 'asd',
                     value: true,
                   ),
@@ -114,9 +119,13 @@ class _ListViewScreenState extends State<ListViewScreen> {
               HRadioListView(
                 groupValue: 1,
                 items: [
-                  HRadioListItemData(title: '12312', subtitle: 'asd', value: 1),
                   HRadioListItemData(
-                    title: '123234',
+                    title: Text('12312'),
+                    subtitle: 'asd',
+                    value: 1,
+                  ),
+                  HRadioListItemData(
+                    title: Text('123234'),
                     subtitle: 'asd',
                     value: 2,
                   ),

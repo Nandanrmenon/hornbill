@@ -25,7 +25,7 @@ class HListItemData {
   });
 
   /// The row's primary text, rendered as the `ListTile.title`.
-  final String title;
+  final Widget title;
 
   /// Optional secondary text, rendered as the `ListTile.subtitle`.
   ///
