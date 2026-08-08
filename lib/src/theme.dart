@@ -1,15 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 
+/// Preset colour schemes for the Hornbill theme.
+/// Use like `HColourScheme.red`, `HColourScheme.blue`, etc.
+class HColourScheme {
+  const HColourScheme._(this.seedColor);
+
+  final Color seedColor;
+
+  /// Build a custom scheme from a [Color].
+  factory HColourScheme.custom(Color color) => HColourScheme._(color);
+
+  /// Build a custom scheme from a hex string.
+  ///
+  /// Accepts formats like `"#RRGGBB"`, `"RRGGBB"`, `"#AARRGGBB"`,
+  /// `"AARRGGBB"`, with or without the leading `#`.
+  factory HColourScheme.fromHex(String hex) {
+    var value = hex.trim().replaceFirst('#', '');
+    if (value.length == 6) {
+      value = 'FF$value'; // assume fully opaque if no alpha given
+    }
+    if (value.length != 8) {
+      throw FormatException('Invalid hex colour: $hex');
+    }
+    final intValue = int.parse(value, radix: 16);
+    return HColourScheme._(Color(intValue));
+  }
+
+  // --- Presets -------------------------------------------------------
+
+  static const purple = HColourScheme._(Color(0xFF591DC1)); // original default
+  static const red = HColourScheme._(Color(0xFFB3261E));
+  static const orange = HColourScheme._(Color(0xFFE8710A));
+  static const amber = HColourScheme._(Color(0xFFC77800));
+  static const yellow = HColourScheme._(Color(0xFFAE9200));
+  static const green = HColourScheme._(Color(0xFF2E7D32));
+  static const teal = HColourScheme._(Color(0xFF00796B));
+  static const cyan = HColourScheme._(Color(0xFF00838F));
+  static const blue = HColourScheme._(Color(0xFF1565C0));
+  static const indigo = HColourScheme._(Color(0xFF3F51B5));
+  static const pink = HColourScheme._(Color(0xFFD81B60));
+  static const brown = HColourScheme._(Color(0xFF6D4C41));
+  static const grey = HColourScheme._(Color(0xFF616161));
+}
+
 class HornbillTheme {
   const HornbillTheme({
-    this.seedColor = const Color(0xFF591DC1),
+    this.colourScheme = HColourScheme.purple,
     this.dynamicSchemeVariant = DynamicSchemeVariant.tonalSpot,
     this.appBarFontFamily,
     this.fontFamily,
   });
 
-  final Color seedColor;
+  final HColourScheme colourScheme;
   final DynamicSchemeVariant dynamicSchemeVariant;
   final String? appBarFontFamily;
   final String? fontFamily;
@@ -18,12 +61,47 @@ class HornbillTheme {
 
   ThemeData darkTheme() => _buildTheme(Brightness.dark);
 
-  ThemeData _buildTheme(Brightness brightness) {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: seedColor,
+  /// True neutral seed (R=G=B → zero chroma), so surfaces/outlines never
+  /// pick up a tint from the accent colour regardless of scheme variant.
+  static const _neutralSeed = Color(0xFF767680);
+
+  ColorScheme _buildColorScheme(Brightness brightness) {
+    final tinted = ColorScheme.fromSeed(
+      seedColor: colourScheme.seedColor,
       brightness: brightness,
       dynamicSchemeVariant: dynamicSchemeVariant,
     );
+
+    final neutral = ColorScheme.fromSeed(
+      seedColor: _neutralSeed,
+      brightness: brightness,
+      dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
+    );
+
+    // Keep primary/secondary/tertiary tones from the tinted scheme,
+    // but pull every surface/outline tone from the untinted neutral one.
+    return tinted.copyWith(
+      surface: neutral.surface,
+      onSurface: neutral.onSurface,
+      onSurfaceVariant: neutral.onSurfaceVariant,
+      surfaceDim: neutral.surfaceDim,
+      surfaceBright: neutral.surfaceBright,
+      surfaceContainerLowest: neutral.surfaceContainerLowest,
+      surfaceContainerLow: neutral.surfaceContainerLow,
+      surfaceContainer: neutral.surfaceContainer,
+      surfaceContainerHigh: neutral.surfaceContainerHigh,
+      surfaceContainerHighest: neutral.surfaceContainerHighest,
+      outline: neutral.outline,
+      outlineVariant: neutral.outlineVariant,
+      shadow: neutral.shadow,
+      scrim: neutral.scrim,
+      inverseSurface: neutral.inverseSurface,
+      onInverseSurface: neutral.onInverseSurface,
+    );
+  }
+
+  ThemeData _buildTheme(Brightness brightness) {
+    final colorScheme = _buildColorScheme(brightness);
 
     return ThemeData(
       useMaterial3: true,

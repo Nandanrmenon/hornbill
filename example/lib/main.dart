@@ -15,12 +15,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: HornbillTheme(
         // dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
-        appBarFontFamily: GoogleFonts.bodoniModa().fontFamily,
+        appBarFontFamily: GoogleFonts.googleSansFlex().fontFamily,
       ).lightTheme(),
       darkTheme: HornbillTheme(
         // dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
-        appBarFontFamily: GoogleFonts.bodoniModa().fontFamily,
+        appBarFontFamily: GoogleFonts.googleSansFlex().fontFamily,
       ).darkTheme(),
+      themeMode: ThemeMode.dark,
       home: const HornbilExampleApp(),
     );
   }
