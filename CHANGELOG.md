@@ -1,3 +1,12 @@
+## 1.3.0
+
+- Added `HButton` and `HIconButton` widgets for creating buttons.
+- Added `HNavigationBar` widget for creating a navigation bar with customizable items and actions.
+- Added `HAppBar`. (buggy)
+- New `HProgressIndicator` widget for displaying progress in a linear format.
+- New `HornbillSwitch` widget for toggling between two states.
+- The example app can now copy code snippets to the clipboard for easy integration into your own projects (beta).
+
 ## 1.2.0
 
 - Added `HornbillDataTable` widget for displaying tabular data with sorting with customisation options.
