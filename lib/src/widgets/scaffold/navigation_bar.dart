@@ -72,7 +72,6 @@ class _HNavigationBarState extends State<HNavigationBar> {
     final bgColor = widget.backgroundColor ?? theme.surface;
     final selectedColor = widget.selectedColor ?? theme.primary;
     final unselectedColor = widget.unselectedColor ?? theme.onSurfaceVariant;
-    final indicatorColor = widget.indicatorColor ?? theme.primaryContainer;
 
     return Container(
       height: widget.height,
@@ -88,95 +87,60 @@ class _HNavigationBarState extends State<HNavigationBar> {
         top: false,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final itemWidth = constraints.maxWidth / widget.items.length;
-            final indicatorLeft =
-                itemWidth * widget.currentIndex +
-                (itemWidth - widget.indicatorWidth) / 2;
+            return Row(
+              children: List.generate(widget.items.length, (index) {
+                final item = widget.items[index];
+                final selected = index == widget.currentIndex;
+                final color = selected ? selectedColor : unselectedColor;
 
-            return Stack(
-              children: [
-                // AnimatedPositioned(
-                //   duration: widget.duration,
-                //   curve: widget.curve,
-                //   left: indicatorLeft,
-                //   bottom: 0,
-                //   // top: 0,
-                //   child: Container(
-                //     // width: widget.indicatorWidth,
-                //     height: widget.indicatorHeight,
-                //     decoration: BoxDecoration(
-                //       color: indicatorColor,
-                //       borderRadius: BorderRadius.only(
-                //         topLeft: Radius.circular(
-                //           // widget.indicatorHeight / 0.2,
-                //           kBorderRadiusMedium,
-                //         ),
-                //         topRight: Radius.circular(
-                //           // widget.indicatorHeight / 0.2,
-                //           kBorderRadiusMedium,
-                //         ),
-                //         // widget.indicatorHeight / 2,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // Sliding underline indicator.
-                Row(
-                  children: List.generate(widget.items.length, (index) {
-                    final item = widget.items[index];
-                    final selected = index == widget.currentIndex;
-                    final color = selected ? selectedColor : unselectedColor;
-
-                    return Expanded(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTapDown: (_) => setState(() => _pressedIndex = index),
-                        onTapUp: (_) => setState(() => _pressedIndex = null),
-                        onTapCancel: () => setState(() => _pressedIndex = null),
-                        onTap: () => widget.onTap(index),
-                        child: AnimatedScale(
-                          scale: _pressedIndex == index ? 0.90 : 1.0,
-                          duration: const Duration(milliseconds: 100),
-                          curve: Curves.easeOut,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                selected && item.selectedIcon != null
-                                    ? item.selectedIcon
-                                    : item.icon,
-                                key: ValueKey('$index-$selected'),
-                                size: widget.iconSize,
-                                color: color,
-                                fill: selected ? 1.0 : 0.0,
-                              ),
-                              if (widget.showLabels) ...[
-                                const SizedBox(height: 4),
-                                AnimatedDefaultTextStyle(
-                                  duration: widget.duration,
-                                  style:
-                                      (widget.labelStyle ??
-                                              const TextStyle(fontSize: 12))
-                                          .copyWith(
-                                            color: color,
-                                            fontWeight: selected
-                                                ? FontWeight.w600
-                                                : FontWeight.w400,
-                                          ),
-                                  child: Text(
-                                    item.label,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ],
+                return Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTapDown: (_) => setState(() => _pressedIndex = index),
+                    onTapUp: (_) => setState(() => _pressedIndex = null),
+                    onTapCancel: () => setState(() => _pressedIndex = null),
+                    onTap: () => widget.onTap(index),
+                    child: AnimatedScale(
+                      scale: _pressedIndex == index ? 0.90 : 1.0,
+                      duration: const Duration(milliseconds: 100),
+                      curve: Curves.easeOut,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            selected && item.selectedIcon != null
+                                ? item.selectedIcon
+                                : item.icon,
+                            key: ValueKey('$index-$selected'),
+                            size: widget.iconSize,
+                            color: color,
+                            fill: selected ? 1.0 : 0.0,
                           ),
-                        ),
+                          if (widget.showLabels) ...[
+                            const SizedBox(height: 4),
+                            AnimatedDefaultTextStyle(
+                              duration: widget.duration,
+                              style:
+                                  (widget.labelStyle ??
+                                          const TextStyle(fontSize: 12))
+                                      .copyWith(
+                                        color: color,
+                                        fontWeight: selected
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
+                                      ),
+                              child: Text(
+                                item.label,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
-                    );
-                  }),
-                ),
-              ],
+                    ),
+                  ),
+                );
+              }),
             );
           },
         ),
