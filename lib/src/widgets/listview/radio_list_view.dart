@@ -112,41 +112,43 @@ class HRadioListView<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final count = _count;
-    return ListView.separated(
-      shrinkWrap: _resolveShrinkWrap(shrinkWrap),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      physics: _resolvePhysics(enableScroll),
-      itemCount: count,
-      itemBuilder: (context, index) {
-        final item = _itemAt(index);
-        return _ListCard(
-          key: ValueKey('${item.title}_$index'),
-          index: index,
-          itemCount: count,
-          child: RadioListTile<T>(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0.0),
-            ),
-            contentPadding: const EdgeInsets.only(left: 16.0, right: 18.0),
-            title: item.title,
-            subtitle: item.subtitle.isNotEmpty
-                ? Text(
-                    item.subtitle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                : null,
-            value: item.value,
-            groupValue: groupValue,
-            onChanged: (value) {
-              if (value != null) onChanged(value);
-            },
-            secondary: item.suffix,
-          ),
-        );
+    return RadioGroup<T>(
+      groupValue: groupValue,
+      onChanged: (value) {
+        if (value != null) onChanged(value);
       },
-      separatorBuilder: (context, index) =>
-          const SizedBox(height: _kItemSpacing),
+      child: ListView.separated(
+        shrinkWrap: _resolveShrinkWrap(shrinkWrap),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        physics: _resolvePhysics(enableScroll),
+        itemCount: count,
+        itemBuilder: (context, index) {
+          final item = _itemAt(index);
+          return _ListCard(
+            key: ValueKey('${item.title}_$index'),
+            index: index,
+            itemCount: count,
+            child: RadioListTile<T>(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0.0),
+              ),
+              contentPadding: const EdgeInsets.only(left: 16.0, right: 18.0),
+              title: item.title,
+              subtitle: item.subtitle.isNotEmpty
+                  ? Text(
+                      item.subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : null,
+              value: item.value,
+              secondary: item.suffix,
+            ),
+          );
+        },
+        separatorBuilder: (context, index) =>
+            const SizedBox(height: _kItemSpacing),
+      ),
     );
   }
 }
