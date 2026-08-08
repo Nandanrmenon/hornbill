@@ -1,3 +1,7 @@
+## 1.3.2
+
+- Added `HColourScheme` for easily switching between different color schemes in the app.
+
 ## 1.3.1
 
 - Use `RadioGroup` to avoid deprecated member.

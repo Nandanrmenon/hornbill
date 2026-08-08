@@ -14,11 +14,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: HornbillTheme(
-        // dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
         appBarFontFamily: GoogleFonts.googleSansFlex().fontFamily,
       ).lightTheme(),
       darkTheme: HornbillTheme(
-        // dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
         appBarFontFamily: GoogleFonts.googleSansFlex().fontFamily,
       ).darkTheme(),
       themeMode: ThemeMode.dark,
