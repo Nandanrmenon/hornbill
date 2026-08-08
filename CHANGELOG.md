@@ -1,3 +1,7 @@
+## 1.3.3
+
+- Update `pubsec.yaml`
+
 ## 1.3.2
 
 - Added `HColourScheme` for easily switching between different color schemes in the app.
