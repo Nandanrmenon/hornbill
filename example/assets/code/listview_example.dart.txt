@@ -1,0 +1,9 @@
+HornbillSwitch(
+  showCheckIcon: true,
+  value: switchValue,
+  onChanged: (value) {
+    setState(() {
+      switchValue = value;
+    });
+  },
+),

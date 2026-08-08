@@ -1,6 +1,7 @@
 import 'hornbill_platform_interface.dart';
 
 export 'src/theme.dart';
+export 'src/widgets/data/codeblock.dart';
 export 'src/widgets/data/data_table.dart';
 export 'src/widgets/data/page_navigation.dart';
 export 'src/widgets/feedback/progressindicator.dart';
