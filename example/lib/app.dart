@@ -76,16 +76,6 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                     ),
                   ),
                   HListItemData(
-                    leading: Icon(Symbols.table_rows_rounded),
-                    title: Text('Data Table'),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DataTableScreen(),
-                      ),
-                    ),
-                  ),
-                  HListItemData(
                     leading: Icon(Symbols.toggle_on_rounded),
                     title: Text('Switch'),
                     onTap: () => Navigator.push(
