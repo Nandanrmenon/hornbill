@@ -1,4 +1,4 @@
-![Hornbill Cover](assets/cover.png)
+![Hornbill Cover](https://gitlab.knoxxbox.in/nahnah/hornbill/-/raw/main/assets/cover.png?ref_type=heads)
 
 Hornbill UI is a lightweight Flutter component package starter for building a consistent design system. Check out the [example app](https://hornbill-example.vercel.app/) for a demo of the components in action. Documentation coming soon.
 
