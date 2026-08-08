@@ -1,3 +1,8 @@
+## 1.3.1
+
+- Use `RadioGroup` to avoid deprecated member.
+- Code Cleanup.
+
 ## 1.3.0
 
 - Added `HButton` and `HIconButton` widgets for creating buttons.
