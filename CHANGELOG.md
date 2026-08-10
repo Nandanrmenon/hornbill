@@ -1,3 +1,9 @@
+## 1.4.0
+
+- Added `HSideBar` widget for sidebar with navrail support.
+- Added `HChip` widget for displaying chips/labels.
+- Improved `example` app to include a sidebar and a new chip page.
+
 ## 1.3.3
 
 - Update `pubsec.yaml`
