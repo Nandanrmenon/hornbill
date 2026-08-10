@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       darkTheme: HornbillTheme(
         appBarFontFamily: GoogleFonts.googleSansFlex().fontFamily,
       ).darkTheme(),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.system,
       home: const HornbilExampleApp(),
     );
   }
