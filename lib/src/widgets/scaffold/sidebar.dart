@@ -96,6 +96,7 @@ class _HSideBarState extends State<HSideBar> {
 
     return Material(
       color: widget.backgroundColor ?? theme.colorScheme.surfaceContainerLow,
+      shape: Border(right: BorderSide(color: theme.colorScheme.outlineVariant)),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
@@ -277,6 +278,8 @@ class _HSideBarItemState extends State<HSideBarItem> {
   bool _hoveringTrigger = false;
   bool _hoveringFlyout = false;
 
+  bool _pressed = false;
+
   bool get _isGroup => widget.children != null && widget.children!.isNotEmpty;
 
   void _handleTap() {
@@ -371,6 +374,10 @@ class _HSideBarItemState extends State<HSideBarItem> {
     _flyoutEntry = null;
   }
 
+  void _setPressed(bool value) {
+    setState(() => _pressed = value);
+  }
+
   @override
   void didUpdateWidget(covariant HSideBarItem oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -392,7 +399,7 @@ class _HSideBarItemState extends State<HSideBarItem> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final activeColor = widget.selectedColor ?? theme.colorScheme.onSurface;
+    final activeColor = widget.selectedColor ?? theme.colorScheme.primary;
     final activeBg =
         widget.selectedBackgroundColor ??
         theme.colorScheme.surfaceContainerHigh;
@@ -409,72 +416,82 @@ class _HSideBarItemState extends State<HSideBarItem> {
           )
         : widget.trailing;
 
-    final tile = Material(
-      color: widget.selected ? activeBg : Colors.transparent,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
+    final tile = GestureDetector(
+      onTapDown: (_) => _setPressed(true),
+      onTapUp: (_) => _setPressed(false),
+      onTapCancel: () => _setPressed(false),
+      onTap: canTap ? _handleTap : null,
+      child: Material(
+        color: widget.selected ? activeBg : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
-        onTap: canTap ? _handleTap : null,
-        child: Padding(
-          padding: collapsed
-              ? const EdgeInsets.symmetric(vertical: 14)
-              : const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          child: collapsed
-              ? Center(
-                  child: widget.icon != null
-                      ? Icon(
-                          widget.icon,
-                          size: 22,
-                          color: widget.selected
-                              ? activeColor
-                              : theme.iconTheme.color?.withValues(alpha: 0.7),
-                        )
-                      : Text(
-                          widget.label.isNotEmpty
-                              ? widget.label[0].toUpperCase()
-                              : '',
-                          style: theme.textTheme.labelLarge?.copyWith(
+        child: AnimatedScale(
+          scale: _pressed ? 0.96 : 1.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeOut,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOut,
+            padding: collapsed
+                ? const EdgeInsets.symmetric(vertical: 14)
+                : const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: collapsed
+                ? Center(
+                    child: widget.icon != null
+                        ? Icon(
+                            widget.icon,
+                            size: 22,
                             color: widget.selected
                                 ? activeColor
-                                : theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                )
-              : Row(
-                  children: [
-                    if (widget.icon != null) ...[
-                      Icon(
-                        widget.icon,
-                        size: 20,
-                        color: widget.selected
-                            ? activeColor
-                            : theme.iconTheme.color?.withValues(alpha: 0.7),
-                      ),
-                      const SizedBox(width: 12),
-                    ],
-                    Expanded(
-                      child:
-                          Text(
-                            widget.label,
-                            maxLines: 1,
-                            style: theme.textTheme.bodyMedium?.copyWith(
+                                : theme.iconTheme.color?.withValues(alpha: 0.7),
+                          )
+                        : Text(
+                            widget.label.isNotEmpty
+                                ? widget.label[0].toUpperCase()
+                                : '',
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              fontWeight: FontWeight.w500,
                               color: widget.selected
                                   ? activeColor
                                   : theme.colorScheme.onSurfaceVariant,
-                              fontWeight: widget.selected
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ).animate().slide(
-                            duration: const Duration(milliseconds: 200),
-                            begin: const Offset(-0.1, 0),
-                            end: const Offset(0, 0),
                           ),
-                    ),
-                    ?trailingWidget,
-                  ],
-                ),
+                  )
+                : Row(
+                    children: [
+                      if (widget.icon != null) ...[
+                        Icon(
+                          widget.icon,
+                          size: 20,
+                          color: widget.selected
+                              ? activeColor
+                              : theme.iconTheme.color?.withValues(alpha: 0.7),
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+                      Expanded(
+                        child:
+                            Text(
+                              widget.label,
+                              maxLines: 1,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: widget.selected
+                                    ? activeColor
+                                    : theme.colorScheme.onSurfaceVariant,
+                                fontWeight: widget.selected
+                                    ? FontWeight.w500
+                                    : FontWeight.w300,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ).animate().slide(
+                              duration: const Duration(milliseconds: 200),
+                              begin: const Offset(-0.1, 0),
+                              end: const Offset(0, 0),
+                            ),
+                      ),
+                      ?trailingWidget,
+                    ],
+                  ),
+          ),
         ),
       ),
     );
