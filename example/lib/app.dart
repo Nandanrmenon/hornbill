@@ -19,10 +19,46 @@ class HornbilExampleApp extends StatefulWidget {
 }
 
 class _HornbilExampleAppState extends State<HornbilExampleApp> {
+  int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
       appBar: SliverAppBar.large(title: Text('Hornbill Example App')),
+      sidebar: HSideBar(
+        header: const Padding(
+          padding: EdgeInsets.all(16),
+          child: Text('Hornbill UI'),
+        ),
+        selectedIndex: _selectedIndex,
+        onItemSelected: (i) => setState(() => _selectedIndex = i),
+        footer: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(
+            'Version 0.0.1',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        items: [
+          HSideBarItem(icon: Symbols.home_rounded, label: 'Home'),
+          HSideBarItem(
+            icon: Symbols.folder_rounded,
+            label: 'Components',
+            initiallyExpanded: true,
+            children: [
+              HSideBarItem(
+                label: 'Buttons',
+                icon: Symbols.web_traffic_rounded,
+                onTap: () {},
+              ),
+              HSideBarItem(label: 'Chips', icon: Symbols.label, onTap: () {}),
+            ],
+          ),
+          HSideBarItem(icon: Symbols.help_rounded, label: 'Profile'),
+        ],
+      ),
       slivers: [
         SliverToBoxAdapter(
           child: Column(
