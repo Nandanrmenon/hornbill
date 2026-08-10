@@ -4,6 +4,7 @@ export 'src/theme.dart';
 export 'src/widgets/data/codeblock.dart';
 export 'src/widgets/data/data_table.dart';
 export 'src/widgets/data/page_navigation.dart';
+export 'src/widgets/feedback/chip.dart';
 export 'src/widgets/feedback/progressindicator.dart';
 export 'src/widgets/hornbill_card.dart';
 export 'src/widgets/inputfield/buttons.dart';

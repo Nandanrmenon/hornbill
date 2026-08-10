@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/screens/buttons_screen.dart';
+import 'package:hornbill_example/screens/chips_screen.dart';
 import 'package:hornbill_example/screens/datatable_screen.dart';
 import 'package:hornbill_example/screens/listview_screen.dart';
 import 'package:hornbill_example/screens/navigationbar_screen.dart';
@@ -112,6 +113,14 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
               HListHeader(title: 'Feedback'),
               HListView(
                 items: [
+                  HListItemData(
+                    leading: Icon(Symbols.label),
+                    title: Text('Chip'),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChipsScreen()),
+                    ),
+                  ),
                   HListItemData(
                     leading: Icon(Symbols.percent),
                     title: Text('Progress Indicators'),
