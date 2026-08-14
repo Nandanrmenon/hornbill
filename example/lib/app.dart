@@ -1,4 +1,3 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/screens/buttons_screen.dart';
 import 'package:hornbill_example/screens/chips_screen.dart';
@@ -10,6 +9,7 @@ import 'package:hornbill_example/screens/switch.dart';
 import 'package:hornbill_example/screens/textinputfield_screen.dart';
 import 'package:hornbill_example/screens/theme_screen.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:material_ui/material_ui.dart';
 
 class HornbilExampleApp extends StatefulWidget {
   const HornbilExampleApp({super.key});
@@ -59,9 +59,9 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       footer: Padding(
         padding: const EdgeInsets.all(16),
         child: Tooltip(
-          message: 'Version 1.4.0',
+          message: 'Version 1.4.1',
           child: Text(
-            'Version 1.4.0',
+            'Version 1.4.1',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
