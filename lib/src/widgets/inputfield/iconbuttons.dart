@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 
 /// Internal visual style variant. Set via the named constructors below.

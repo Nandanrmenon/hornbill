@@ -26,6 +26,7 @@ dependencies:
   material_symbols_icons: ^4.2960.0
   plugin_platform_interface: ^2.0.2
 
+  material_ui: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

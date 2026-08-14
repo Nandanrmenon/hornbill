@@ -35,7 +35,7 @@
 /// themselves — see each widget's constructor docs for details.
 library;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 part 'listview/checkbox_list_view.dart';
 part 'listview/list_card.dart';
