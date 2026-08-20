@@ -1,6 +1,6 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:material_ui/material_ui.dart';
 
 class NavigationbarScreen extends StatefulWidget {
   const NavigationbarScreen({super.key});
@@ -13,7 +13,7 @@ class _NavigationbarScreenState extends State<NavigationbarScreen> {
   int _index = 0;
   @override
   Widget build(BuildContext context) {
-    return HornbillScaffold(
+    return HScaffold(
       appBar: HAppBar(title: 'Navigation Bar'),
       slivers: [
         SliverToBoxAdapter(

@@ -1,6 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
-class HornbillTextField extends StatefulWidget {
+class HTextField extends StatefulWidget {
   final String? label;
   final String? hintText;
   final TextEditingController? controller;
@@ -11,7 +11,7 @@ class HornbillTextField extends StatefulWidget {
   final void Function(String)? onFieldSubmitted;
   final Icon? icon;
   final Widget? trailingWidget;
-  const HornbillTextField({
+  const HTextField({
     super.key,
     this.label,
     this.hintText,
@@ -26,10 +26,10 @@ class HornbillTextField extends StatefulWidget {
   });
 
   @override
-  State<HornbillTextField> createState() => _HornbillTextFieldState();
+  State<HTextField> createState() => _HTextFieldState();
 }
 
-class _HornbillTextFieldState extends State<HornbillTextField> {
+class _HTextFieldState extends State<HTextField> {
   @override
   Widget build(BuildContext context) {
     final themeColor = Theme.of(context).colorScheme;

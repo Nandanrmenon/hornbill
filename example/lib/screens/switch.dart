@@ -1,6 +1,6 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_highlight/themes/codepen-embed.dart';
 import 'package:hornbill/hornbill.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SwitchScreen extends StatefulWidget {
   const SwitchScreen({super.key});
@@ -13,7 +13,7 @@ class _SwitchScreenState extends State<SwitchScreen> {
   bool switchValue = false;
   @override
   Widget build(BuildContext context) {
-    return HornbillScaffold(
+    return HScaffold(
       appBar: HAppBar(title: 'Switch'),
       slivers: [
         SliverToBoxAdapter(
@@ -26,7 +26,7 @@ class _SwitchScreenState extends State<SwitchScreen> {
                 HListHeader(title: 'Preview'),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: HornbillSwitch(
+                  child: HSwitch(
                     showCheckIcon: true,
                     value: switchValue,
                     onChanged: (value) {

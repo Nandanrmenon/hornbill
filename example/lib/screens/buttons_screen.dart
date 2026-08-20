@@ -1,6 +1,6 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ButtonsScreen extends StatefulWidget {
   const ButtonsScreen({super.key});
@@ -12,7 +12,7 @@ class ButtonsScreen extends StatefulWidget {
 class _ButtonsScreenState extends State<ButtonsScreen> {
   @override
   Widget build(BuildContext context) {
-    return HornbillScaffold(
+    return HScaffold(
       appBar: HAppBar(title: 'Buttons'),
       slivers: [
         SliverToBoxAdapter(child: HListHeader(title: 'Text')),

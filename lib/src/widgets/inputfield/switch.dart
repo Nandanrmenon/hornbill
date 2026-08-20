@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class HornbillSwitch extends StatefulWidget {
+class HSwitch extends StatefulWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
 
@@ -17,7 +17,7 @@ class HornbillSwitch extends StatefulWidget {
   final bool showCheckIcon;
   final IconData? checkIcon;
 
-  const HornbillSwitch({
+  const HSwitch({
     super.key,
     required this.value,
     required this.onChanged,
@@ -30,10 +30,10 @@ class HornbillSwitch extends StatefulWidget {
   });
 
   @override
-  State<HornbillSwitch> createState() => _HornbillSwitchState();
+  State<HSwitch> createState() => _HSwitchState();
 }
 
-class _HornbillSwitchState extends State<HornbillSwitch> {
+class _HSwitchState extends State<HSwitch> {
   bool _dragging = false;
   double _dragExtent = 0;
 

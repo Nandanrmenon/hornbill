@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
-class HornbillCard extends StatelessWidget {
-  const HornbillCard({
+class HCard extends StatelessWidget {
+  const HCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(20),

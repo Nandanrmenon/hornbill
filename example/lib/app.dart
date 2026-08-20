@@ -214,7 +214,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
 
   @override
   Widget build(BuildContext context) {
-    return HornbillScaffold(
+    return HScaffold(
       // appBar: _isDesktop
       //     ? null
       //     : SliverAppBar.large(title: Text('Hornbill Example App')),

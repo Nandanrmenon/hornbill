@@ -1,4 +1,4 @@
-HornbillSwitch(
+HSwitch(
   showCheckIcon: true,
   value: switchValue,
   onChanged: (value) {

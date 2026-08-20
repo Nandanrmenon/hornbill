@@ -13,7 +13,7 @@ class _ToastScreenState extends State<ToastScreen> {
   bool switchValue = false;
   @override
   Widget build(BuildContext context) {
-    return HornbillScaffold(
+    return HScaffold(
       appBar: HAppBar(title: 'Toast'),
       slivers: [
         SliverToBoxAdapter(

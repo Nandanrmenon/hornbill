@@ -1,6 +1,6 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ChipsScreen extends StatefulWidget {
   const ChipsScreen({super.key});
@@ -12,7 +12,7 @@ class ChipsScreen extends StatefulWidget {
 class _ChipsScreenState extends State<ChipsScreen> {
   @override
   Widget build(BuildContext context) {
-    return HornbillScaffold(
+    return HScaffold(
       appBar: HAppBar(title: 'Chips'),
       slivers: [
         SliverFillRemaining(

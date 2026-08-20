@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class HornbillPageNavigation extends StatefulWidget {
+class HPageNavigation extends StatefulWidget {
   final int pageNr;
   final int totalPages;
   final int totalRecords;
@@ -18,7 +18,7 @@ class HornbillPageNavigation extends StatefulWidget {
   /// when it's away from the edges.
   final int siblingCount;
 
-  const HornbillPageNavigation({
+  const HPageNavigation({
     super.key,
     required this.pageNr,
     required this.totalPages,
@@ -33,10 +33,10 @@ class HornbillPageNavigation extends StatefulWidget {
   });
 
   @override
-  State<HornbillPageNavigation> createState() => _HornbillPageNavigationState();
+  State<HPageNavigation> createState() => _HPageNavigationState();
 }
 
-class _HornbillPageNavigationState extends State<HornbillPageNavigation> {
+class _HPageNavigationState extends State<HPageNavigation> {
   Widget _buildPageButton(int pageIndex) {
     final isSelected = pageIndex == widget.pageNr;
     return Material(

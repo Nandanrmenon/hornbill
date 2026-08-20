@@ -1,6 +1,6 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_highlight/themes/codepen-embed.dart';
 import 'package:hornbill/hornbill.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ThemeScreen extends StatefulWidget {
   const ThemeScreen({super.key});
@@ -12,7 +12,7 @@ class ThemeScreen extends StatefulWidget {
 class _ThemeScreenState extends State<ThemeScreen> {
   @override
   Widget build(BuildContext context) {
-    return HornbillScaffold(
+    return HScaffold(
       appBar: HAppBar(title: 'Hornbill Colour Schemes'),
       slivers: [
         SliverToBoxAdapter(
@@ -29,7 +29,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
               spacing: 8.0,
               children: [
                 Text(
-                  '`HornbillTheme` accepts an `HColourScheme`, which controls the primary/secondary/tertiary accent colours while keeping surfaces and backgrounds neutral (untinted). You can use a built-in preset, or supply your own colour.',
+                  '`HTheme` accepts an `HColourScheme`, which controls the primary/secondary/tertiary accent colours while keeping surfaces and backgrounds neutral (untinted). You can use a built-in preset, or supply your own colour.',
                 ),
 
                 // Using a preset
@@ -40,7 +40,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                 ),
                 CodeBlock(
                   code:
-                      'final theme = HornbillTheme(colourScheme: HColourScheme.blue).lightTheme();',
+                      'final theme = HTheme(colourScheme: HColourScheme.blue).lightTheme();',
                   backgroundColor: Theme.of(
                     context,
                   ).colorScheme.surfaceContainer,
@@ -59,7 +59,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
                 ),
                 CodeBlock(
                   code: '''
-final theme = HornbillTheme(
+final theme = HTheme(
   colourScheme: HColourScheme.custom(const Color(0xFF00FF00)),
 ).lightTheme();''',
                   backgroundColor: Theme.of(
@@ -77,7 +77,7 @@ final theme = HornbillTheme(
                 ),
                 CodeBlock(
                   code: '''
-final theme = HornbillTheme(
+final theme = HTheme(
   colourScheme: HColourScheme.fromHex('#FF5733'),
 ).lightTheme();
 
@@ -108,8 +108,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: HornbillTheme(colourScheme: HColourScheme.blue).lightTheme(),
-      darkTheme: HornbillTheme(colourScheme: HColourScheme.blue).darkTheme(),
+      theme: HTheme(colourScheme: HColourScheme.blue).lightTheme(),
+      darkTheme: HTheme(colourScheme: HColourScheme.blue).darkTheme(),
       themeMode: ThemeMode.system,
       home: const HomePage(),
     );

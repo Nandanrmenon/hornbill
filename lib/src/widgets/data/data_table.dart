@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 
-class HornbillDataTable extends StatelessWidget {
+class HDataTable extends StatelessWidget {
   final List<DataColumn> columns;
   final List<DataRow> rows;
   final bool showCheckbox;
@@ -15,7 +15,7 @@ class HornbillDataTable extends StatelessWidget {
   /// Background color for even-indexed data rows.
   final Color? evenRowColor;
 
-  const HornbillDataTable({
+  const HDataTable({
     super.key,
     required this.columns,
     required this.rows,

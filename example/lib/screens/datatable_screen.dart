@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/hornbill.dart';
+import 'package:material_ui/material_ui.dart';
 
 class DataTableScreen extends StatefulWidget {
   const DataTableScreen({super.key});
@@ -11,13 +11,13 @@ class DataTableScreen extends StatefulWidget {
 class _DataTableScreenState extends State<DataTableScreen> {
   @override
   Widget build(BuildContext context) {
-    return HornbillScaffold(
+    return HScaffold(
       appBar: HAppBar(title: 'Data Table'),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: HornbillDataTable(
+            child: HDataTable(
               columns: [
                 DataColumn(label: Text('Column 1')),
                 DataColumn(label: Text('Column 2')),
@@ -59,7 +59,7 @@ class _DataTableScreenState extends State<DataTableScreen> {
           ),
         ),
       ],
-      bottomNavigationBar: HornbillPageNavigation(
+      bottomNavigationBar: HPageNavigation(
         pageNr: 7,
         totalPages: 10,
         totalRecords: 20,

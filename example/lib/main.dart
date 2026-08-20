@@ -1,7 +1,7 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/app.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: HornbillTheme(
+      theme: HTheme(
         appBarFontFamily: GoogleFonts.googleSansFlex().fontFamily,
       ).lightTheme(),
-      darkTheme: HornbillTheme(
+      darkTheme: HTheme(
         appBarFontFamily: GoogleFonts.googleSansFlex().fontFamily,
       ).darkTheme(),
       themeMode: ThemeMode.system,

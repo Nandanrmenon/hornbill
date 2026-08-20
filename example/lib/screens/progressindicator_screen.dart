@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/hornbill.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ProgressIndicatorScreen extends StatefulWidget {
   const ProgressIndicatorScreen({super.key});
@@ -12,7 +12,7 @@ class ProgressIndicatorScreen extends StatefulWidget {
 class _ProgressIndicatorScreenState extends State<ProgressIndicatorScreen> {
   @override
   Widget build(BuildContext context) {
-    return HornbillScaffold(
+    return HScaffold(
       appBar: HAppBar(title: 'Progress Indicator'),
       slivers: [
         SliverFillRemaining(

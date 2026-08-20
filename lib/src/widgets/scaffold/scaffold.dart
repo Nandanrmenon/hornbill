@@ -36,7 +36,7 @@ class _SliverPreferredSizeHeaderDelegate
   }
 }
 
-class HornbillScaffold extends StatefulWidget {
+class HScaffold extends StatefulWidget {
   /// The top app bar. Must be a [PreferredSizeWidget] (e.g. [HAppBar]
   /// or a plain [AppBar]) — it's automatically wrapped as a pinned
   /// sliver header. Pass null for no app bar.
@@ -51,7 +51,7 @@ class HornbillScaffold extends StatefulWidget {
   final bool pinned; // whether the app bar is pinned (default: true)
   final bool floating; // whether the app bar is floating (default: false)
 
-  const HornbillScaffold({
+  const HScaffold({
     super.key,
     this.appBar,
     required this.slivers,
@@ -65,10 +65,10 @@ class HornbillScaffold extends StatefulWidget {
   });
 
   @override
-  State<HornbillScaffold> createState() => _HornbillScaffoldState();
+  State<HScaffold> createState() => _HScaffoldState();
 }
 
-class _HornbillScaffoldState extends State<HornbillScaffold> {
+class _HScaffoldState extends State<HScaffold> {
   bool isDesktop(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return width >= 600; // Adjust the threshold as needed

@@ -44,8 +44,8 @@ class HColourScheme {
   static const grey = HColourScheme._(Color(0xFF616161));
 }
 
-class HornbillTheme {
-  const HornbillTheme({
+class HTheme {
+  const HTheme({
     this.colourScheme = HColourScheme.purple,
     this.dynamicSchemeVariant = DynamicSchemeVariant.tonalSpot,
     this.appBarFontFamily,
