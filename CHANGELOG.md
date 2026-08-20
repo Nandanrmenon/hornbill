@@ -1,11 +1,19 @@
+## 1.4.4
+
+- Added `HToast` widget for displaying toast messages.
+- Renamed all widgets to remove `Hornbill` prefix and replace it with `H` for consistency and clarity.
+
 ## 1.4.3
+
 - Improved `HAppBar` to be responsive for both mobile and desktop with extensive features.
-- Improved `HornbillScaffold` to accomodate floating and pinned `HAppBar`.
+- Improved `HScaffold` to accomodate floating and pinned `HAppBar`.
 
 ## 1.4.2
+
 - Added `HSideBarAccountTile` widget for sidebar
 
 ## 1.4.1
+
 - Migrate to `material_ui` package as a part of Flutter 3.47 upgrade.
 
 ## 1.4.0
