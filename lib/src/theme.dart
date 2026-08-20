@@ -125,7 +125,6 @@ class HornbillTheme {
       bottomSheetTheme: bottomSheetTheme(colorScheme),
       dialogTheme: dialogTheme(colorScheme),
       checkboxTheme: checkboxTheme(colorScheme),
-      progressIndicatorTheme: progressIndicatorTheme(),
       searchBarTheme: searchBarTheme(colorScheme),
       listTileTheme: listTileTheme(colorScheme),
     );
@@ -405,14 +404,6 @@ CheckboxThemeData checkboxTheme(ColorScheme scheme) {
       return null; // Use the default fill color
     }),
     side: BorderSide(color: scheme.onSurfaceVariant, width: 1.5),
-  );
-}
-
-ProgressIndicatorThemeData progressIndicatorTheme() {
-  return ProgressIndicatorThemeData(
-    year2023: false,
-    linearMinHeight: 10,
-    borderRadius: BorderRadius.circular(99),
   );
 }
 
