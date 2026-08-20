@@ -56,20 +56,18 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         padding: EdgeInsets.all(16),
         child: Text('Hornbill UI'),
       ),
-      footer: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Tooltip(
-          message: 'Version 1.4.1',
-          child: Text(
-            'Version 1.4.1',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ),
+      footer: HSideBarAccountTile(
+        title: 'Ada Lovelace',
+        subtitle: 'ada@example.com',
+        onLogout: () {},
+        accounts: const [
+          HSideBarAccount(title: 'Ada Lovelace', subtitle: 'ada@example.com'),
+          HSideBarAccount(title: 'Grace Hopper', subtitle: 'grace@example.com'),
+        ],
+        onAccountSelected: (value) {},
+        onAddAccount: () {},
       ),
+
       items: _desktopSidebarItems(),
     );
   }

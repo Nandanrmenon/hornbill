@@ -47,6 +47,9 @@ class HSideBar extends StatefulWidget {
   final Widget? header;
 
   /// Optional widget shown below the items (e.g. a user profile / logout).
+  /// If this is an [HSideBarAccountTile], HSideBar automatically feeds it
+  /// the current collapsed state so it renders consistently with the
+  /// rest of the sidebar.
   final Widget? footer;
 
   /// Index of the currently selected item, if HSideBar should manage
@@ -138,7 +141,7 @@ class _HSideBarState extends State<HSideBar> {
               ),
             ),
             if (widget.footer != null) const Divider(height: 1),
-            ?widget.footer,
+            ?_buildFooter(),
           ],
         ),
       ),
@@ -189,6 +192,30 @@ class _HSideBarState extends State<HSideBar> {
           const Divider(height: 1),
       ],
     );
+  }
+
+  /// Returns [widget.footer], threading through the sidebar's collapsed
+  /// state when the footer is an [HSideBarAccountTile] — mirrors how
+  /// [HSideBarItem]s in [items] are re-wired above.
+  Widget? _buildFooter() {
+    final footer = widget.footer;
+    if (footer == null) return null;
+
+    if (footer is HSideBarAccountTile) {
+      return HSideBarAccountTile(
+        key: footer.key,
+        title: footer.title,
+        subtitle: footer.subtitle,
+        avatar: footer.avatar,
+        onLogout: footer.onLogout,
+        accounts: footer.accounts,
+        onAccountSelected: footer.onAccountSelected,
+        onAddAccount: footer.onAddAccount,
+        collapsed: _collapsed,
+      );
+    }
+
+    return footer;
   }
 }
 
@@ -546,5 +573,327 @@ class _HSideBarItemState extends State<HSideBarItem> {
         ),
       ],
     );
+  }
+}
+
+/// One entry in the "switch account" section of an
+/// [HSideBarAccountTile]'s menu.
+class HSideBarAccount {
+  const HSideBarAccount({required this.title, this.subtitle, this.avatar});
+
+  /// Display name for this account.
+  final String title;
+
+  /// Optional email / subtitle shown under [title] in the menu.
+  final String? subtitle;
+
+  /// Optional avatar widget (e.g. a [CircleAvatar]). Falls back to the
+  /// first letter of [title] on a plain circle when omitted.
+  final Widget? avatar;
+}
+
+/// A footer tile for an [HSideBar] that shows the signed-in account and
+/// opens a menu with "switch account" and "log out" actions.
+///
+/// Pass this directly as [HSideBar.footer] — [HSideBar] detects it and
+/// automatically feeds it the sidebar's collapsed state, so it shows a
+/// full name/email row while expanded and shrinks to a single centered
+/// avatar (tap to open the same menu) while collapsed, matching how
+/// [HSideBarItem] behaves inside [items].
+///
+/// ```dart
+/// HSideBar(
+///   items: [...],
+///   footer: HSideBarAccountTile(
+///     title: 'Ada Lovelace',
+///     subtitle: 'ada@example.com',
+///     onLogout: () => authService.logOut(),
+///     accounts: const [
+///       HSideBarAccount(title: 'Ada Lovelace', subtitle: 'ada@example.com'),
+///       HSideBarAccount(title: 'Grace Hopper', subtitle: 'grace@example.com'),
+///     ],
+///     onAccountSelected: (account) => authService.switchTo(account),
+///     onAddAccount: () => authService.addAccount(),
+///   ),
+/// )
+/// ```
+class HSideBarAccountTile extends StatefulWidget {
+  const HSideBarAccountTile({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.avatar,
+    this.onLogout,
+    this.accounts,
+    this.onAccountSelected,
+    this.onAddAccount,
+    this.collapsed = false,
+  });
+
+  /// Display name of the currently signed-in account.
+  final String title;
+
+  /// Email (or other subtitle) of the currently signed-in account.
+  final String? subtitle;
+
+  /// Optional avatar widget (e.g. a [CircleAvatar] with a network
+  /// image). Falls back to the first letter of [title] on a colored
+  /// circle when omitted.
+  final Widget? avatar;
+
+  /// Called when "Log out" is selected from the menu. The menu item is
+  /// hidden entirely when this is null.
+  final VoidCallback? onLogout;
+
+  /// Other accounts the user can switch to. Any entry whose [title]
+  /// matches [title] is treated as the current account and skipped, so
+  /// you can pass the full account list without filtering it yourself.
+  /// When empty or null, the "switch account" section is hidden.
+  final List<HSideBarAccount>? accounts;
+
+  /// Called with the tapped [HSideBarAccount] when the user picks one
+  /// from [accounts] in the menu.
+  final ValueChanged<HSideBarAccount>? onAccountSelected;
+
+  /// Called when "Add account" is selected. The menu item is hidden
+  /// entirely when this is null.
+  final VoidCallback? onAddAccount;
+
+  /// Whether to render as a centered, avatar-only row. Normally set
+  /// automatically by the parent [HSideBar] when this widget is passed
+  /// as its [HSideBar.footer].
+  final bool collapsed;
+
+  @override
+  State<HSideBarAccountTile> createState() => _HSideBarAccountTileState();
+}
+
+class _HSideBarAccountTileState extends State<HSideBarAccountTile> {
+  bool _pressed = false;
+
+  void _setPressed(bool value) => setState(() => _pressed = value);
+
+  Widget _buildAvatar(ThemeData theme, {double size = 32}) {
+    if (widget.avatar != null) return widget.avatar!;
+    return CircleAvatar(
+      radius: size / 2,
+      backgroundColor: theme.colorScheme.primaryContainer,
+      child: Text(
+        widget.title.isNotEmpty ? widget.title[0].toUpperCase() : '?',
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: theme.colorScheme.onPrimaryContainer,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  void _openMenu(BuildContext context) {
+    final theme = Theme.of(context);
+    final overlayBox =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    final renderBox = context.findRenderObject() as RenderBox;
+
+    // Anchor the menu to the tile itself rather than the tap point, so
+    // it opens consistently whether triggered by mouse or keyboard/touch.
+    final topLeft = renderBox.localToGlobal(Offset.zero, ancestor: overlayBox);
+    final bottomRight = renderBox.localToGlobal(
+      renderBox.size.bottomRight(Offset.zero),
+      ancestor: overlayBox,
+    );
+    final position = RelativeRect.fromLTRB(
+      topLeft.dx,
+      bottomRight.dy + 4,
+      overlayBox.size.width - bottomRight.dx,
+      0,
+    );
+
+    final accounts = widget.accounts ?? const <HSideBarAccount>[];
+    final otherAccounts = accounts
+        .where((account) => account.title != widget.title)
+        .toList();
+
+    showMenu<void>(
+      context: context,
+      position: position,
+      constraints: const BoxConstraints(minWidth: 240, maxWidth: 280),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(kBorderRadiusMedium),
+        side: BorderSide(color: theme.colorScheme.outlineVariant),
+      ),
+      color: theme.colorScheme.surfaceContainerLowest,
+      items: [
+        PopupMenuItem<void>(
+          enabled: false,
+          child: Row(
+            children: [
+              _buildAvatar(theme, size: 28),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (widget.subtitle != null)
+                      Text(
+                        widget.subtitle!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (otherAccounts.isNotEmpty) ...[
+          const PopupMenuDivider(),
+          ...otherAccounts.map(
+            (account) => PopupMenuItem<void>(
+              onTap: () => widget.onAccountSelected?.call(account),
+              child: Row(
+                children: [
+                  account.avatar ??
+                      CircleAvatar(
+                        radius: 12,
+                        backgroundColor: theme.colorScheme.surfaceContainerHigh,
+                        child: Text(
+                          account.title.isNotEmpty
+                              ? account.title[0].toUpperCase()
+                              : '?',
+                          style: theme.textTheme.labelSmall,
+                        ),
+                      ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      account.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+        if (widget.onAddAccount != null) ...[
+          const PopupMenuDivider(),
+          PopupMenuItem<void>(
+            onTap: widget.onAddAccount,
+            child: const Row(
+              children: [
+                Icon(Symbols.add_rounded, size: 18),
+                SizedBox(width: 10),
+                Text('Add account'),
+              ],
+            ),
+          ),
+        ],
+        if (widget.onLogout != null) ...[
+          const PopupMenuDivider(),
+          PopupMenuItem<void>(
+            onTap: widget.onLogout,
+            child: Row(
+              children: [
+                Icon(
+                  Symbols.logout_rounded,
+                  size: 18,
+                  color: theme.colorScheme.error,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'Log out',
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final collapsed = widget.collapsed;
+
+    final tile = GestureDetector(
+      onTapDown: (_) => _setPressed(true),
+      onTapUp: (_) => _setPressed(false),
+      onTapCancel: () => _setPressed(false),
+      onTap: () => _openMenu(context),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+        child: AnimatedScale(
+          scale: _pressed ? 0.96 : 1.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeOut,
+          child: Padding(
+            padding: collapsed
+                ? const EdgeInsets.symmetric(vertical: 10)
+                : const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: collapsed
+                ? Center(child: _buildAvatar(theme))
+                : Row(
+                    children: [
+                      _buildAvatar(theme),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              widget.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            if (widget.subtitle != null)
+                              Text(
+                                widget.subtitle!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Symbols.unfold_more_rounded,
+                        size: 18,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ],
+                  ),
+          ),
+        ),
+      ),
+    );
+
+    final padded = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: tile,
+    );
+
+    return collapsed ? Tooltip(message: widget.title, child: padded) : padded;
   }
 }
