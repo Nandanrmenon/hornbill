@@ -1,3 +1,7 @@
+## 1.4.3
+- Improved `HAppBar` to be responsive for both mobile and desktop with extensive features.
+- Improved `HornbillScaffold` to accomodate floating and pinned `HAppBar`.
+
 ## 1.4.2
 - Added `HSideBarAccountTile` widget for sidebar
 
