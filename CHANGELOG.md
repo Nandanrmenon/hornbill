@@ -1,3 +1,6 @@
+## 1.4.2
+- Added `HSideBarAccountTile` widget for sidebar
+
 ## 1.4.1
 - Migrate to `material_ui` package as a part of Flutter 3.47 upgrade.
 

@@ -8,7 +8,7 @@ Add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hornbill: ^1.3.2
+  hornbill: ^1.4.2
 ```
 
 Then run `flutter pub get` to install the package.
