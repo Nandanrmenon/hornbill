@@ -8,6 +8,7 @@ import 'package:hornbill_example/screens/progressindicator_screen.dart';
 import 'package:hornbill_example/screens/switch.dart';
 import 'package:hornbill_example/screens/textinputfield_screen.dart';
 import 'package:hornbill_example/screens/theme_screen.dart';
+import 'package:hornbill_example/screens/toast_screen.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -39,6 +40,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       ),
       _navigationItem(icon: Symbols.web_traffic_rounded, label: 'Buttons'),
       _navigationItem(icon: Symbols.toggle_on_rounded, label: 'Switch'),
+      _navigationItem(icon: Symbols.message, label: 'Toast'),
       _navigationItem(icon: Symbols.event_list_rounded, label: 'List View'),
       _navigationItem(icon: Symbols.table_rows_rounded, label: 'Data Table'),
       _navigationItem(icon: Symbols.label, label: 'Chip'),
@@ -199,6 +201,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             TextinputfieldScreen(),
             ButtonsScreen(),
             SwitchScreen(),
+            ToastScreen(),
             ListViewScreen(),
             DataTableScreen(),
             ChipsScreen(),
