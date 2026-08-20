@@ -13,7 +13,7 @@ class _ChipsScreenState extends State<ChipsScreen> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      appBar: SliverAppBar.large(title: Text('HChips')),
+      appBar: HAppBar(title: 'Chips'),
       slivers: [
         SliverFillRemaining(
           child: Center(

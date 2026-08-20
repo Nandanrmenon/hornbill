@@ -13,7 +13,7 @@ class _ProgressIndicatorScreenState extends State<ProgressIndicatorScreen> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      appBar: SliverAppBar.large(title: Text('Switch')),
+      appBar: HAppBar(title: 'Progress Indicator'),
       slivers: [
         SliverFillRemaining(
           child: Center(

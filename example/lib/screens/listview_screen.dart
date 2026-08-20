@@ -13,7 +13,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      appBar: SliverAppBar.large(title: Text('List View')),
+      appBar: HAppBar(title: 'List View'),
       slivers: [
         SliverToBoxAdapter(
           child: Column(

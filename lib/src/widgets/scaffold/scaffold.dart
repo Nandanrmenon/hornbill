@@ -1,13 +1,55 @@
 import 'package:material_ui/material_ui.dart';
 
+/// Wraps any [PreferredSizeWidget] (e.g. [HAppBar]) so it can be used as a
+/// sliver inside a [CustomScrollView]. Pinned by default, so it behaves
+/// like a normal AppBar that stays fixed to the top while the body scrolls
+/// underneath it.
+class _SliverPreferredSizeHeaderDelegate
+    extends SliverPersistentHeaderDelegate {
+  final PreferredSizeWidget child;
+
+  const _SliverPreferredSizeHeaderDelegate(this.child);
+
+  @override
+  double get minExtent => child.preferredSize.height;
+
+  @override
+  double get maxExtent => child.preferredSize.height;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    // Material elevation/shadow only kicks in once content has actually
+    // scrolled under the header.
+    return Material(
+      elevation: overlapsContent ? 2 : 0,
+      child: SizedBox.expand(child: child),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _SliverPreferredSizeHeaderDelegate oldDelegate) {
+    return oldDelegate.child != child;
+  }
+}
+
 class HornbillScaffold extends StatefulWidget {
-  final Widget? appBar; // pass a SliverAppBar (or null)
+  /// The top app bar. Must be a [PreferredSizeWidget] (e.g. [HAppBar]
+  /// or a plain [AppBar]) — it's automatically wrapped as a pinned
+  /// sliver header. Pass null for no app bar.
+  final PreferredSizeWidget? appBar;
+
   final List<Widget> slivers; // body content as slivers
   final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
   final Widget? drawer;
   final Color? backgroundColor;
   final Widget? sidebar; // optional sidebar widget
+  final bool pinned; // whether the app bar is pinned (default: true)
+  final bool floating; // whether the app bar is floating (default: false)
 
   const HornbillScaffold({
     super.key,
@@ -18,6 +60,8 @@ class HornbillScaffold extends StatefulWidget {
     this.drawer,
     this.backgroundColor,
     this.sidebar,
+    this.pinned = false,
+    this.floating = true,
   });
 
   @override
@@ -39,10 +83,20 @@ class _HornbillScaffoldState extends State<HornbillScaffold> {
       bottomNavigationBar: widget.bottomNavigationBar,
       body: Row(
         children: [
-          if (isDesktop(context) && widget.sidebar != null) ?widget.sidebar,
+          if (isDesktop(context) && widget.sidebar != null) widget.sidebar!,
           Expanded(
             child: CustomScrollView(
-              slivers: [?widget.appBar, ...widget.slivers],
+              slivers: [
+                if (widget.appBar != null)
+                  SliverPersistentHeader(
+                    pinned: widget.pinned,
+                    floating: widget.floating,
+                    delegate: _SliverPreferredSizeHeaderDelegate(
+                      widget.appBar!,
+                    ),
+                  ),
+                ...widget.slivers,
+              ],
             ),
           ),
         ],

@@ -14,7 +14,7 @@ class _SwitchScreenState extends State<SwitchScreen> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      appBar: SliverAppBar.large(title: Text('Switch')),
+      appBar: HAppBar(title: 'Switch'),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

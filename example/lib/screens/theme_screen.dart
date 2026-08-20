@@ -13,7 +13,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      appBar: SliverAppBar.large(title: Text('Hornbill Colour Schemes')),
+      appBar: HAppBar(title: 'Hornbill Colour Schemes'),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

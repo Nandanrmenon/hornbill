@@ -12,7 +12,7 @@ class _DataTableScreenState extends State<DataTableScreen> {
   @override
   Widget build(BuildContext context) {
     return HornbillScaffold(
-      appBar: SliverAppBar.large(title: Text('Data Table')),
+      appBar: HAppBar(title: 'Data Table'),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
