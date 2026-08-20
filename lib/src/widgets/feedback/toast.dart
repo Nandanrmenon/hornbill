@@ -45,33 +45,40 @@ class _HToastItem {
 ///
 /// Call [HToast.show] (or the convenience helpers [HToast.info],
 /// [HToast.success], [HToast.error], [HToast.warning]) from anywhere you
-/// have a [BuildContext]. All toasts are rendered in a single [Overlay]
-/// entry and managed as a stack.
+/// have a [BuildContext]. Each corner ([HToastPosition]) gets its own
+/// independent stack, so you can show toasts in different corners at the
+/// same time if you want to.
 class HToast {
   HToast._();
 
-  // ---- Configuration (override before calling show, if desired) ----
-  static HToastPosition position = HToastPosition.topRight;
-  static EdgeInsets margin = const EdgeInsets.all(16);
-  static double width = 320;
+  // ---- Default fallbacks (used when a param isn't passed to show()) ----
+  static const HToastPosition defaultPosition = HToastPosition.topRight;
+  static const EdgeInsets defaultMargin = EdgeInsets.all(16);
+  static const double defaultWidth = 320;
 
-  // ---- Internal state ----
-  static OverlayEntry? _overlayEntry;
-  static final GlobalKey<_HToastStackState> _stackKey =
-      GlobalKey<_HToastStackState>();
-  static final List<_HToastItem> _items = [];
+  // ---- Internal state, keyed per-position so stacks are independent ----
+  static final Map<HToastPosition, OverlayEntry> _overlayEntries = {};
+  static final Map<HToastPosition, GlobalKey<_HToastStackState>> _stackKeys =
+      {};
+  static final Map<HToastPosition, List<_HToastItem>> _itemsByPosition = {};
   static int _counter = 0;
 
   /// Shows a new toast. Returns the toast's id, which can be passed to
   /// [dismiss] to remove it early.
+  ///
+  /// [position] controls which corner the toast (and its stack) appears in.
+  /// [margin] and [width] are optional overrides for that stack.
   static String show(
     BuildContext context, {
     required String message,
     HToastType type = HToastType.info,
     Duration duration = const Duration(seconds: 3),
+    HToastPosition position = defaultPosition,
+    EdgeInsets margin = defaultMargin,
+    double width = defaultWidth,
   }) {
     final overlay = Overlay.of(context, rootOverlay: true);
-    _ensureOverlay(overlay);
+    _ensureOverlay(overlay, position, margin, width);
 
     final id = 'htoast_${_counter++}';
     final item = _HToastItem(
@@ -80,9 +87,9 @@ class HToast {
       type: type,
       duration: duration,
     );
-    item.timer = Timer(duration, () => _remove(id));
-    _items.add(item);
-    _stackKey.currentState?.refresh();
+    item.timer = Timer(duration, () => _remove(position, id));
+    _itemsByPosition[position]!.add(item);
+    _stackKeys[position]?.currentState?.refresh();
     return id;
   }
 
@@ -90,84 +97,118 @@ class HToast {
     BuildContext context,
     String message, {
     Duration duration = const Duration(seconds: 3),
+    HToastPosition position = defaultPosition,
   }) => show(
     context,
     message: message,
     type: HToastType.info,
     duration: duration,
+    position: position,
   );
 
   static String success(
     BuildContext context,
     String message, {
     Duration duration = const Duration(seconds: 3),
+    HToastPosition position = defaultPosition,
   }) => show(
     context,
     message: message,
     type: HToastType.success,
     duration: duration,
+    position: position,
   );
 
   static String error(
     BuildContext context,
     String message, {
     Duration duration = const Duration(seconds: 4),
+    HToastPosition position = defaultPosition,
   }) => show(
     context,
     message: message,
     type: HToastType.error,
     duration: duration,
+    position: position,
   );
 
   static String warning(
     BuildContext context,
     String message, {
     Duration duration = const Duration(seconds: 3),
+    HToastPosition position = defaultPosition,
   }) => show(
     context,
     message: message,
     type: HToastType.warning,
     duration: duration,
+    position: position,
   );
 
   /// Dismisses a single toast by id (returned from [show]).
-  static void dismiss(String id) => _remove(id);
-
-  /// Dismisses every currently visible toast.
-  static void dismissAll() {
-    for (final item in _items) {
-      item.timer?.cancel();
+  /// If you know which [position] it was shown in, pass it for an O(1)
+  /// lookup; otherwise every stack is searched.
+  static void dismiss(String id, [HToastPosition? position]) {
+    if (position != null) {
+      _remove(position, id);
+      return;
     }
-    _items.clear();
-    _overlayEntry?.remove();
-    _overlayEntry = null;
+    for (final pos in _itemsByPosition.keys.toList()) {
+      _remove(pos, id);
+    }
   }
 
-  static void _ensureOverlay(OverlayState overlay) {
-    if (_overlayEntry != null) return;
-    _overlayEntry = OverlayEntry(
+  /// Dismisses every currently visible toast in every stack.
+  static void dismissAll() {
+    for (final pos in _itemsByPosition.keys.toList()) {
+      for (final item in _itemsByPosition[pos]!) {
+        item.timer?.cancel();
+      }
+      _itemsByPosition[pos]!.clear();
+      _overlayEntries[pos]?.remove();
+      _overlayEntries.remove(pos);
+    }
+  }
+
+  static void _ensureOverlay(
+    OverlayState overlay,
+    HToastPosition position,
+    EdgeInsets margin,
+    double width,
+  ) {
+    _itemsByPosition.putIfAbsent(position, () => []);
+    if (_overlayEntries[position] != null) return;
+
+    final stackKey = GlobalKey<_HToastStackState>();
+    _stackKeys[position] = stackKey;
+
+    final entry = OverlayEntry(
       builder: (context) => _HToastStack(
-        key: _stackKey,
-        items: _items,
+        key: stackKey,
+        items: _itemsByPosition[position]!,
         position: position,
         margin: margin,
         width: width,
-        onDismiss: _remove,
+        onDismiss: (id) => _remove(position, id),
       ),
     );
-    overlay.insert(_overlayEntry!);
+    _overlayEntries[position] = entry;
+    overlay.insert(entry);
   }
 
-  static void _remove(String id) {
-    final index = _items.indexWhere((e) => e.id == id);
+  static void _remove(HToastPosition position, String id) {
+    final items = _itemsByPosition[position];
+    if (items == null) return;
+    final index = items.indexWhere((e) => e.id == id);
     if (index == -1) return;
-    _items[index].timer?.cancel();
-    _items.removeAt(index);
-    _stackKey.currentState?.refresh();
+    items[index].timer?.cancel();
+    items.removeAt(index);
+    _stackKeys[position]?.currentState?.refresh();
 
-    if (_items.isEmpty) {
-      _overlayEntry?.remove();
-      _overlayEntry = null;
+    if (items.isEmpty) {
+      _overlayEntries[position]?.remove();
+      _overlayEntries.remove(position);
+      _stackKeys.remove(position);
     }
   }
 }
@@ -411,7 +452,7 @@ class _HToastCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(4),
                 child: Icon(
-                  Icons.close_rounded,
+                  Symbols.close_rounded,
                   size: 16,
                   color: textColor.withValues(alpha: 0.5),
                 ),
