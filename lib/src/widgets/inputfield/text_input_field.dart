@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 class HTextField extends StatefulWidget {
@@ -11,6 +12,10 @@ class HTextField extends StatefulWidget {
   final void Function(String)? onFieldSubmitted;
   final Icon? icon;
   final Widget? trailingWidget;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
+  final VoidCallback? onEditingComplete;
+  final Function(String)? onChanged;
   const HTextField({
     super.key,
     this.label,
@@ -23,6 +28,10 @@ class HTextField extends StatefulWidget {
     this.onFieldSubmitted,
     this.icon,
     this.trailingWidget,
+    this.inputFormatters,
+    this.maxLength,
+    this.onEditingComplete,
+    this.onChanged
   });
 
   @override
@@ -61,13 +70,18 @@ class _HTextFieldState extends State<HTextField> {
             }
             return null;
           },
+          maxLength: widget.maxLength,
           decoration: InputDecoration(
             hintText: widget.hintText,
             suffixIcon: widget.trailingWidget,
+            counterText: '',
           ),
           keyboardType: widget.keyboardType ?? TextInputType.text,
+          inputFormatters: widget.inputFormatters,
           focusNode: widget.focusNode,
           onFieldSubmitted: widget.onFieldSubmitted,
+          onEditingComplete: widget.onEditingComplete,
+          onChanged: widget.onChanged,
         ),
       ],
     );
