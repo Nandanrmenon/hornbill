@@ -1,3 +1,6 @@
+## 1.4.5
+- Fixes `HTextField` to include inputFormatters, maxLength, onEditingComplete, and onChanged
+
 ## 1.4.4
 
 - Added `HToast` widget for displaying toast messages.
