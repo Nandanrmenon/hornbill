@@ -8,6 +8,7 @@ import 'package:hornbill_example/screens/listview_screen.dart';
 import 'package:hornbill_example/screens/navigationbar_screen.dart';
 import 'package:hornbill_example/screens/progressindicator_screen.dart';
 import 'package:hornbill_example/screens/scaffold_screen.dart';
+import 'package:hornbill_example/screens/sidebar_screen.dart';
 import 'package:hornbill_example/screens/switch.dart';
 import 'package:hornbill_example/screens/textinputfield_screen.dart';
 import 'package:hornbill_example/screens/theme_screen.dart';
@@ -69,6 +70,12 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             label: 'Scaffold',
             selected: _activeScreenKey == 'scaffold',
             onTap: () => _selectScreen('scaffold'),
+          ),
+          HSideBarItem(
+            icon: Symbols.side_navigation,
+            label: 'Sidebar',
+            selected: _activeScreenKey == 'sidebar',
+            onTap: () => _selectScreen('sidebar'),
           ),
           HSideBarItem(
             icon: Symbols.mobile_layout,
@@ -222,6 +229,16 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                   ),
                 ),
                 HListItemData(
+                  leading: const Icon(Symbols.side_navigation),
+                  title: const Text('Sidebar'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SidebarScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
                   leading: const Icon(Symbols.dialogs_rounded),
                   title: const Text('Dialogs'),
                   onTap: () => Navigator.push(
@@ -335,6 +352,8 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         return const NavigationbarScreen();
       case 'scaffold':
         return const ScaffoldScreen();
+      case 'sidebar':
+        return const SidebarScreen();
       case 'dialog':
         return const DialogScreen();
       case 'textfield':
