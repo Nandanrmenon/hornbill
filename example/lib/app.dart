@@ -2,6 +2,7 @@ import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/screens/buttons_screen.dart';
 import 'package:hornbill_example/screens/chips_screen.dart';
 import 'package:hornbill_example/screens/datatable_screen.dart';
+import 'package:hornbill_example/screens/dialog_screen.dart';
 import 'package:hornbill_example/screens/listview_screen.dart';
 import 'package:hornbill_example/screens/navigationbar_screen.dart';
 import 'package:hornbill_example/screens/progressindicator_screen.dart';
@@ -38,6 +39,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         icon: Symbols.text_fields_alt_rounded,
         label: 'Text Input Field',
       ),
+      _navigationItem(icon: Symbols.dialogs_rounded, label: 'Dialogs'),
       _navigationItem(icon: Symbols.web_traffic_rounded, label: 'Buttons'),
       _navigationItem(icon: Symbols.toggle_on_rounded, label: 'Switch'),
       _navigationItem(icon: Symbols.message, label: 'Toast'),
@@ -164,6 +166,14 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             HListView(
               items: [
                 HListItemData(
+                  leading: Icon(Symbols.dialogs_rounded),
+                  title: Text('Dialogs'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DialogScreen()),
+                  ),
+                ),
+                HListItemData(
                   leading: Icon(Symbols.label),
                   title: Text('Chip'),
                   onTap: () => Navigator.push(
@@ -199,6 +209,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             ThemeScreen(),
             NavigationbarScreen(),
             TextinputfieldScreen(),
+            DialogScreen(),
             ButtonsScreen(),
             SwitchScreen(),
             ToastScreen(),

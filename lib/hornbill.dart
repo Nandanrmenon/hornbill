@@ -15,6 +15,7 @@ export 'src/widgets/inputfield/switch.dart';
 export 'src/widgets/inputfield/text_input_field.dart';
 export 'src/widgets/list_widgets.dart';
 export 'src/widgets/scaffold/appbar.dart';
+export 'src/widgets/scaffold/dialog.dart';
 export 'src/widgets/scaffold/navigation_bar.dart';
 export 'src/widgets/scaffold/scaffold.dart';
 export 'src/widgets/scaffold/sidebar.dart';
