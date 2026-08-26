@@ -3,6 +3,7 @@ import 'package:hornbill_example/screens/buttons_screen.dart';
 import 'package:hornbill_example/screens/chips_screen.dart';
 import 'package:hornbill_example/screens/datatable_screen.dart';
 import 'package:hornbill_example/screens/dialog_screen.dart';
+import 'package:hornbill_example/screens/icons_screen.dart';
 import 'package:hornbill_example/screens/listview_screen.dart';
 import 'package:hornbill_example/screens/navigationbar_screen.dart';
 import 'package:hornbill_example/screens/progressindicator_screen.dart';
@@ -45,6 +46,12 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         icon: Symbols.palette_rounded,
         selected: _activeScreenKey == 'themes',
         onTap: () => _selectScreen('themes'),
+      ),
+      HSideBarItem(
+        label: 'Icons',
+        icon: Symbols.package,
+        selected: _activeScreenKey == 'icons',
+        onTap: () => _selectScreen('icons'),
       ),
       HSideBarItem(
         icon: Symbols.folder_rounded,
@@ -189,6 +196,18 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                 ),
               ],
             ),
+            HListView(
+              items: [
+                HListItemData(
+                  leading: const Icon(Symbols.package),
+                  title: const Text('Icons'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => IconsScreen()),
+                  ),
+                ),
+              ],
+            ),
             const HListHeader(title: 'Layout'),
             HListView(
               items: [
@@ -310,6 +329,8 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
     switch (_activeScreenKey) {
       case 'themes':
         return ThemeScreen(themeController: widget.themeController);
+      case 'icons':
+        return const IconsScreen();
       case 'navigation_bar':
         return const NavigationbarScreen();
       case 'scaffold':
