@@ -1,4 +1,9 @@
+## 1.5.1
+
+- Fixed vercel build command to include `--no-tree-shake-icons` flag for proper icon rendering in the example app.
+
 ## 1.5.0
+
 - Example app updated to docs in https://hornbill-example.vercel.app/
 - Added `HDialog` with support child, title, actions, and onDismiss callback.
 - Improvements to `HSideBarItem` to support better tint, which is better system status visibility.
@@ -7,6 +12,7 @@
 - Example app has now color changer.
 
 ## 1.4.5
+
 - Fixes `HTextField` to include inputFormatters, maxLength, onEditingComplete, and onChanged
 
 ## 1.4.4
