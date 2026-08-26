@@ -6,15 +6,20 @@ import 'package:hornbill_example/screens/dialog_screen.dart';
 import 'package:hornbill_example/screens/listview_screen.dart';
 import 'package:hornbill_example/screens/navigationbar_screen.dart';
 import 'package:hornbill_example/screens/progressindicator_screen.dart';
+import 'package:hornbill_example/screens/scaffold_screen.dart';
 import 'package:hornbill_example/screens/switch.dart';
 import 'package:hornbill_example/screens/textinputfield_screen.dart';
 import 'package:hornbill_example/screens/theme_screen.dart';
 import 'package:hornbill_example/screens/toast_screen.dart';
+import 'package:hornbill_example/theme_controller.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 class HornbilExampleApp extends StatefulWidget {
-  const HornbilExampleApp({super.key});
+  const HornbilExampleApp({super.key, required this.themeController});
+
+  /// Drives the live colour-scheme picker on the Themes screen.
+  final HThemeController themeController;
 
   @override
   State<HornbilExampleApp> createState() => _HornbilExampleAppState();
@@ -22,40 +27,128 @@ class HornbilExampleApp extends StatefulWidget {
 
 class _HornbilExampleAppState extends State<HornbilExampleApp> {
   bool get _isDesktop => MediaQuery.of(context).size.width >= 600;
-  int _desktopSelectedIndex = 0;
 
-  HSideBarItem _navigationItem({
-    required IconData icon,
-    required String label,
-  }) {
-    return HSideBarItem(icon: icon, label: label);
+  // Track active view using a unique string key instead of fragile indices
+  String _activeScreenKey = 'themes';
+
+  // Helper to switch desktop content safely
+  void _selectScreen(String screenKey) {
+    setState(() {
+      _activeScreenKey = screenKey;
+    });
   }
 
   List<HSideBarItem> _desktopSidebarItems() {
     return [
-      _navigationItem(icon: Symbols.palette_rounded, label: 'Themes'),
-      _navigationItem(icon: Symbols.menu_rounded, label: 'Navigation Bar'),
-      _navigationItem(
-        icon: Symbols.text_fields_alt_rounded,
-        label: 'Text Input Field',
+      HSideBarItem(
+        label: 'Themes',
+        icon: Symbols.palette_rounded,
+        selected: _activeScreenKey == 'themes',
+        onTap: () => _selectScreen('themes'),
       ),
-      _navigationItem(icon: Symbols.dialogs_rounded, label: 'Dialogs'),
-      _navigationItem(icon: Symbols.web_traffic_rounded, label: 'Buttons'),
-      _navigationItem(icon: Symbols.toggle_on_rounded, label: 'Switch'),
-      _navigationItem(icon: Symbols.message, label: 'Toast'),
-      _navigationItem(icon: Symbols.event_list_rounded, label: 'List View'),
-      _navigationItem(icon: Symbols.table_rows_rounded, label: 'Data Table'),
-      _navigationItem(icon: Symbols.label, label: 'Chip'),
-      _navigationItem(icon: Symbols.percent, label: 'Progress Indicators'),
+      HSideBarItem(
+        icon: Symbols.folder_rounded,
+        label: 'Layout',
+        initiallyExpanded: true,
+        children: [
+          HSideBarItem(
+            icon: Symbols.menu_rounded,
+            label: 'Navigation Bar',
+            selected: _activeScreenKey == 'navigation_bar',
+            onTap: () => _selectScreen('navigation_bar'),
+          ),
+          HSideBarItem(
+            icon: Symbols.mobile_layout,
+            label: 'Scaffold',
+            selected: _activeScreenKey == 'scaffold',
+            onTap: () => _selectScreen('scaffold'),
+          ),
+          HSideBarItem(
+            icon: Symbols.mobile_layout,
+            label: 'Dialog',
+            selected: _activeScreenKey == 'dialog',
+            onTap: () => _selectScreen('dialog'),
+          ),
+        ],
+      ),
+      HSideBarItem(
+        icon: Symbols.folder_rounded,
+        label: 'Forms',
+        initiallyExpanded: true,
+        children: [
+          HSideBarItem(
+            icon: Symbols.text_fields_alt_rounded,
+            label: 'TextField',
+            selected: _activeScreenKey == 'textfield',
+            onTap: () => _selectScreen('textfield'),
+          ),
+          HSideBarItem(
+            icon: Symbols.web_traffic_rounded,
+            label: 'Button',
+            selected: _activeScreenKey == 'button',
+            onTap: () => _selectScreen('button'),
+          ),
+          HSideBarItem(
+            icon: Symbols.toggle_on_rounded,
+            label: 'Switch',
+            selected: _activeScreenKey == 'switch',
+            onTap: () => _selectScreen('switch'),
+          ),
+        ],
+      ),
+      HSideBarItem(
+        icon: Symbols.folder_rounded,
+        label: 'Data Presentation',
+        initiallyExpanded: true,
+        children: [
+          HSideBarItem(
+            icon: Symbols.event_list_rounded,
+            label: 'List View',
+            selected: _activeScreenKey == 'list_view',
+            onTap: () => _selectScreen('list_view'),
+          ),
+          HSideBarItem(
+            icon: Symbols.table_rows_rounded,
+            label: 'Data Table',
+            selected: _activeScreenKey == 'data_table',
+            onTap: () => _selectScreen('data_table'),
+          ),
+        ],
+      ),
+      HSideBarItem(
+        icon: Symbols.folder_rounded,
+        label: 'Feedback',
+        initiallyExpanded: true,
+        children: [
+          HSideBarItem(
+            icon: Symbols.message,
+            label: 'Toast',
+            selected: _activeScreenKey == 'toast',
+            onTap: () => _selectScreen('toast'),
+          ),
+          HSideBarItem(
+            icon: Symbols.table_rows_rounded,
+            label: 'Chip',
+            selected: _activeScreenKey == 'chip',
+            onTap: () => _selectScreen('chip'),
+          ),
+          HSideBarItem(
+            icon: Symbols.percent,
+            label: 'Progress Indicators',
+            selected: _activeScreenKey == 'progress_indicators',
+            onTap: () => _selectScreen('progress_indicators'),
+          ),
+        ],
+      ),
     ];
   }
 
   Widget _buildDesktopSidebar(BuildContext context) {
     return HSideBar(
-      selectedIndex: _desktopSelectedIndex,
-      onItemSelected: (index) {
-        setState(() => _desktopSelectedIndex = index);
-      },
+      // Passing -1 disables HSideBar's default global numeric index watcher,
+      // letting our explicit item `onTap` and `selected` properties take total control.
+      selectedIndex: -1,
+      onItemSelected: (_) {},
       header: const Padding(
         padding: EdgeInsets.all(16),
         child: Text('Hornbill UI'),
@@ -71,7 +164,6 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         onAccountSelected: (value) {},
         onAddAccount: () {},
       ),
-
       items: _desktopSidebarItems(),
     );
   }
@@ -81,113 +173,127 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       SliverToBoxAdapter(
         child: Column(
           children: [
-            HListHeader(title: 'Helper'),
+            const HListHeader(title: 'Helper'),
             HListView(
               items: [
                 HListItemData(
-                  leading: Icon(Symbols.palette_rounded),
-                  title: Text('Themes'),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ThemeScreen()),
-                  ),
-                ),
-              ],
-            ),
-            HListHeader(title: 'Layout'),
-            HListView(
-              items: [
-                HListItemData(
-                  leading: Icon(Symbols.menu_rounded),
-                  title: Text('Navigation Bar'),
+                  leading: const Icon(Symbols.palette_rounded),
+                  title: const Text('Themes'),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NavigationbarScreen(),
+                      builder: (context) =>
+                          ThemeScreen(themeController: widget.themeController),
                     ),
                   ),
                 ),
               ],
             ),
-            HListHeader(title: 'Form'),
+            const HListHeader(title: 'Layout'),
             HListView(
               items: [
                 HListItemData(
-                  leading: Icon(Symbols.text_fields_alt_rounded),
-                  title: Text('Text Input Field'),
+                  leading: const Icon(Symbols.menu_rounded),
+                  title: const Text('Navigation Bar'),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TextinputfieldScreen(),
+                      builder: (context) => const NavigationbarScreen(),
                     ),
                   ),
                 ),
                 HListItemData(
-                  leading: Icon(Symbols.web_traffic_rounded),
-                  title: Text('Buttons'),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ButtonsScreen()),
-                  ),
-                ),
-                HListItemData(
-                  leading: Icon(Symbols.toggle_on_rounded),
-                  title: Text('Switch'),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SwitchScreen()),
-                  ),
-                ),
-              ],
-            ),
-            HListHeader(title: 'Data Presentation'),
-            HListView(
-              items: [
-                HListItemData(
-                  leading: Icon(Symbols.event_list_rounded),
-                  title: Text('List View'),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ListViewScreen()),
-                  ),
-                ),
-
-                HListItemData(
-                  leading: Icon(Symbols.table_rows_rounded),
-                  title: Text('Data Table'),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DataTableScreen()),
-                  ),
-                ),
-              ],
-            ),
-            HListHeader(title: 'Feedback'),
-            HListView(
-              items: [
-                HListItemData(
-                  leading: Icon(Symbols.dialogs_rounded),
-                  title: Text('Dialogs'),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DialogScreen()),
-                  ),
-                ),
-                HListItemData(
-                  leading: Icon(Symbols.label),
-                  title: Text('Chip'),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ChipsScreen()),
-                  ),
-                ),
-                HListItemData(
-                  leading: Icon(Symbols.percent),
-                  title: Text('Progress Indicators'),
+                  leading: const Icon(Symbols.dialogs_rounded),
+                  title: const Text('Dialogs'),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProgressIndicatorScreen(),
+                      builder: (context) => const DialogScreen(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const HListHeader(title: 'Form'),
+            HListView(
+              items: [
+                HListItemData(
+                  leading: const Icon(Symbols.text_fields_alt_rounded),
+                  title: const Text('Text Input Field'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const TextinputfieldScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
+                  leading: const Icon(Symbols.web_traffic_rounded),
+                  title: const Text('Buttons'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ButtonsScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
+                  leading: const Icon(Symbols.toggle_on_rounded),
+                  title: const Text('Switch'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SwitchScreen(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const HListHeader(title: 'Data Presentation'),
+            HListView(
+              items: [
+                HListItemData(
+                  leading: const Icon(Symbols.event_list_rounded),
+                  title: const Text('List View'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ListViewScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
+                  leading: const Icon(Symbols.table_rows_rounded),
+                  title: const Text('Data Table'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DataTableScreen(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const HListHeader(title: 'Feedback'),
+            HListView(
+              items: [
+                HListItemData(
+                  leading: const Icon(Symbols.label),
+                  title: const Text('Chip'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChipsScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
+                  leading: const Icon(Symbols.percent),
+                  title: const Text('Progress Indicators'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProgressIndicatorScreen(),
                     ),
                   ),
                 ),
@@ -199,37 +305,48 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
     ];
   }
 
+  // Clean widget switch mechanism replacing IndexedStack
+  Widget _buildSelectedScreen() {
+    switch (_activeScreenKey) {
+      case 'themes':
+        return ThemeScreen(themeController: widget.themeController);
+      case 'navigation_bar':
+        return const NavigationbarScreen();
+      case 'scaffold':
+        return const ScaffoldScreen();
+      case 'dialog':
+        return const DialogScreen();
+      case 'textfield':
+        return const TextinputfieldScreen();
+      case 'button':
+        return const ButtonsScreen();
+      case 'switch':
+        return const SwitchScreen();
+      case 'list_view':
+        return const ListViewScreen();
+      case 'data_table':
+        return const DataTableScreen();
+      case 'toast':
+        return const ToastScreen();
+      case 'chip':
+        return const ChipsScreen();
+      case 'progress_indicators':
+        return const ProgressIndicatorScreen();
+      default:
+        return ThemeScreen(themeController: widget.themeController);
+    }
+  }
+
   List<Widget> _buildDesktopSlivers() {
     return [
-      SliverFillRemaining(
-        hasScrollBody: false,
-        child: IndexedStack(
-          index: _desktopSelectedIndex,
-          children: const [
-            ThemeScreen(),
-            NavigationbarScreen(),
-            TextinputfieldScreen(),
-            DialogScreen(),
-            ButtonsScreen(),
-            SwitchScreen(),
-            ToastScreen(),
-            ListViewScreen(),
-            DataTableScreen(),
-            ChipsScreen(),
-            ProgressIndicatorScreen(),
-          ],
-        ),
-      ),
+      SliverFillRemaining(hasScrollBody: false, child: _buildSelectedScreen()),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     return HScaffold(
-      // appBar: _isDesktop
-      //     ? null
-      //     : SliverAppBar.large(title: Text('Hornbill Example App')),
-      appBar: _isDesktop ? null : HAppBar(title: 'Hornbill Example App'),
+      appBar: _isDesktop ? null : const HAppBar(title: 'Hornbill Example App'),
       sidebar: _isDesktop ? _buildDesktopSidebar(context) : null,
       slivers: _isDesktop
           ? _buildDesktopSlivers()

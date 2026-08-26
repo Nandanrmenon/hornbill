@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.1"
+  base_cod_view:
+    dependency: transitive
+    description:
+      name: base_cod_view
+      sha256: d34a69dc814617ae765551de398cc4faaf47a7f5d705b176073143a1c7a3d45e
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   boolean_selector:
     dependency: transitive
     description:
@@ -118,6 +126,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.2"
+  flutter_code_view:
+    dependency: "direct main"
+    description:
+      name: flutter_code_view
+      sha256: "8e10e78f267020de908f3cc396828eb4300459b9475d9dd4444051d0781dafec"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   flutter_driver:
     dependency: transitive
     description: flutter
