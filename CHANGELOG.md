@@ -1,3 +1,11 @@
+## 1.5.0
+- Example app updated to docs in https://hornbill-example.vercel.app/
+- Added `HDialog` with support child, title, actions, and onDismiss callback.
+- Improvements to `HSideBarItem` to support better tint, which is better system status visibility.
+- Added Icon browser in example app.
+- Fixed weird size issues in `HButton` and `HIconButton`.
+- Example app has now color changer.
+
 ## 1.4.5
 - Fixes `HTextField` to include inputFormatters, maxLength, onEditingComplete, and onChanged
 

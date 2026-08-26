@@ -1,6 +1,6 @@
 name: hornbill
 description: "A lightweight, beautify Flutter UI component package inspired by Material Design 3 Expressive, with a focus on simplicity, elegance, and ease of use."
-version: 1.4.5
+version: 1.5.0
 repository: https://gitlab.knoxxbox.in/nahnah/hornbill
 issue_tracker: https://gitlab.knoxxbox.in/nahnah/hornbill/-/issues
 homepage: https://hornbill-example.vercel.app/
