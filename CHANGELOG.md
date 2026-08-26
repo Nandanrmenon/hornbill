@@ -1,3 +1,7 @@
+## 1.5.2
+
+- Fixed all of `HListView` and similar widgets to use `dense` property for better spacing and layout control.
+
 ## 1.5.1
 
 - Fixed vercel build command to include `--no-tree-shake-icons` flag for proper icon rendering in the example app.
