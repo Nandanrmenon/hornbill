@@ -1,8 +1,8 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A vertical navigation sidebar that can collapse into a narrow,
 /// icon-only rail (similar to [NavigationRail]) via a toggle button
@@ -429,7 +429,7 @@ class _HSideBarItemState extends State<HSideBarItem> {
     final activeColor = widget.selectedColor ?? theme.colorScheme.primary;
     final activeBg =
         widget.selectedBackgroundColor ??
-        theme.colorScheme.surfaceContainerHigh;
+        theme.colorScheme.primaryContainer.withValues(alpha: 0.5);
     final collapsed = widget.collapsed;
     final canTap = widget.onTap != null || (_isGroup && !collapsed);
 
@@ -467,6 +467,7 @@ class _HSideBarItemState extends State<HSideBarItem> {
                         ? Icon(
                             widget.icon,
                             size: 22,
+                            fill: widget.selected ? 1 : 0,
                             color: widget.selected
                                 ? activeColor
                                 : theme.iconTheme.color?.withValues(alpha: 0.7),
@@ -489,6 +490,7 @@ class _HSideBarItemState extends State<HSideBarItem> {
                         Icon(
                           widget.icon,
                           size: 20,
+                          fill: widget.selected ? 1 : 0,
                           color: widget.selected
                               ? activeColor
                               : theme.iconTheme.color?.withValues(alpha: 0.7),
