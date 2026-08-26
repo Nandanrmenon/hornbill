@@ -20,6 +20,7 @@ class HListHeader extends StatelessWidget {
     this.subtitle,
     this.onTap,
     this.trailing,
+    this.dense,
   });
 
   /// The header's title text.
@@ -40,13 +41,18 @@ class HListHeader extends StatelessWidget {
   /// button or a "See all" link).
   final Widget? trailing;
 
+  /// Defaults to `false`. Also tightens the list's outer padding.
+  final bool? dense;
+
   @override
   Widget build(BuildContext context) {
     final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        padding: dense == true
+            ? const EdgeInsets.all(8)
+            : const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Row(
           children: [
             if (icon != null) ...[

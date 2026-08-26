@@ -62,6 +62,7 @@ class HCheckboxListView extends StatelessWidget {
     required this.onChanged,
     this.enableScroll,
     this.shrinkWrap,
+    this.dense,
   }) : itemCount = null,
        itemBuilder = null;
 
@@ -74,6 +75,7 @@ class HCheckboxListView extends StatelessWidget {
     required this.onChanged,
     this.enableScroll,
     this.shrinkWrap,
+    this.dense,
   }) : items = null;
 
   /// The rows to render, when constructed via [HCheckboxListView.new].
@@ -101,6 +103,11 @@ class HCheckboxListView extends StatelessWidget {
   /// See [HListView.shrinkWrap] for details; the default is the same.
   final bool? shrinkWrap;
 
+  /// Whether rows use the compact/"dense" [ListTile] layout.
+  ///
+  /// Defaults to `false`. Also tightens the list's outer padding.
+  final bool? dense;
+
   /// The number of rows this list will render, regardless of which
   /// constructor was used.
   int get _count => items?.length ?? itemCount!;
@@ -111,10 +118,13 @@ class HCheckboxListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDense = dense ?? false;
     final count = _count;
     return ListView.separated(
       shrinkWrap: _resolveShrinkWrap(shrinkWrap),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: isDense
+          ? const EdgeInsets.all(8)
+          : const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       physics: _resolvePhysics(enableScroll),
       itemCount: count,
       itemBuilder: (context, index) {
@@ -141,6 +151,7 @@ class HCheckboxListView extends StatelessWidget {
               if (value != null) onChanged(index, value);
             },
             secondary: item.suffix,
+            dense: dense,
           ),
         );
       },
