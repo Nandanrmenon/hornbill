@@ -1,5 +1,8 @@
-import 'package:material_ui/material_ui.dart';
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart';
 import 'package:hornbill/src/helpers/constants.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Position of the icon relative to the label.
 enum HButtonIconPosition { left, right }
@@ -27,7 +30,7 @@ class HButton extends StatefulWidget {
   final Color? foregroundColor;
   final EdgeInsetsGeometry padding;
   final double? width;
-  final double height;
+  final double? height;
   final double iconSize;
   final double gap;
   final TextStyle? textStyle;
@@ -41,11 +44,11 @@ class HButton extends StatefulWidget {
     this.iconPosition = HButtonIconPosition.left,
     this.color,
     this.foregroundColor,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.padding = const EdgeInsets.symmetric(horizontal: 16),
     this.width,
-    this.height = 48,
-    this.iconSize = 18,
-    this.gap = 8,
+    this.height,
+    this.iconSize = 16,
+    this.gap = 6.0,
     this.textStyle,
   }) : _variant = _HButtonVariant.filled;
 
@@ -58,11 +61,11 @@ class HButton extends StatefulWidget {
     this.iconPosition = HButtonIconPosition.left,
     this.color,
     this.foregroundColor,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.padding = const EdgeInsets.symmetric(horizontal: 16),
     this.width,
-    this.height = 48,
-    this.iconSize = 18,
-    this.gap = 8,
+    this.height,
+    this.iconSize = 16,
+    this.gap = 6.0,
     this.textStyle,
   }) : _variant = _HButtonVariant.outlined;
 
@@ -75,11 +78,11 @@ class HButton extends StatefulWidget {
     this.iconPosition = HButtonIconPosition.left,
     this.color,
     this.foregroundColor,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.padding = const EdgeInsets.symmetric(horizontal: 16),
     this.width,
-    this.height = 44,
-    this.iconSize = 18,
-    this.gap = 8,
+    this.height,
+    this.iconSize = 16,
+    this.gap = 6.0,
     this.textStyle,
   }) : _variant = _HButtonVariant.text;
 
@@ -92,11 +95,11 @@ class HButton extends StatefulWidget {
     this.iconPosition = HButtonIconPosition.left,
     this.color,
     this.foregroundColor,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.padding = const EdgeInsets.symmetric(horizontal: 16),
     this.width,
-    this.height = 48,
-    this.iconSize = 18,
-    this.gap = 8,
+    this.height,
+    this.iconSize = 16,
+    this.gap = 6.0,
     this.textStyle,
   }) : _variant = _HButtonVariant.tonal;
 
@@ -112,6 +115,16 @@ class _HButtonState extends State<HButton> {
   void _setPressed(bool value) {
     if (!_enabled) return;
     setState(() => _pressed = value);
+  }
+
+  // ---- Adaptive height calculation (32 for desktop, 44 for mobile) ----
+  double get _resolvedHeight {
+    if (widget.height != null) return widget.height!;
+
+    final bool isDesktop =
+        !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
+
+    return isDesktop ? 32.0 : 44.0;
   }
 
   // ---- Style resolution per variant ----
@@ -166,6 +179,8 @@ class _HButtonState extends State<HButton> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDesktop = _resolvedHeight <= 36;
+
     final children = <Widget>[
       if (widget.showIcon &&
           widget.icon != null &&
@@ -173,17 +188,16 @@ class _HButtonState extends State<HButton> {
         Icon(widget.icon, size: widget.iconSize, color: _fgColor),
         SizedBox(width: widget.gap),
       ],
-      Flexible(
-        child: Text(
-          widget.label,
-          overflow: TextOverflow.ellipsis,
-          style:
-              (widget.textStyle ?? const TextStyle(fontWeight: FontWeight.w600))
-                  .copyWith(
-                    color: _fgColor,
-                    fontSize: widget.textStyle?.fontSize ?? 15,
-                  ),
-        ),
+      Text(
+        widget.label,
+        overflow: TextOverflow.ellipsis,
+        style:
+            (widget.textStyle ?? const TextStyle(fontWeight: FontWeight.w600))
+                .copyWith(
+                  color: _fgColor,
+                  // Slightly smaller font for compact 32px desktop view
+                  fontSize: widget.textStyle?.fontSize ?? (isDesktop ? 13 : 14),
+                ),
       ),
       if (widget.showIcon &&
           widget.icon != null &&
@@ -194,6 +208,7 @@ class _HButtonState extends State<HButton> {
     ];
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTapDown: (_) => _setPressed(true),
       onTapUp: (_) => _setPressed(false),
       onTapCancel: () => _setPressed(false),
@@ -202,52 +217,29 @@ class _HButtonState extends State<HButton> {
         scale: _pressed ? 0.96 : 1.0,
         duration: const Duration(milliseconds: 100),
         curve: Curves.easeOut,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          curve: Curves.easeOut,
-          padding: widget.padding,
-          decoration: BoxDecoration(
-            color: _backgroundColor,
-            borderRadius: BorderRadius.circular(kBorderRadiusMedium),
-            border: _border,
-          ),
-          child: Center(
-            child: Row(mainAxisSize: MainAxisSize.min, children: children),
+        child: SizedBox(
+          width: widget.width,
+          height: _resolvedHeight,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOut,
+            padding: widget.padding,
+            decoration: BoxDecoration(
+              color: _backgroundColor,
+              borderRadius: BorderRadius.circular(kBorderRadiusMedium),
+              border: _border,
+            ),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisSize: widget.width != null
+                  ? MainAxisSize.max
+                  : MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: children,
+            ),
           ),
         ),
       ),
     );
   }
 }
-
-/// --- Example usage ---
-///
-/// Column(
-///   crossAxisAlignment: CrossAxisAlignment.start,
-///   children: [
-///     HButton.filled(
-///       label: 'Continue',
-///       showIcon: true,
-///       icon: Icons.arrow_forward,
-///       iconPosition: HButtonIconPosition.right,
-///       onPressed: () {},
-///     ),
-///     const SizedBox(height: 12),
-///     HButton.outlined(
-///       label: 'Cancel',
-///       onPressed: () {},
-///     ),
-///     const SizedBox(height: 12),
-///     HButton.tonal(
-///       label: 'Save draft',
-///       showIcon: true,
-///       icon: Icons.save,
-///       onPressed: () {},
-///     ),
-///     const SizedBox(height: 12),
-///     HButton.text(
-///       label: 'Skip',
-///       onPressed: () {},
-///     ),
-///   ],
-/// )

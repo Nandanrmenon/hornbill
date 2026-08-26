@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/src/helpers/constants.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Internal visual style variant. Set via the named constructors below.
 enum _HIconButtonVariant { filled, outlined, text, tonal }
@@ -50,7 +50,7 @@ class HIconButton extends StatefulWidget {
     required this.onPressed,
     this.color,
     this.foregroundColor,
-    this.size = 40,
+    this.size = 44,
     this.iconSize = 20,
     this.tooltip,
   }) : _variant = _HIconButtonVariant.text;
@@ -135,6 +135,7 @@ class _HIconButtonState extends State<HIconButton> {
   @override
   Widget build(BuildContext context) {
     final button = GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTapDown: (_) => _setPressed(true),
       onTapUp: (_) => _setPressed(false),
       onTapCancel: () => _setPressed(false),
@@ -143,18 +144,18 @@ class _HIconButtonState extends State<HIconButton> {
         scale: _pressed ? 0.92 : 1.0,
         duration: const Duration(milliseconds: 100),
         curve: Curves.easeOut,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          curve: Curves.easeOut,
-          // width: widget.size,
-          // height: widget.size,
-          padding: EdgeInsets.all((widget.size - widget.iconSize) / 2),
-          decoration: BoxDecoration(
-            color: _backgroundColor,
-            borderRadius: BorderRadius.circular(kBorderRadiusRounded),
-            border: _border,
-          ),
-          child: Center(
+        child: SizedBox(
+          width: widget.size,
+          height: widget.size,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOut,
+            decoration: BoxDecoration(
+              color: _backgroundColor,
+              borderRadius: BorderRadius.circular(kBorderRadiusRounded),
+              border: _border,
+            ),
+            alignment: Alignment.center,
             child: Icon(widget.icon, size: widget.iconSize, color: _fgColor),
           ),
         ),
@@ -167,30 +168,3 @@ class _HIconButtonState extends State<HIconButton> {
     return button;
   }
 }
-
-/// --- Example usage ---
-///
-/// Row(
-///   children: [
-///     HIconButton.filled(
-///       icon: Icons.add,
-///       onPressed: () {},
-///     ),
-///     const SizedBox(width: 12),
-///     HIconButton.outlined(
-///       icon: Icons.edit,
-///       onPressed: () {},
-///     ),
-///     const SizedBox(width: 12),
-///     HIconButton.tonal(
-///       icon: Icons.favorite,
-///       onPressed: () {},
-///     ),
-///     const SizedBox(width: 12),
-///     HIconButton.text(
-///       icon: Icons.close,
-///       tooltip: 'Close',
-///       onPressed: () {},
-///     ),
-///   ],
-/// )
