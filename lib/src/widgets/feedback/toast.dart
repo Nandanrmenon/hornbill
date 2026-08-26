@@ -15,6 +15,7 @@
 
 import 'dart:async';
 
+import 'package:hornbill/hornbill.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
@@ -406,13 +407,15 @@ class _HToastCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
     final style = _styleFor(item.type, brightness);
-    final bg = Theme.of(context).colorScheme.surfaceContainerLow;
+    // final bg = Theme.of(context).colorScheme.surfaceContainerLow;
+    final bg = style.color.withValues(alpha: 0.3);
     final textColor = Theme.of(context).colorScheme.onSurface;
 
     return Material(
-      color: Colors.transparent,
+      // color: Colors.transparent,
+      borderRadius: BorderRadius.circular(kBorderRadius),
+      clipBehavior: Clip.antiAlias,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 2),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: bg,
@@ -430,7 +433,7 @@ class _HToastCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(style.icon, color: style.color, size: 22, fill: 1),
+            Icon(style.icon, color: textColor),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -446,18 +449,7 @@ class _HToastCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 6),
-            InkWell(
-              onTap: onClose,
-              borderRadius: BorderRadius.circular(14),
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Icon(
-                  Symbols.close_rounded,
-                  size: 16,
-                  color: textColor.withValues(alpha: 0.5),
-                ),
-              ),
-            ),
+            HIconButton.text(icon: Symbols.close_rounded, onPressed: onClose),
           ],
         ),
       ),
