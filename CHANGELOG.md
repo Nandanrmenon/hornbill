@@ -1,3 +1,8 @@
+## 1.5.4
+
+- Added `HBreadcrumb` widget for displaying breadcrumb navigation.
+- Improvements to `HAppBar`.
+
 ## 1.5.3
 
 - Revert `HDropDownField` and `HTextField` to use Material 3 styling for better layout management and consistency with the overall design system.

@@ -4,15 +4,21 @@ Hornbill UI is a lightweight Flutter component package starter for building a co
 
 ### Installation
 
-Add the following to your `pubspec.yaml` file:
+Either add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  hornbill: ^1.4.2
+  hornbill: ^1.5.4
 ```
 
-Then run `flutter pub get` to install the package.
+and run `flutter pub get`,
+
+or run the following command in your terminal:
+
+```bash
+$ flutter pub add hornbill
+```
 
 ### Documentation
 
-The documentation for Hornbill UI is currently under development. Please refer to the example app for usage examples and component demonstrations.
+The documentation for Hornbill UI is available at [https://hornbill-example.vercel.app/](https://hornbill-example.vercel.app/). It provides detailed information on how to use the various components and features of the package. Remember to check the documentation regularly for updates, breaking changes and new features.
