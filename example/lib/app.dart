@@ -1,4 +1,5 @@
 import 'package:hornbill/hornbill.dart';
+import 'package:hornbill_example/screens/breadcrumbs_screen.dart';
 import 'package:hornbill_example/screens/buttons_screen.dart';
 import 'package:hornbill_example/screens/chips_screen.dart';
 import 'package:hornbill_example/screens/datatable_screen.dart';
@@ -82,6 +83,12 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             label: 'Dialog',
             selected: _activeScreenKey == 'dialog',
             onTap: () => _selectScreen('dialog'),
+          ),
+          HSideBarItem(
+            icon: Symbols.chevron_right_rounded,
+            label: 'Breadcrumbs',
+            selected: _activeScreenKey == 'breadcrumbs',
+            onTap: () => _selectScreen('breadcrumbs'),
           ),
         ],
       ),
@@ -248,6 +255,26 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                     ),
                   ),
                 ),
+                HListItemData(
+                  leading: const Icon(Symbols.mobile_layout),
+                  title: const Text('Scaffold'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ScaffoldScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
+                  title: const Text('Breadcrumbs'),
+                  leading: const Icon(Symbols.chevron_right_rounded),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BreadcrumbsScreen(),
+                    ),
+                  ),
+                ),
               ],
             ),
             const HListHeader(title: 'Form'),
@@ -372,6 +399,8 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         return const ChipsScreen();
       case 'progress_indicators':
         return const ProgressIndicatorScreen();
+      case 'breadcrumbs':
+        return const BreadcrumbsScreen();
       default:
         return ThemeScreen(themeController: widget.themeController);
     }
