@@ -1,5 +1,6 @@
 import 'package:flutter_code_view/flutter_code_view.dart';
 import 'package:hornbill/hornbill.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 class ScaffoldScreen extends StatefulWidget {
@@ -15,7 +16,20 @@ class _ScaffoldScreenState extends State<ScaffoldScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return HScaffold(
-      appBar: HAppBar(title: 'Scaffold'),
+      appBar: HAppBar(
+        title: 'Scaffold',
+        searchEnabled: true,
+        onSearchChanged: (value) {
+          // Handle search query changes here
+        },
+        showBackButton: true,
+        onBackPressed: () =>
+            HToast.show(context, message: 'Back button pressed'),
+        actions: [
+          HAppBarAction(label: 'Action 1', icon: Symbols.abc, onPressed: () {}),
+        ],
+        backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+      ),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

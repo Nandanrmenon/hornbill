@@ -1,4 +1,6 @@
+import 'package:hornbill/hornbill.dart';
 import 'package:hornbill/src/helpers/constants.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// A single action item shown in [HAppBar].
@@ -164,16 +166,16 @@ class _HAppBarState extends State<HAppBar> {
 
     // Mobile with active search: show a close/back icon that exits search.
     if (isMobile && widget.searchEnabled && _searchActive) {
-      return IconButton(
-        icon: const Icon(Icons.arrow_back),
+      return HIconButton.text(
+        icon: Symbols.arrow_back_ios_new_rounded,
         tooltip: 'Close search',
         onPressed: () => _setSearchActive(false),
       );
     }
 
     if (wantsBack) {
-      return IconButton(
-        icon: const Icon(Icons.arrow_back),
+      return HIconButton.text(
+        icon: Symbols.arrow_back_ios_new_rounded,
         tooltip: 'Back',
         onPressed:
             widget.onBackPressed ??
@@ -197,11 +199,11 @@ class _HAppBarState extends State<HAppBar> {
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         hintText: widget.searchHint,
-        prefixIcon: const Icon(Icons.search),
+        prefixIcon: const Icon(Symbols.search),
         suffixIcon: _searchController.text.isEmpty
             ? null
-            : IconButton(
-                icon: const Icon(Icons.clear),
+            : HIconButton.text(
+                icon: Symbols.clear,
                 onPressed: () {
                   _searchController.clear();
                   widget.onSearchChanged?.call('');
