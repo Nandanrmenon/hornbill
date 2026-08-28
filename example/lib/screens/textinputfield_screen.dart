@@ -26,6 +26,7 @@ class _TextinputfieldScreenState extends State<TextinputfieldScreen> {
                   label: 'Label',
                   hintText: 'Hint Text',
                   onFieldSubmitted: (p0) {},
+                  errorText: 'Optional',
                 ),
                 HTextField(
                   label: 'Label with obscure text',
@@ -34,6 +35,7 @@ class _TextinputfieldScreenState extends State<TextinputfieldScreen> {
                   onFieldSubmitted: (p0) {},
                 ),
                 HTextField(
+                  icon: Icon(Symbols.person),
                   label: 'Label w/ trailing widget',
                   hintText: 'Hint Text',
                   trailingWidget: IconButton(
@@ -41,6 +43,19 @@ class _TextinputfieldScreenState extends State<TextinputfieldScreen> {
                     icon: Icon(Symbols.date_range),
                   ),
                   onFieldSubmitted: (p0) {},
+                ),
+                HDropDownField(
+                  icon: Icon(Symbols.person),
+                  width: double.infinity,
+                  label: 'Label',
+                  hintText: 'Hint Text',
+                  dropdownMenuEntries: [
+                    DropdownMenuEntry(value: 'Option 1', label: 'Option 1'),
+                    DropdownMenuEntry(value: 'Option 2', label: 'Option 2'),
+                    DropdownMenuEntry(value: 'Option 3', label: 'Option 3'),
+                  ],
+                  initialSelection: 'Option 1',
+                  onSelected: (value) {},
                 ),
               ],
             ),

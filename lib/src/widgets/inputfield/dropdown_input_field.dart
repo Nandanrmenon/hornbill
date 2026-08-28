@@ -14,6 +14,7 @@ class HDropDownField extends StatefulWidget {
   final List<DropdownMenuEntry<String>>? dropdownMenuEntries;
   final String? initialSelection;
   final void Function(String?)? onSelected;
+  final double? width;
   const HDropDownField({
     super.key,
     this.label,
@@ -29,6 +30,7 @@ class HDropDownField extends StatefulWidget {
     this.dropdownMenuEntries,
     this.initialSelection,
     this.onSelected,
+    this.width,
   });
 
   @override
@@ -38,32 +40,26 @@ class HDropDownField extends StatefulWidget {
 class _HDropDownFieldState extends State<HDropDownField> {
   @override
   Widget build(BuildContext context) {
-    final themeColor = Theme.of(context).colorScheme;
-    final themeText = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: .start,
+    // final themeColor = Theme.of(context).colorScheme;
+    // final themeText = Theme.of(context).textTheme;
+    return Row(
+      crossAxisAlignment: .center,
       spacing: widget.icon != null ? 8.0 : 4.0,
       children: [
-        Row(
-          spacing: 4.0,
-          children: [
-            widget.icon ?? const SizedBox.shrink(),
-            Text(
-              widget.label ?? 'Label',
-              style: themeText.labelMedium?.copyWith(
-                color: themeColor.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        DropdownMenu(
-          initialSelection: widget.initialSelection,
-          controller: widget.controller,
-          onSelected: (value) => widget.onSelected,
-          dropdownMenuEntries: widget.dropdownMenuEntries ?? [],
-          focusNode: widget.focusNode,
-          hintText: widget.hintText ?? 'Select an option',
-          keyboardType: widget.keyboardType ?? TextInputType.text,
+        (widget.icon ?? const SizedBox.shrink()),
+        Flexible(
+          child: DropdownMenu(
+            width: widget.width,
+            initialSelection: widget.initialSelection,
+            controller: widget.controller,
+            onSelected: (value) => widget.onSelected,
+            dropdownMenuEntries: widget.dropdownMenuEntries ?? [],
+            focusNode: widget.focusNode,
+            alignmentOffset: const Offset(0, 4),
+            label: Text(widget.label!),
+            hintText: widget.hintText ?? 'Select an option',
+            keyboardType: widget.keyboardType ?? TextInputType.text,
+          ),
         ),
       ],
     );

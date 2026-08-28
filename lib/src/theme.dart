@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/src/helpers/constants.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Preset colour schemes for the Hornbill theme.
 /// Use like `HColourScheme.red`, `HColourScheme.blue`, etc.
@@ -295,11 +295,20 @@ MenuThemeData menuTheme(ColorScheme scheme) {
 MenuStyle menuStyle(ColorScheme scheme) {
   return MenuStyle(
     backgroundColor: WidgetStatePropertyAll(scheme.surfaceContainer),
+    elevation: WidgetStatePropertyAll(0),
     shape: WidgetStatePropertyAll(
       RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(kBorderRadius),
+        side: BorderSide(width: 2, color: scheme.outlineVariant),
+        borderRadius: BorderRadius.circular(kBorderRadiusMedium),
       ),
     ),
+  );
+}
+
+DropdownMenuThemeData dropdownMenuTheme(ColorScheme scheme) {
+  return DropdownMenuThemeData(
+    menuStyle: menuStyle(scheme),
+    inputDecorationTheme: inputDecorationTheme(scheme),
   );
 }
 
@@ -338,32 +347,24 @@ PopupMenuThemeData popupMenuTheme(ColorScheme scheme) {
   );
 }
 
-DropdownMenuThemeData dropdownMenuTheme(ColorScheme scheme) {
-  return DropdownMenuThemeData(
-    menuStyle: menuStyle(scheme),
-    inputDecorationTheme: inputDecorationTheme(scheme),
-  );
-}
-
 InputDecorationTheme inputDecorationTheme(ColorScheme scheme) {
   return InputDecorationTheme(
-    filled: true,
-    border: OutlineInputBorder(borderSide: BorderSide(width: 0)),
+    border: OutlineInputBorder(borderSide: BorderSide(width: 2)),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(kBorderRadius),
-      borderSide: BorderSide(width: 1, color: scheme.outlineVariant),
+      borderRadius: BorderRadius.circular(kBorderRadiusMedium),
+      borderSide: BorderSide(width: 2, color: scheme.outlineVariant),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(kBorderRadius),
-      borderSide: BorderSide(color: scheme.primary, width: 1),
+      borderRadius: BorderRadius.circular(kBorderRadiusMedium),
+      borderSide: BorderSide(color: scheme.primary, width: 2),
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(kBorderRadius),
-      borderSide: BorderSide(color: scheme.error, width: 1),
+      borderRadius: BorderRadius.circular(kBorderRadiusMedium),
+      borderSide: BorderSide(color: scheme.error, width: 2),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(kBorderRadius),
-      borderSide: BorderSide(color: scheme.error, width: 1),
+      borderRadius: BorderRadius.circular(kBorderRadiusMedium),
+      borderSide: BorderSide(color: scheme.error, width: 2),
     ),
   );
 }
