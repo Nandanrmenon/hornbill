@@ -1,3 +1,7 @@
+## 1.5.3
+
+- Revert `HDropDownField` and `HTextField` to use Material 3 styling for better layout management and consistency with the overall design system.
+
 ## 1.5.2
 
 - Fixed all of `HListView` and similar widgets to use `dense` property for better spacing and layout control.
