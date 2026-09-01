@@ -21,4 +21,26 @@ $ flutter pub add hornbill
 
 ### Documentation
 
-The documentation for Hornbill UI is available at [https://hornbill-example.vercel.app/](https://hornbill-example.vercel.app/). It provides detailed information on how to use the various components and features of the package. Remember to check the documentation regularly for updates, breaking changes and new features.
+There are various widget available in this package. Here are some of the widgets available in this package:
+
+- `HAppBar`
+- `HButton`
+- `HIconButton`
+- `HNavigationBar`
+- `HDialog`
+- `HSideBar`
+- `HSideBarItem`
+- `HSideBarAccountTile`
+- `HChip`
+- `HDropDownField`
+- `HTextField`
+- `HToast`
+- `HBreadcrumb`
+- `HListView`
+- `HScaffold`
+- `HCard`
+- `HProgressIndicator`
+- `HSwitch`
+- `HTheme`
+
+You can find the documentation for these widgets in the [example app](https://hornbill-example.vercel.app/) (WIP). The example app is also available in the [GitLab repository](https://gitlab.knoxxbox.in/nahnah/hornbill/-/tree/main/example).

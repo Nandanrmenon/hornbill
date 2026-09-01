@@ -1,3 +1,6 @@
+## 1.5.5
+- Fixed width isues with `HDropDownField` with added in a parent widget.  
+
 ## 1.5.4
 
 - Added `HBreadcrumb` widget for displaying breadcrumb navigation.
