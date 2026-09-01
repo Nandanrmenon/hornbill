@@ -14,7 +14,8 @@ class HDropDownField extends StatefulWidget {
   final List<DropdownMenuEntry<String>>? dropdownMenuEntries;
   final String? initialSelection;
   final void Function(String?)? onSelected;
-  final double? width;
+  final double? width; // still honored if explicitly provided
+
   const HDropDownField({
     super.key,
     this.label,
@@ -40,25 +41,31 @@ class HDropDownField extends StatefulWidget {
 class _HDropDownFieldState extends State<HDropDownField> {
   @override
   Widget build(BuildContext context) {
-    // final themeColor = Theme.of(context).colorScheme;
-    // final themeText = Theme.of(context).textTheme;
     return Row(
-      crossAxisAlignment: .center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       spacing: widget.icon != null ? 8.0 : 4.0,
       children: [
-        (widget.icon ?? const SizedBox.shrink()),
+        widget.icon ?? const SizedBox.shrink(),
         Flexible(
-          child: DropdownMenu(
-            width: widget.width,
-            initialSelection: widget.initialSelection,
-            controller: widget.controller,
-            onSelected: (value) => widget.onSelected,
-            dropdownMenuEntries: widget.dropdownMenuEntries ?? [],
-            focusNode: widget.focusNode,
-            alignmentOffset: const Offset(0, 4),
-            label: Text(widget.label!),
-            hintText: widget.hintText ?? 'Select an option',
-            keyboardType: widget.keyboardType ?? TextInputType.text,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Use explicit width if given, otherwise fall back to
+              // the real, finite width the Flexible/Expanded gave us.
+              final effectiveWidth = widget.width ?? constraints.maxWidth;
+
+              return DropdownMenu<String>(
+                width: effectiveWidth,
+                initialSelection: widget.initialSelection,
+                controller: widget.controller,
+                onSelected: widget.onSelected, // see fix #2 below
+                dropdownMenuEntries: widget.dropdownMenuEntries ?? [],
+                focusNode: widget.focusNode,
+                alignmentOffset: const Offset(0, 4),
+                label: widget.label != null ? Text(widget.label!) : null,
+                hintText: widget.hintText ?? 'Select an option',
+                keyboardType: widget.keyboardType ?? TextInputType.text,
+              );
+            },
           ),
         ),
       ],
