@@ -9,7 +9,6 @@ class CardsScreen extends StatefulWidget {
 }
 
 class _CardsScreenState extends State<CardsScreen> {
-  final int _index = 0;
   @override
   Widget build(BuildContext context) {
     return HScaffold(

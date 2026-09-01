@@ -240,8 +240,6 @@ class _ColourSchemePicker extends StatelessWidget {
 }
 
 class _ExampleWidgets extends StatefulWidget {
-  const _ExampleWidgets({super.key});
-
   @override
   State<_ExampleWidgets> createState() => _ExampleWidgetsState();
 }
