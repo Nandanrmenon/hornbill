@@ -53,8 +53,6 @@ class HTextField extends StatefulWidget {
 class _HTextFieldState extends State<HTextField> {
   @override
   Widget build(BuildContext context) {
-    final themeColor = Theme.of(context).colorScheme;
-    final themeText = Theme.of(context).textTheme;
     return Row(
       crossAxisAlignment: .center,
       spacing: widget.icon != null ? 8.0 : 4.0,
