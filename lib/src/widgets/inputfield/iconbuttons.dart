@@ -72,12 +72,18 @@ class HIconButton extends StatefulWidget {
 
 class _HIconButtonState extends State<HIconButton> {
   bool _pressed = false;
+  bool _hovered = false;
 
   bool get _enabled => widget.onPressed != null;
 
   void _setPressed(bool value) {
     if (!_enabled) return;
     setState(() => _pressed = value);
+  }
+
+  void _setHovered(bool value) {
+    if (!_enabled) return;
+    setState(() => _hovered = value);
   }
 
   // ---- Style resolution per variant ----
@@ -98,15 +104,28 @@ class _HIconButtonState extends State<HIconButton> {
           return Colors.transparent;
       }
     }
+
+    final Color resting;
     switch (widget._variant) {
       case _HIconButtonVariant.filled:
-        return _baseColor;
+        resting = _baseColor;
       case _HIconButtonVariant.tonal:
-        return _baseColor.withValues(alpha: 0.12);
+        resting = _baseColor.withValues(alpha: 0.12);
       case _HIconButtonVariant.outlined:
       case _HIconButtonVariant.text:
-        return Colors.transparent;
+        resting = Colors.transparent;
     }
+
+    if (!_hovered) return resting;
+
+    // Hover state layer, same approach as HButton: blend a low-alpha
+    // wash of the foreground color over the resting background so
+    // filled/tonal darken slightly and outlined/text (which rest fully
+    // transparent) pick up a faint tint instead of no feedback at all.
+    final overlay = _fgColor.withValues(alpha: 0.08);
+    return resting == Colors.transparent
+        ? overlay
+        : Color.alphaBlend(overlay, resting);
   }
 
   Color get _fgColor {
@@ -134,29 +153,34 @@ class _HIconButtonState extends State<HIconButton> {
 
   @override
   Widget build(BuildContext context) {
-    final button = GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTapDown: (_) => _setPressed(true),
-      onTapUp: (_) => _setPressed(false),
-      onTapCancel: () => _setPressed(false),
-      onTap: widget.onPressed,
-      child: AnimatedScale(
-        scale: _pressed ? 0.92 : 1.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOut,
-        child: SizedBox(
-          width: widget.size,
-          height: widget.size,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            curve: Curves.easeOut,
-            decoration: BoxDecoration(
-              color: _backgroundColor,
-              borderRadius: BorderRadius.circular(kBorderRadiusRounded),
-              border: _border,
+    final button = MouseRegion(
+      cursor: _enabled ? SystemMouseCursors.click : MouseCursor.defer,
+      onEnter: (_) => _setHovered(true),
+      onExit: (_) => _setHovered(false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (_) => _setPressed(true),
+        onTapUp: (_) => _setPressed(false),
+        onTapCancel: () => _setPressed(false),
+        onTap: widget.onPressed,
+        child: AnimatedScale(
+          scale: _pressed ? 0.92 : 1.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeOut,
+          child: SizedBox(
+            width: widget.size,
+            height: widget.size,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOut,
+              decoration: BoxDecoration(
+                color: _backgroundColor,
+                borderRadius: BorderRadius.circular(kBorderRadiusRounded),
+                border: _border,
+              ),
+              alignment: Alignment.center,
+              child: Icon(widget.icon, size: widget.iconSize, color: _fgColor),
             ),
-            alignment: Alignment.center,
-            child: Icon(widget.icon, size: widget.iconSize, color: _fgColor),
           ),
         ),
       ),
