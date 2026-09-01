@@ -1,3 +1,9 @@
+## 1.6.0
+
+- Added different styles for `HCard` widget, `HElevatedCard`, `HFilledCard`, `HGradientCard` and `HStatusCard`.
+- Re-wrote `HDataTable` for better UX, with resizing option.
+- Fixed `HButton`, `HIconButton` and `HSideBarItem` to use onHover animation for better user experience.
+
 ## 1.5.6
 
 - Remove unnecessary themeColor and themeText variables in `HTextField` widget for cleaner code.
