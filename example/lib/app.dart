@@ -1,6 +1,7 @@
 import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/screens/breadcrumbs_screen.dart';
 import 'package:hornbill_example/screens/buttons_screen.dart';
+import 'package:hornbill_example/screens/cards_screen.dart';
 import 'package:hornbill_example/screens/chips_screen.dart';
 import 'package:hornbill_example/screens/datatable_screen.dart';
 import 'package:hornbill_example/screens/dialog_screen.dart';
@@ -122,6 +123,12 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         label: 'Data Presentation',
         initiallyExpanded: true,
         children: [
+          HSideBarItem(
+            label: 'Cards',
+            icon: Symbols.credit_card_rounded,
+            selected: _activeScreenKey == 'cards',
+            onTap: () => _selectScreen('cards'),
+          ),
           HSideBarItem(
             icon: Symbols.event_list_rounded,
             label: 'List View',
@@ -316,6 +323,16 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             HListView(
               items: [
                 HListItemData(
+                  title: const Text('Cards'),
+                  leading: const Icon(Symbols.credit_card_rounded),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CardsScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
                   leading: const Icon(Symbols.event_list_rounded),
                   title: const Text('List View'),
                   onTap: () => Navigator.push(
@@ -401,6 +418,8 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         return const ProgressIndicatorScreen();
       case 'breadcrumbs':
         return const BreadcrumbsScreen();
+      case 'cards':
+        return const CardsScreen();
       default:
         return ThemeScreen(themeController: widget.themeController);
     }
