@@ -306,6 +306,7 @@ class _HSideBarItemState extends State<HSideBarItem> {
   bool _hoveringFlyout = false;
 
   bool _pressed = false;
+  bool _hovered = false;
 
   bool get _isGroup => widget.children != null && widget.children!.isNotEmpty;
 
@@ -405,6 +406,10 @@ class _HSideBarItemState extends State<HSideBarItem> {
     setState(() => _pressed = value);
   }
 
+  void _setHovered(bool value) {
+    setState(() => _hovered = value);
+  }
+
   @override
   void didUpdateWidget(covariant HSideBarItem oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -433,6 +438,19 @@ class _HSideBarItemState extends State<HSideBarItem> {
     final collapsed = widget.collapsed;
     final canTap = widget.onTap != null || (_isGroup && !collapsed);
 
+    // Background: selected wins; otherwise a subtle surface tint on
+    // hover so tappable rows visibly react before the press animation
+    // kicks in — without this, nothing changes until the user is
+    // already pressing down, which reads as "not clickable".
+    final Color backgroundColor;
+    if (widget.selected) {
+      backgroundColor = activeBg;
+    } else if (canTap && _hovered) {
+      backgroundColor = theme.colorScheme.onSurface.withValues(alpha: 0.06);
+    } else {
+      backgroundColor = Colors.transparent;
+    }
+
     final trailingWidget = collapsed
         ? null
         : _isGroup
@@ -443,83 +461,94 @@ class _HSideBarItemState extends State<HSideBarItem> {
           )
         : widget.trailing;
 
-    final tile = GestureDetector(
-      onTapDown: (_) => _setPressed(true),
-      onTapUp: (_) => _setPressed(false),
-      onTapCancel: () => _setPressed(false),
-      onTap: canTap ? _handleTap : null,
-      child: Material(
-        color: widget.selected ? activeBg : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-        child: AnimatedScale(
-          scale: _pressed ? 0.96 : 1.0,
-          duration: const Duration(milliseconds: 100),
+    final tile = MouseRegion(
+      cursor: canTap ? SystemMouseCursors.click : MouseCursor.defer,
+      onEnter: canTap ? (_) => _setHovered(true) : null,
+      onExit: canTap ? (_) => _setHovered(false) : null,
+      child: GestureDetector(
+        onTapDown: (_) => _setPressed(true),
+        onTapUp: (_) => _setPressed(false),
+        onTapCancel: () => _setPressed(false),
+        onTap: canTap ? _handleTap : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
           curve: Curves.easeOut,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: AnimatedScale(
+            scale: _pressed ? 0.96 : 1.0,
+            duration: const Duration(milliseconds: 100),
             curve: Curves.easeOut,
-            padding: collapsed
-                ? const EdgeInsets.symmetric(vertical: 14)
-                : const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: collapsed
-                ? Center(
-                    child: widget.icon != null
-                        ? Icon(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOut,
+              padding: collapsed
+                  ? const EdgeInsets.symmetric(vertical: 14)
+                  : const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: collapsed
+                  ? Center(
+                      child: widget.icon != null
+                          ? Icon(
+                              widget.icon,
+                              size: 22,
+                              fill: widget.selected ? 1 : 0,
+                              color: widget.selected
+                                  ? activeColor
+                                  : theme.iconTheme.color?.withValues(
+                                      alpha: 0.7,
+                                    ),
+                            )
+                          : Text(
+                              widget.label.isNotEmpty
+                                  ? widget.label[0].toUpperCase()
+                                  : '',
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: widget.selected
+                                    ? activeColor
+                                    : theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                    )
+                  : Row(
+                      children: [
+                        if (widget.icon != null) ...[
+                          Icon(
                             widget.icon,
-                            size: 22,
+                            size: 20,
                             fill: widget.selected ? 1 : 0,
                             color: widget.selected
                                 ? activeColor
                                 : theme.iconTheme.color?.withValues(alpha: 0.7),
-                          )
-                        : Text(
-                            widget.label.isNotEmpty
-                                ? widget.label[0].toUpperCase()
-                                : '',
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: widget.selected
-                                  ? activeColor
-                                  : theme.colorScheme.onSurfaceVariant,
-                            ),
                           ),
-                  )
-                : Row(
-                    children: [
-                      if (widget.icon != null) ...[
-                        Icon(
-                          widget.icon,
-                          size: 20,
-                          fill: widget.selected ? 1 : 0,
-                          color: widget.selected
-                              ? activeColor
-                              : theme.iconTheme.color?.withValues(alpha: 0.7),
-                        ),
-                        const SizedBox(width: 12),
-                      ],
-                      Expanded(
-                        child:
-                            Text(
-                              widget.label,
-                              maxLines: 1,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: widget.selected
-                                    ? activeColor
-                                    : theme.colorScheme.onSurfaceVariant,
-                                fontWeight: widget.selected
-                                    ? FontWeight.w500
-                                    : FontWeight.w300,
+                          const SizedBox(width: 12),
+                        ],
+                        Expanded(
+                          child:
+                              Text(
+                                widget.label,
+                                maxLines: 1,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: widget.selected
+                                      ? activeColor
+                                      : theme.colorScheme.onSurfaceVariant,
+                                  fontWeight: widget.selected
+                                      ? FontWeight.w500
+                                      : FontWeight.w300,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ).animate().slide(
+                                duration: const Duration(milliseconds: 200),
+                                begin: const Offset(-0.1, 0),
+                                end: const Offset(0, 0),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ).animate().slide(
-                              duration: const Duration(milliseconds: 200),
-                              begin: const Offset(-0.1, 0),
-                              end: const Offset(0, 0),
-                            ),
-                      ),
-                      ?trailingWidget,
-                    ],
-                  ),
+                        ),
+                        ?trailingWidget,
+                      ],
+                    ),
+            ),
           ),
         ),
       ),
@@ -672,8 +701,10 @@ class HSideBarAccountTile extends StatefulWidget {
 
 class _HSideBarAccountTileState extends State<HSideBarAccountTile> {
   bool _pressed = false;
+  bool _hovered = false;
 
   void _setPressed(bool value) => setState(() => _pressed = value);
+  void _setHovered(bool value) => setState(() => _hovered = value);
 
   Widget _buildAvatar(ThemeData theme, {double size = 32}) {
     if (widget.avatar != null) return widget.avatar!;
@@ -832,60 +863,73 @@ class _HSideBarAccountTileState extends State<HSideBarAccountTile> {
     final theme = Theme.of(context);
     final collapsed = widget.collapsed;
 
-    final tile = GestureDetector(
-      onTapDown: (_) => _setPressed(true),
-      onTapUp: (_) => _setPressed(false),
-      onTapCancel: () => _setPressed(false),
-      onTap: () => _openMenu(context),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-        child: AnimatedScale(
-          scale: _pressed ? 0.96 : 1.0,
-          duration: const Duration(milliseconds: 100),
+    final backgroundColor = _hovered
+        ? theme.colorScheme.onSurface.withValues(alpha: 0.06)
+        : Colors.transparent;
+
+    final tile = MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => _setHovered(true),
+      onExit: (_) => _setHovered(false),
+      child: GestureDetector(
+        onTapDown: (_) => _setPressed(true),
+        onTapUp: (_) => _setPressed(false),
+        onTapCancel: () => _setPressed(false),
+        onTap: () => _openMenu(context),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
           curve: Curves.easeOut,
-          child: Padding(
-            padding: collapsed
-                ? const EdgeInsets.symmetric(vertical: 10)
-                : const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: collapsed
-                ? Center(child: _buildAvatar(theme))
-                : Row(
-                    children: [
-                      _buildAvatar(theme),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              widget.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            if (widget.subtitle != null)
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: AnimatedScale(
+            scale: _pressed ? 0.96 : 1.0,
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeOut,
+            child: Padding(
+              padding: collapsed
+                  ? const EdgeInsets.symmetric(vertical: 10)
+                  : const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: collapsed
+                  ? Center(child: _buildAvatar(theme))
+                  : Row(
+                      children: [
+                        _buildAvatar(theme),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
                               Text(
-                                widget.subtitle!,
+                                widget.title,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurfaceVariant,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                          ],
+                              if (widget.subtitle != null)
+                                Text(
+                                  widget.subtitle!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Icon(
-                        Symbols.unfold_more_rounded,
-                        size: 18,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ],
-                  ),
+                        Icon(
+                          Symbols.unfold_more_rounded,
+                          size: 18,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ),
