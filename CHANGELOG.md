@@ -1,5 +1,10 @@
+## 1.5.6
+
+- Remove unnecessary themeColor and themeText variables in `HTextField` widget for cleaner code.
+
 ## 1.5.5
-- Fixed width isues with `HDropDownField` with added in a parent widget.  
+
+- Fixed width isues with `HDropDownField` with added in a parent widget.
 
 ## 1.5.4
 
