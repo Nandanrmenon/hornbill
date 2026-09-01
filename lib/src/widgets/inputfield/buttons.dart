@@ -109,12 +109,18 @@ class HButton extends StatefulWidget {
 
 class _HButtonState extends State<HButton> {
   bool _pressed = false;
+  bool _hovered = false;
 
   bool get _enabled => widget.onPressed != null;
 
   void _setPressed(bool value) {
     if (!_enabled) return;
     setState(() => _pressed = value);
+  }
+
+  void _setHovered(bool value) {
+    if (!_enabled) return;
+    setState(() => _hovered = value);
   }
 
   // ---- Adaptive height calculation (32 for desktop, 44 for mobile) ----
@@ -145,15 +151,29 @@ class _HButtonState extends State<HButton> {
           return Colors.transparent;
       }
     }
+
+    final Color resting;
     switch (widget._variant) {
       case _HButtonVariant.filled:
-        return _baseColor;
+        resting = _baseColor;
       case _HButtonVariant.tonal:
-        return _baseColor.withValues(alpha: 0.12);
+        resting = _baseColor.withValues(alpha: 0.12);
       case _HButtonVariant.outlined:
       case _HButtonVariant.text:
-        return Colors.transparent;
+        resting = Colors.transparent;
     }
+
+    if (!_hovered) return resting;
+
+    // Hover state: blend a low-alpha layer of the foreground color over
+    // the resting background — the same "state layer" approach Material
+    // buttons use, so filled/tonal darken slightly and outlined/text
+    // (which rest fully transparent) pick up a faint tint instead of
+    // staying visually dead until the user actually presses.
+    final overlay = _fgColor.withValues(alpha: 0.08);
+    return resting == Colors.transparent
+        ? overlay
+        : Color.alphaBlend(overlay, resting);
   }
 
   Color get _fgColor {
@@ -207,35 +227,40 @@ class _HButtonState extends State<HButton> {
       ],
     ];
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTapDown: (_) => _setPressed(true),
-      onTapUp: (_) => _setPressed(false),
-      onTapCancel: () => _setPressed(false),
-      onTap: widget.onPressed,
-      child: AnimatedScale(
-        scale: _pressed ? 0.96 : 1.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOut,
-        child: SizedBox(
-          width: widget.width,
-          height: _resolvedHeight,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            curve: Curves.easeOut,
-            padding: widget.padding,
-            decoration: BoxDecoration(
-              color: _backgroundColor,
-              borderRadius: BorderRadius.circular(kBorderRadiusMedium),
-              border: _border,
-            ),
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisSize: widget.width != null
-                  ? MainAxisSize.max
-                  : MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: children,
+    return MouseRegion(
+      cursor: _enabled ? SystemMouseCursors.click : MouseCursor.defer,
+      onEnter: (_) => _setHovered(true),
+      onExit: (_) => _setHovered(false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (_) => _setPressed(true),
+        onTapUp: (_) => _setPressed(false),
+        onTapCancel: () => _setPressed(false),
+        onTap: widget.onPressed,
+        child: AnimatedScale(
+          scale: _pressed ? 0.96 : 1.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeOut,
+          child: SizedBox(
+            width: widget.width,
+            height: _resolvedHeight,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOut,
+              padding: widget.padding,
+              decoration: BoxDecoration(
+                color: _backgroundColor,
+                borderRadius: BorderRadius.circular(kBorderRadiusMedium),
+                border: _border,
+              ),
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisSize: widget.width != null
+                    ? MainAxisSize.max
+                    : MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: children,
+              ),
             ),
           ),
         ),
