@@ -124,6 +124,8 @@ class HDataTable extends StatefulWidget {
     this.headingRowColor,
     this.rowHeight = 44,
     this.headingRowHeight = 48,
+    this.headerRowHeight,
+    this.footerRowHeight,
     this.columnSpacing = 16,
     this.showColumnDividers = true,
     this.showRowDividers = true,
@@ -160,10 +162,14 @@ class HDataTable extends StatefulWidget {
   final void Function(int columnIndex, bool ascending)? onSort;
 
   /// Extra row rendered first, above the data rows but below the sticky
-  /// header — e.g. a summary/subtitle row. Not sticky itself.
+  /// header — e.g. a summary/subtitle row. Not sticky itself. Its height
+  /// is [headerRowHeight] (falling back to [rowHeight]), independent of
+  /// the data rows' height.
   final HDataRow? header;
 
-  /// Extra row rendered last, below the data rows.
+  /// Extra row rendered last, below the data rows. Its height is
+  /// [footerRowHeight] (falling back to [rowHeight]), independent of the
+  /// data rows' height.
   final HDataRow? footer;
 
   final Color? oddRowColor;
@@ -172,8 +178,20 @@ class HDataTable extends StatefulWidget {
   final Color? hoverRowColor;
   final Color? headingRowColor;
 
+  /// Height of each row in [rows]. Does not affect [header], [footer],
+  /// or the sticky column-title row — see [headerRowHeight],
+  /// [footerRowHeight], and [headingRowHeight].
   final double rowHeight;
+
+  /// Height of the sticky column-title row.
   final double headingRowHeight;
+
+  /// Height of [header]. Defaults to [rowHeight] when null.
+  final double? headerRowHeight;
+
+  /// Height of [footer]. Defaults to [rowHeight] when null.
+  final double? footerRowHeight;
+
   final double columnSpacing;
 
   /// Draws a vertical line between columns (and after the checkbox
@@ -272,13 +290,6 @@ class _HDataTableState extends State<HDataTable> {
     final resolvedDivider =
         widget.dividerColor ?? theme.colorScheme.outlineVariant;
 
-    final extraRows = <HDataRow>[
-      if (widget.header != null) widget.header!,
-      ...widget.rows,
-      if (widget.footer != null) widget.footer!,
-    ];
-    final headerOffset = widget.header != null ? 1 : 0;
-
     Widget body;
     if (widget.loading) {
       body = const SizedBox.expand(
@@ -349,30 +360,40 @@ class _HDataTableState extends State<HDataTable> {
                           ),
                         ),
                       ),
+                      if (widget.header != null)
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: widget.headerRowHeight ?? widget.rowHeight,
+                            child: _HDataTableRow(
+                              row: widget.header!,
+                              columns: widget.columns,
+                              columnWidths: _columnWidths,
+                              columnSpacing: widget.columnSpacing,
+                              showCheckboxColumn: widget.showCheckboxColumn,
+                              checkboxColumnWidth: widget.checkboxColumnWidth,
+                              showColumnDividers: widget.showColumnDividers,
+                              showRowDivider: widget.showRowDividers,
+                              dividerColor: resolvedDivider,
+                              background: widget.header!.color ?? resolvedEven,
+                              hoverable: false,
+                              onHoverChanged: (_) {},
+                            ),
+                          ),
+                        ),
                       SliverFixedExtentList(
                         itemExtent: widget.rowHeight,
                         delegate: SliverChildBuilderDelegate((context, index) {
-                          final row = extraRows[index];
-                          final isHeaderRow =
-                              widget.header != null && index == 0;
-                          final isFooterRow =
-                              widget.footer != null &&
-                              index == extraRows.length - 1;
-                          final dataIndex = index - headerOffset;
+                          final row = widget.rows[index];
 
                           final Color background;
                           if (row.selected) {
                             background = resolvedSelected;
-                          } else if (!isHeaderRow &&
-                              !isFooterRow &&
-                              _hoveredRowIndex == dataIndex) {
+                          } else if (_hoveredRowIndex == index) {
                             background = resolvedHover;
                           } else if (row.color != null) {
                             background = row.color!;
-                          } else if (isHeaderRow || isFooterRow) {
-                            background = resolvedEven;
                           } else {
-                            background = dataIndex.isEven
+                            background = index.isEven
                                 ? resolvedEven
                                 : resolvedOdd;
                           }
@@ -388,19 +409,39 @@ class _HDataTableState extends State<HDataTable> {
                             showRowDivider: widget.showRowDividers,
                             dividerColor: resolvedDivider,
                             background: background,
-                            hoverable: !isHeaderRow && !isFooterRow,
+                            hoverable: true,
                             onHoverChanged: (hovering) {
                               setState(() {
                                 _hoveredRowIndex = hovering
-                                    ? dataIndex
-                                    : (_hoveredRowIndex == dataIndex
+                                    ? index
+                                    : (_hoveredRowIndex == index
                                           ? null
                                           : _hoveredRowIndex);
                               });
                             },
                           );
-                        }, childCount: extraRows.length),
+                        }, childCount: widget.rows.length),
                       ),
+                      if (widget.footer != null)
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: widget.footerRowHeight ?? widget.rowHeight,
+                            child: _HDataTableRow(
+                              row: widget.footer!,
+                              columns: widget.columns,
+                              columnWidths: _columnWidths,
+                              columnSpacing: widget.columnSpacing,
+                              showCheckboxColumn: widget.showCheckboxColumn,
+                              checkboxColumnWidth: widget.checkboxColumnWidth,
+                              showColumnDividers: widget.showColumnDividers,
+                              showRowDivider: widget.showRowDividers,
+                              dividerColor: resolvedDivider,
+                              background: widget.footer!.color ?? resolvedEven,
+                              hoverable: false,
+                              onHoverChanged: (_) {},
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
