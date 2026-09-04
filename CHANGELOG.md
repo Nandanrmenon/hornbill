@@ -1,3 +1,7 @@
+## 1.6.1
+
+- Added headerRowHeight & footerRowHeight for HDataTable
+
 ## 1.6.0
 
 - Added different styles for `HCard` widget, `HElevatedCard`, `HFilledCard`, `HGradientCard` and `HStatusCard`.
