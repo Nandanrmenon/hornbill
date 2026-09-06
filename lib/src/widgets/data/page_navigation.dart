@@ -1,5 +1,6 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:hornbill/src/theme.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:material_ui/material_ui.dart';
 
 class HPageNavigation extends StatefulWidget {
   final int pageNr;
@@ -45,11 +46,13 @@ class _HPageNavigationState extends State<HPageNavigation> {
           : Theme.of(context).colorScheme.surfaceContainer,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(999),
-        side: BorderSide(
-          color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.outlineVariant,
-        ),
+        side: hIsOutlined(context)
+            ? BorderSide(
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.outlineVariant,
+              )
+            : BorderSide.none,
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(

@@ -50,12 +50,14 @@ class HTheme {
     this.dynamicSchemeVariant = DynamicSchemeVariant.tonalSpot,
     this.appBarFontFamily,
     this.fontFamily,
+    this.outlined = true,
   });
 
   final HColourScheme colourScheme;
   final DynamicSchemeVariant dynamicSchemeVariant;
   final String? appBarFontFamily;
   final String? fontFamily;
+  final bool outlined;
 
   ThemeData lightTheme() => _buildTheme(Brightness.light);
 
@@ -106,29 +108,59 @@ class HTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
+      extensions: [HThemeExtension(outlined: outlined)],
       fontFamily: fontFamily,
       splashFactory: NoSplash.splashFactory,
       pageTransitionsTheme: pageTransitionTheme(),
-      appBarTheme: appBarTheme(colorScheme, fontFamily: appBarFontFamily),
-      cardTheme: cardTheme(colorScheme),
+      appBarTheme: appBarTheme(
+        colorScheme,
+        fontFamily: appBarFontFamily,
+        outlined: outlined,
+      ),
+      cardTheme: cardTheme(colorScheme, outlined: outlined),
       filledButtonTheme: filledButtonTheme(colorScheme),
       outlinedButtonTheme: outlinedButtonTheme(colorScheme),
       iconButtonTheme: iconButtonTheme(colorScheme),
       segmentedButtonTheme: segmentedButtonTheme(colorScheme),
       switchTheme: switchTheme(colorScheme),
-      menuTheme: menuTheme(colorScheme),
+      menuTheme: menuTheme(colorScheme, outlined: outlined),
       navigationBarTheme: navigationBarTheme(colorScheme),
       navigationRailTheme: navigationRailTheme(colorScheme),
-      popupMenuTheme: popupMenuTheme(colorScheme),
-      dropdownMenuTheme: dropdownMenuTheme(colorScheme),
+      popupMenuTheme: popupMenuTheme(colorScheme, outlined: outlined),
+      dropdownMenuTheme: dropdownMenuTheme(colorScheme, outlined: outlined),
       inputDecorationTheme: inputDecorationTheme(colorScheme),
       bottomSheetTheme: bottomSheetTheme(colorScheme),
-      dialogTheme: dialogTheme(colorScheme),
+      dialogTheme: dialogTheme(colorScheme, outlined: outlined),
       checkboxTheme: checkboxTheme(colorScheme),
-      searchBarTheme: searchBarTheme(colorScheme),
+      searchBarTheme: searchBarTheme(colorScheme, outlined: outlined),
       listTileTheme: listTileTheme(colorScheme),
     );
   }
+}
+
+class HThemeExtension extends ThemeExtension<HThemeExtension> {
+  const HThemeExtension({this.outlined = true});
+
+  final bool outlined;
+
+  @override
+  HThemeExtension copyWith({bool? outlined}) {
+    return HThemeExtension(outlined: outlined ?? this.outlined);
+  }
+
+  @override
+  HThemeExtension lerp(ThemeExtension<HThemeExtension>? other, double t) {
+    final otherOutlined = other is HThemeExtension ? other.outlined : outlined;
+    return HThemeExtension(outlined: t < 0.5 ? outlined : otherOutlined);
+  }
+}
+
+bool hIsOutlined(BuildContext context) {
+  final extension = Theme.of(context).extension<HThemeExtension>();
+  if (extension is HThemeExtension) {
+    return extension.outlined;
+  }
+  return true;
 }
 
 PageTransitionsTheme pageTransitionTheme() {
@@ -143,7 +175,11 @@ PageTransitionsTheme pageTransitionTheme() {
   );
 }
 
-AppBarTheme appBarTheme(ColorScheme scheme, {String? fontFamily}) {
+AppBarTheme appBarTheme(
+  ColorScheme scheme, {
+  String? fontFamily,
+  bool outlined = true,
+}) {
   return AppBarTheme(
     centerTitle: false,
     scrolledUnderElevation: 0,
@@ -157,13 +193,15 @@ AppBarTheme appBarTheme(ColorScheme scheme, {String? fontFamily}) {
   );
 }
 
-CardThemeData cardTheme(ColorScheme scheme) {
+CardThemeData cardTheme(ColorScheme scheme, {bool outlined = true}) {
   return CardThemeData(
     elevation: 0,
     color: scheme.surfaceContainer,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(24),
-      side: BorderSide(width: 2, color: scheme.outlineVariant, strokeAlign: 0),
+      side: outlined
+          ? BorderSide(width: 2, color: scheme.outlineVariant, strokeAlign: 0)
+          : BorderSide.none,
     ),
   );
 }
@@ -288,26 +326,31 @@ SwitchThemeData switchTheme(ColorScheme scheme) {
   );
 }
 
-MenuThemeData menuTheme(ColorScheme scheme) {
-  return MenuThemeData(style: menuStyle(scheme));
+MenuThemeData menuTheme(ColorScheme scheme, {bool outlined = true}) {
+  return MenuThemeData(style: menuStyle(scheme, outlined: outlined));
 }
 
-MenuStyle menuStyle(ColorScheme scheme) {
+MenuStyle menuStyle(ColorScheme scheme, {bool outlined = true}) {
   return MenuStyle(
     backgroundColor: WidgetStatePropertyAll(scheme.surfaceContainer),
     elevation: WidgetStatePropertyAll(0),
     shape: WidgetStatePropertyAll(
       RoundedRectangleBorder(
-        side: BorderSide(width: 2, color: scheme.outlineVariant),
+        side: outlined
+            ? BorderSide(width: 2, color: scheme.outlineVariant)
+            : BorderSide.none,
         borderRadius: BorderRadius.circular(kBorderRadiusMedium),
       ),
     ),
   );
 }
 
-DropdownMenuThemeData dropdownMenuTheme(ColorScheme scheme) {
+DropdownMenuThemeData dropdownMenuTheme(
+  ColorScheme scheme, {
+  bool outlined = true,
+}) {
   return DropdownMenuThemeData(
-    menuStyle: menuStyle(scheme),
+    menuStyle: menuStyle(scheme, outlined: outlined),
     inputDecorationTheme: inputDecorationTheme(scheme),
   );
 }
@@ -337,12 +380,15 @@ NavigationRailThemeData navigationRailTheme(ColorScheme scheme) {
   );
 }
 
-PopupMenuThemeData popupMenuTheme(ColorScheme scheme) {
+PopupMenuThemeData popupMenuTheme(ColorScheme scheme, {bool outlined = true}) {
   return PopupMenuThemeData(
     elevation: 1,
     color: scheme.surfaceContainerHighest,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(kBorderRadius),
+      side: outlined
+          ? BorderSide(color: scheme.outlineVariant)
+          : BorderSide.none,
     ),
   );
 }
@@ -378,7 +424,7 @@ BottomSheetThemeData bottomSheetTheme(ColorScheme scheme) {
   );
 }
 
-DialogThemeData dialogTheme(ColorScheme scheme) {
+DialogThemeData dialogTheme(ColorScheme scheme, {bool outlined = true}) {
   return DialogThemeData(
     backgroundColor: scheme.surfaceContainer,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -408,16 +454,14 @@ CheckboxThemeData checkboxTheme(ColorScheme scheme) {
   );
 }
 
-SearchBarThemeData searchBarTheme(ColorScheme scheme) {
+SearchBarThemeData searchBarTheme(ColorScheme scheme, {bool outlined = true}) {
   return SearchBarThemeData(
     shape: WidgetStatePropertyAll(
       RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(kBorderRadiusRounded),
-        side: BorderSide(
-          width: 1,
-          color: scheme.outlineVariant,
-          strokeAlign: 0,
-        ),
+        side: outlined
+            ? BorderSide(width: 1, color: scheme.outlineVariant, strokeAlign: 0)
+            : BorderSide.none,
       ),
     ),
     backgroundColor: WidgetStatePropertyAll(scheme.surfaceContainer),

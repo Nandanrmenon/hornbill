@@ -1,6 +1,7 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/src/helpers/constants.dart';
+import 'package:hornbill/src/theme.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:material_ui/material_ui.dart';
 
 class HSwitch extends StatefulWidget {
   final bool value;
@@ -92,9 +93,11 @@ class _HSwitchState extends State<HSwitch> {
             //     ? Theme.of(context).colorScheme.primary
             //     : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38),
             color: Theme.of(context).colorScheme.surfaceContainer,
-            border: Border.all(
-              color: Theme.of(context).colorScheme.outlineVariant,
-            ),
+            border: hIsOutlined(context)
+                ? Border.all(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  )
+                : null,
             borderRadius: BorderRadius.circular(kBorderRadius),
           ),
           child: AnimatedAlign(

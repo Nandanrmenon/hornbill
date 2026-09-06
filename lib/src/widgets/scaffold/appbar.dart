@@ -294,12 +294,14 @@ class _HAppBarState extends State<HAppBar> {
       backgroundColor:
           widget.backgroundColor ??
           Theme.of(context).colorScheme.surfaceContainerLow,
-      shape: Border(
-        bottom: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant,
-          width: 1,
-        ),
-      ),
+      shape: hIsOutlined(context)
+          ? Border(
+              bottom: BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                width: 1,
+              ),
+            )
+          : null,
       elevation: widget.elevation,
       automaticallyImplyLeading: false,
       leading: leading,
@@ -329,12 +331,14 @@ class _HAppBarState extends State<HAppBar> {
           widget.backgroundColor ??
           Theme.of(context).colorScheme.surfaceContainerLow,
       elevation: widget.elevation,
-      shape: Border(
-        bottom: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant,
-          width: 1,
-        ),
-      ),
+      shape: hIsOutlined(context)
+          ? Border(
+              bottom: BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                width: 1,
+              ),
+            )
+          : null,
       // Leave auto-imply on when we're not overriding leading, so the
       // Scaffold's drawer icon still appears when relevant.
       automaticallyImplyLeading: leading == null,

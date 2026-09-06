@@ -420,7 +420,9 @@ class _HToastCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(kBorderRadius),
-          border: Border.all(color: style.color),
+            border: hIsOutlined(context)
+              ? Border.all(color: style.color)
+              : null,
           boxShadow: [
             BoxShadow(
               color: Theme.of(

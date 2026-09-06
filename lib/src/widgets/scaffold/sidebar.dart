@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hornbill/src/helpers/constants.dart';
+import 'package:hornbill/src/theme.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -99,7 +100,11 @@ class _HSideBarState extends State<HSideBar> {
 
     return Material(
       color: widget.backgroundColor ?? theme.colorScheme.surfaceContainerLow,
-      shape: Border(right: BorderSide(color: theme.colorScheme.outlineVariant)),
+      shape: Border(
+        right: hIsOutlined(context)
+        ? BorderSide(color: theme.colorScheme.outlineVariant)
+        : BorderSide.none,
+      ),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
@@ -752,7 +757,9 @@ class _HSideBarAccountTileState extends State<HSideBarAccountTile> {
       constraints: const BoxConstraints(minWidth: 240, maxWidth: 280),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(kBorderRadiusMedium),
-        side: BorderSide(color: theme.colorScheme.outlineVariant),
+        side: hIsOutlined(context)
+          ? BorderSide(color: theme.colorScheme.outlineVariant)
+          : BorderSide.none,
       ),
       color: theme.colorScheme.surfaceContainerLowest,
       items: [

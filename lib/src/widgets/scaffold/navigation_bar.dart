@@ -1,4 +1,5 @@
 import 'package:hornbill/src/helpers/constants.dart';
+import 'package:hornbill/src/theme.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// A single destination in an [HNavigationBar].
@@ -192,7 +193,9 @@ class _HNavigationBarState extends State<HNavigationBar> {
               Material(
                 color: bgColor,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(color: borderColor),
+                    side: hIsOutlined(context)
+                      ? BorderSide(color: borderColor)
+                      : BorderSide.none,
                   borderRadius: radius,
                 ),
                 elevation: widget.elevation,

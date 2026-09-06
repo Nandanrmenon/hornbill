@@ -1,3 +1,4 @@
+import 'package:hornbill/src/theme.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// ---------------------------------------------------------------------
@@ -75,10 +76,14 @@ class HCard extends StatelessWidget {
       color: selected ? colorScheme.primaryContainer : colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: radius,
-        side: BorderSide(
-          color: selected ? colorScheme.primary : colorScheme.outlineVariant,
-          width: selected ? 1.5 : 1,
-        ),
+        side: hIsOutlined(context)
+            ? BorderSide(
+                color: selected
+                    ? colorScheme.primary
+                    : colorScheme.outlineVariant,
+                width: selected ? 1.5 : 1,
+              )
+            : BorderSide.none,
       ),
       child: _interactive(
         onTap: onTap,
@@ -227,14 +232,12 @@ class HGradientCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final radius = BorderRadius.circular(borderRadius);
 
-    final effectiveGradient = gradient ??
+    final effectiveGradient =
+        gradient ??
         LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colorScheme.primaryContainer,
-            colorScheme.tertiaryContainer,
-          ],
+          colors: [colorScheme.primaryContainer, colorScheme.tertiaryContainer],
         );
 
     return Container(
@@ -243,7 +246,7 @@ class HGradientCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: radius,
         gradient: effectiveGradient,
-        border: showBorder
+        border: showBorder && hIsOutlined(context)
             ? Border.all(color: colorScheme.outlineVariant)
             : null,
       ),
@@ -324,7 +327,9 @@ class HStatusCard extends StatelessWidget {
       color: accent.withValues(alpha: 0.06),
       shape: RoundedRectangleBorder(
         borderRadius: radius,
-        side: BorderSide(color: accent.withValues(alpha: 0.35)),
+        side: hIsOutlined(context)
+            ? BorderSide(color: accent.withValues(alpha: 0.35))
+            : BorderSide.none,
       ),
       child: IntrinsicHeight(
         child: Row(

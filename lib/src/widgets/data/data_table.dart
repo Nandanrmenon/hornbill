@@ -1,4 +1,5 @@
 import 'package:hornbill/src/helpers/constants.dart';
+import 'package:hornbill/src/theme.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// A single column definition for [HDataTable].
@@ -455,7 +456,9 @@ class _HDataTableState extends State<HDataTable> {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        border: Border.all(color: theme.colorScheme.outlineVariant),
+        border: hIsOutlined(context)
+          ? Border.all(color: theme.colorScheme.outlineVariant)
+          : null,
         borderRadius: BorderRadius.circular(kBorderRadiusSmall),
       ),
       margin: const EdgeInsets.only(bottom: 32),

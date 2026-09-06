@@ -282,10 +282,12 @@ class HDialog extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor ?? Theme.of(context).colorScheme.surface,
           borderRadius: _radiusFor(resolved),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant,
-            width: 1,
-          ),
+          border: hIsOutlined(context)
+              ? Border.all(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                  width: 1,
+                )
+              : null,
           boxShadow: [
             BoxShadow(
               color:
