@@ -17,42 +17,22 @@ class _NavigationbarScreenState extends State<NavigationbarScreen> {
       appBar: HAppBar(title: 'Navigation Bar'),
       slivers: [
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: .start,
-              children: [
-                HListHeader(title: 'Navigation Bar'),
-                SizedBox(height: 16),
-                Center(
-                  child: HNavigationBar(
-                    currentIndex: _index,
-                    onTap: (i) => setState(() => _index = i),
-                    items: const [
-                      HNavigationBarItem(
-                        icon: Symbols.home_rounded,
-                        selectedIcon: Symbols.home_rounded,
-                        label: 'Home',
-                      ),
-                      HNavigationBarItem(
-                        icon: Symbols.search_rounded,
-                        label: 'Search',
-                      ),
-                      HNavigationBarItem(
-                        icon: Symbols.favorite_rounded,
-                        selectedIcon: Symbols.favorite_rounded,
-                        label: 'Favorites',
-                      ),
-                      HNavigationBarItem(
-                        icon: Symbols.person_rounded,
-                        selectedIcon: Symbols.person_rounded,
-                        label: 'Profile',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          child: Column(
+            children: [
+              HListHeader(title: 'Chats'),
+              HListView.builder(
+                itemCount: 20,
+                itemBuilder: (index) {
+                  return HListItemData(
+                    title: Text('Chat $index'),
+                    subtitle: 'Message $index',
+                    leading: CircleAvatar(child: Icon(Symbols.person_rounded)),
+                    // suffix: Icon(Symbols.arrow_forward_rounded),
+                    onTap: () {},
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ],
@@ -61,19 +41,19 @@ class _NavigationbarScreenState extends State<NavigationbarScreen> {
         onTap: (i) => setState(() => _index = i),
         items: const [
           HNavigationBarItem(
-            icon: Symbols.home,
-            selectedIcon: Symbols.home,
-            label: 'Home',
+            icon: Symbols.message_rounded,
+            selectedIcon: Symbols.message_rounded,
+            label: 'Chats',
           ),
-          HNavigationBarItem(icon: Symbols.search, label: 'Search'),
+          HNavigationBarItem(icon: Symbols.search_rounded, label: 'Search'),
           HNavigationBarItem(
-            icon: Symbols.favorite_border,
-            selectedIcon: Symbols.favorite,
+            icon: Symbols.favorite_rounded,
+            selectedIcon: Symbols.favorite_rounded,
             label: 'Favorites',
           ),
           HNavigationBarItem(
-            icon: Symbols.person_outline,
-            selectedIcon: Symbols.person,
+            icon: Symbols.person_rounded,
+            selectedIcon: Symbols.person_rounded,
             label: 'Profile',
           ),
         ],
