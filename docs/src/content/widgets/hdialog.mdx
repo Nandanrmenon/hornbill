@@ -1,0 +1,19 @@
+export const meta = {
+  title: 'HDialog',
+  description: 'Dialog surface for confirmation and focused tasks.',
+  category: 'Widgets',
+  widget: 'HDialog',
+  order: 12,
+}
+
+`HDialog` is used for short, interruptive flows like confirmations.
+
+<WidgetPreview
+  widget="HDialog"
+  code={`showDialog(
+  context: context,
+  builder: (context) => HDialog(
+    title: 'Delete item?',
+  ),
+)`}
+/>

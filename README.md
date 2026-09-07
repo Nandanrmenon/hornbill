@@ -1,6 +1,6 @@
 ![Hornbill Cover](https://gitlab.knoxxbox.in/nahnah/hornbill/-/raw/main/assets/cover.png?ref_type=heads)
 
-Hornbill UI is a lightweight Flutter component package starter for building a consistent design system. Check out the [example app](https://hornbill-example.vercel.app/) for a demo of the components in action. Documentation coming soon.
+Hornbill UI is a lightweight Flutter component package starter for building a consistent design system. Check out the [example app](https://hornbill-example.vercel.app/) for a demo of the components in action.
 
 ### Installation
 
@@ -44,3 +44,13 @@ There are various widget available in this package. Here are some of the widgets
 - `HTheme`
 
 You can find the documentation for these widgets in the [example app](https://hornbill-example.vercel.app/) (WIP). The example app is also available in the [GitLab repository](https://gitlab.knoxxbox.in/nahnah/hornbill/-/tree/main/example).
+
+### React docs workspace
+
+This repository now includes a React + MDX docs workspace in `/docs` for authoring widget documentation pages with live preview panels.
+
+```bash
+cd docs
+npm install
+npm run dev
+```

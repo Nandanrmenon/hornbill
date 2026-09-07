@@ -1,0 +1,163 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #1f2937;
+  background: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.docs-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+}
+
+.docs-sidebar {
+  background: #0f172a;
+  color: #cbd5e1;
+  padding: 24px;
+  border-right: 1px solid #1e293b;
+}
+
+.brand strong {
+  color: #f8fafc;
+  font-size: 1.25rem;
+}
+
+.brand p {
+  margin: 6px 0 20px;
+  font-size: 0.85rem;
+}
+
+.nav-group {
+  margin-bottom: 20px;
+}
+
+.nav-group h2 {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+}
+
+.nav-group a {
+  display: block;
+  text-decoration: none;
+  padding: 8px 10px;
+  margin: 2px 0;
+  border-radius: 8px;
+  color: #cbd5e1;
+}
+
+.nav-group a.active,
+.nav-group a:hover {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.docs-content {
+  padding: 40px;
+  max-width: 960px;
+}
+
+.docs-content__header {
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+h1 {
+  margin: 8px 0;
+  font-size: 2rem;
+}
+
+article p,
+article li {
+  line-height: 1.6;
+}
+
+.widget-preview,
+.code-sample {
+  margin: 20px 0;
+  border: 1px solid #dbe2ea;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.widget-preview__header,
+.code-sample__header {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.widget-preview__header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.widget-preview__panel {
+  padding: 16px;
+}
+
+.widget-preview pre,
+.code-sample pre {
+  margin: 0;
+  padding: 16px;
+  background: #020617;
+  color: #e2e8f0;
+  overflow-x: auto;
+}
+
+.hb-preview-button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #fff;
+  background: #1d4ed8;
+  cursor: pointer;
+}
+
+.hb-preview-field {
+  display: grid;
+  gap: 6px;
+  max-width: 320px;
+}
+
+.hb-preview-field input {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.hb-preview-dialog {
+  margin-top: 12px;
+  border: 1px solid #dbe2ea;
+  border-radius: 8px;
+  padding: 12px;
+  background: #f8fafc;
+}
+
+@media (max-width: 960px) {
+  .docs-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-content {
+    padding: 24px;
+  }
+}
