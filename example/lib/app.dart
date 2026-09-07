@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/screens/breadcrumbs_screen.dart';
 import 'package:hornbill_example/screens/buttons_screen.dart';
@@ -20,10 +21,15 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 class HornbilExampleApp extends StatefulWidget {
-  const HornbilExampleApp({super.key, required this.themeController});
+  const HornbilExampleApp({
+    super.key,
+    required this.themeController,
+    this.routePath = '/components/themes',
+  });
 
   /// Drives the live colour-scheme picker on the Themes screen.
   final HThemeController themeController;
+  final String routePath;
 
   @override
   State<HornbilExampleApp> createState() => _HornbilExampleAppState();
@@ -33,17 +39,79 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
   bool get _isDesktop => MediaQuery.of(context).size.width >= 600;
 
   // Track active view using a unique string key instead of fragile indices
-  String _activeScreenKey = 'themes';
+  late String _activeScreenKey;
 
-  // Helper to switch desktop content safely
+  @override
+  void initState() {
+    super.initState();
+    _activeScreenKey = _screenKeyFromPath(widget.routePath);
+  }
+
+  static String _screenKeyFromPath(String path) {
+    const paths = {
+      'themes': 'themes',
+      'icons': 'icons',
+      'navigation-bar': 'navigation_bar',
+      'scaffold': 'scaffold',
+      'sidebar': 'sidebar',
+      'dialog': 'dialog',
+      'breadcrumbs': 'breadcrumbs',
+      'textfield': 'textfield',
+      'buttons': 'button',
+      'switch': 'switch',
+      'cards': 'cards',
+      'list-view': 'list_view',
+      'data-table': 'data_table',
+      'toast': 'toast',
+      'chips': 'chip',
+      'progress-indicators': 'progress_indicators',
+    };
+    final slug = path.startsWith('/components/')
+        ? path.substring('/components/'.length)
+        : 'themes';
+    return paths[slug] ?? 'themes';
+  }
+
+  String _pathForScreen(String screenKey) {
+    const paths = {
+      'themes': 'themes',
+      'icons': 'icons',
+      'navigation_bar': 'navigation-bar',
+      'scaffold': 'scaffold',
+      'sidebar': 'sidebar',
+      'dialog': 'dialog',
+      'breadcrumbs': 'breadcrumbs',
+      'textfield': 'textfield',
+      'button': 'buttons',
+      'switch': 'switch',
+      'cards': 'cards',
+      'list_view': 'list-view',
+      'data_table': 'data-table',
+      'toast': 'toast',
+      'chip': 'chips',
+      'progress_indicators': 'progress-indicators',
+    };
+    return '/components/${paths[screenKey] ?? 'themes'}';
+  }
+
   void _selectScreen(String screenKey) {
     setState(() {
       _activeScreenKey = screenKey;
     });
+    SystemNavigator.routeInformationUpdated(
+      uri: Uri.parse(_pathForScreen(screenKey)),
+    );
   }
 
   List<HSideBarItem> _desktopSidebarItems() {
     return [
+      HSideBarItem(
+        label: 'Home',
+        icon: Symbols.home_rounded,
+        onTap: () {
+          Navigator.pushReplacementNamed(context, '/');
+        },
+      ),
       HSideBarItem(
         label: 'Themes',
         icon: Symbols.palette_rounded,
@@ -433,6 +501,10 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isDesktop && widget.routePath != '/') {
+      return _buildSelectedScreen();
+    }
+
     return HScaffold(
       appBar: _isDesktop ? null : const HAppBar(title: 'Hornbill Example App'),
       sidebar: _isDesktop ? _buildDesktopSidebar(context) : null,

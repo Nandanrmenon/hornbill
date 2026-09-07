@@ -1,6 +1,7 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/app.dart';
+import 'package:hornbill_example/screens/landing_screen.dart';
 import 'package:hornbill_example/theme_controller.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -42,7 +43,33 @@ class _MyAppState extends State<MyApp> {
             appBarFontFamily: GoogleFonts.googleSansFlex().fontFamily,
           ).darkTheme(),
           themeMode: ThemeMode.system,
-          home: HornbilExampleApp(themeController: _themeController),
+          initialRoute: '/',
+          onGenerateRoute: (settings) {
+            final path = settings.name ?? '/';
+            return MaterialPageRoute(
+              settings: settings,
+              builder: (context) {
+                if (path == '/') {
+                  if (MediaQuery.sizeOf(context).width >= 600) {
+                    return LandingScreen(
+                      onExplore: () => Navigator.pushReplacementNamed(
+                        context,
+                        '/components/themes',
+                      ),
+                    );
+                  }
+                  return HornbilExampleApp(
+                    themeController: _themeController,
+                    routePath: path,
+                  );
+                }
+                return HornbilExampleApp(
+                  themeController: _themeController,
+                  routePath: path,
+                );
+              },
+            );
+          },
         );
       },
     );
