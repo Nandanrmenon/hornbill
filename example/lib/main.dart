@@ -4,8 +4,11 @@ import 'package:hornbill_example/app.dart';
 import 'package:hornbill_example/screens/landing_screen.dart';
 import 'package:hornbill_example/theme_controller.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  usePathUrlStrategy();
   runApp(const MyApp());
 }
 
@@ -34,6 +37,7 @@ class _MyAppState extends State<MyApp> {
       animation: _themeController,
       builder: (context, _) {
         return MaterialApp(
+          title: 'Hornbill',
           theme: HTheme(
             colourScheme: _themeController.colourScheme,
             appBarFontFamily: GoogleFonts.googleSansFlex().fontFamily,

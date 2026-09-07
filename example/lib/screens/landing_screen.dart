@@ -295,7 +295,7 @@ class _LandingScreenState extends State<LandingScreen> {
                     ],
                   ),
                   FlutterCodeView(
-                    source: sampleCode,
+                    source: installCode,
                     themeType: isDark ? ThemeType.vs2015 : ThemeType.githubGist,
                     language: Languages.bash,
                     autoDetection: true,
@@ -364,5 +364,5 @@ class _Feature extends StatelessWidget {
   }
 }
 
-String sampleCode = '''
-flutter pub add hornbill''';
+String installCode = '''
+\$ flutter pub add hornbill''';
