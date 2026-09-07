@@ -1,10 +1,10 @@
 part of 'package:hornbill/src/widgets/list_widgets.dart';
 
-/// The data for a single row rendered by [HListView].
+/// A standalone list tile that can also be rendered by [HListView].
 ///
 /// Example:
 /// ```dart
-/// HListItemData(
+/// HListTile(
 ///   title: 'Notifications',
 ///   subtitle: 'On',
 ///   leading: const Icon(Icons.notifications_outlined),
@@ -12,9 +12,10 @@ part of 'package:hornbill/src/widgets/list_widgets.dart';
 /// )
 /// ```
 @immutable
-class HListItemData {
-  /// Creates the data for one [HListView] row.
-  const HListItemData({
+class HListTile extends StatelessWidget {
+  /// Creates a standalone list tile.
+  const HListTile({
+    super.key,
     required this.title,
     this.subtitle,
     this.onTap,
@@ -22,6 +23,7 @@ class HListItemData {
     this.suffix,
     this.selected = false,
     this.color,
+    this.dense,
   });
 
   /// The row's primary text, rendered as the `ListTile.title`.
@@ -31,7 +33,7 @@ class HListItemData {
   ///
   /// A null or empty subtitle is treated the same way: no subtitle space
   /// is reserved and the row uses tighter vertical padding.
-  final String? subtitle;
+  final Widget? subtitle;
 
   /// Called when the row is tapped. If null, the row is not interactive.
   final VoidCallback? onTap;
@@ -53,4 +55,41 @@ class HListItemData {
   /// opacity, as `ListTile.selectedColor`. Falls back to the current
   /// theme's surface/primary colors when null.
   final Color? color;
+
+  /// Whether this tile uses the compact [ListTile] layout.
+  final bool? dense;
+
+  @override
+  Widget build(BuildContext context) {
+    return _ListCard(
+      color: color?.withValues(alpha: 0.2),
+      index: 0,
+      itemCount: 1,
+      child: _buildContent(context),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, {bool? denseOverride}) {
+    final hasSubtitle = subtitle != null;
+    return ListTile(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+      contentPadding: EdgeInsets.only(
+        left: 16.0,
+        right: 16.0,
+        bottom: hasSubtitle ? 4.0 : 8.0,
+        top: hasSubtitle ? 0.0 : 8.0,
+      ),
+      dense: denseOverride ?? dense,
+      title: title,
+      leading: leading,
+      selectedColor: color ?? Theme.of(context).colorScheme.primary,
+      subtitle: hasSubtitle ? subtitle! : null,
+      onTap: onTap,
+      trailing: suffix,
+      selected: selected,
+    );
+  }
 }
+
+/// Compatibility alias for [HListTile]. Prefer [HListTile] in new code.
+typedef HListItemData = HListTile;

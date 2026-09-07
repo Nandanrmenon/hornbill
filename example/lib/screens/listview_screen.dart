@@ -16,15 +16,25 @@ class _ListViewScreenState extends State<ListViewScreen> {
       appBar: HAppBar(title: 'List View'),
       slivers: [
         SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: HListTile(
+              title: Text('HListTile'),
+              subtitle: Text('A list tile that can be used in a list view.'),
+              onTap: () {},
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
           child: Column(
             children: [
               HListHeader(title: 'List View - Normal'),
               HListView.builder(
                 itemCount: 20,
                 itemBuilder: (index) {
-                  return HListItemData(
+                  return HListTile(
                     title: Text('Item $index'),
-                    subtitle: 'Subtitle $index',
+                    subtitle: Text('Subtitle $index'),
                     leading: Icon(Symbols.star_rounded),
                     suffix: Icon(Symbols.arrow_forward_rounded),
                     onTap: () {},
@@ -40,9 +50,18 @@ class _ListViewScreenState extends State<ListViewScreen> {
               HListHeader(title: 'List View - Normal w/ subtitle'),
               HListView(
                 items: [
-                  HListItemData(title: Text('Item 1'), subtitle: 'Subtitle 1'),
-                  HListItemData(title: Text('Item 2'), subtitle: 'Subtitle 2'),
-                  HListItemData(title: Text('Item 3'), subtitle: 'Subtitle 3'),
+                  HListTile(
+                    title: Text('Item 1'),
+                    subtitle: Text('Subtitle 1'),
+                  ),
+                  HListTile(
+                    title: Text('Item 2'),
+                    subtitle: Text('Subtitle 2'),
+                  ),
+                  HListTile(
+                    title: Text('Item 3'),
+                    subtitle: Text('Subtitle 3'),
+                  ),
                 ],
               ),
             ],
@@ -54,32 +73,32 @@ class _ListViewScreenState extends State<ListViewScreen> {
               HListHeader(title: 'List View - Normal w/ other properties'),
               HListView(
                 items: [
-                  HListItemData(
+                  HListTile(
                     title: Text('Item 1'),
-                    subtitle: 'Subtitle 1',
+                    subtitle: Text('Subtitle 1'),
                     leading: Icon(Symbols.star_rounded),
                     suffix: Icon(Symbols.arrow_forward_rounded),
                   ),
-                  HListItemData(
+                  HListTile(
                     title: Text('Item 2'),
-                    subtitle: 'Subtitle 2',
+                    subtitle: Text('Subtitle 2'),
                     suffix: Icon(Symbols.arrow_forward_rounded),
                   ),
-                  HListItemData(
+                  HListTile(
                     title: Text('Item 3'),
-                    subtitle: 'Subtitle 3',
+                    subtitle: Text('Subtitle 3'),
                     leading: Icon(Symbols.star_rounded),
                   ),
-                  HListItemData(
+                  HListTile(
                     title: Text('Item 4'),
-                    subtitle: 'Subtitle 4',
+                    subtitle: Text('Subtitle 4'),
                     leading: Icon(Symbols.star_rounded),
                     selected: true,
                     onTap: () {},
                   ),
-                  HListItemData(
+                  HListTile(
                     title: Text('Item 5'),
-                    subtitle: 'Subtitle 5',
+                    subtitle: Text('Subtitle 5'),
                     leading: Icon(Symbols.star_rounded),
                     selected: true,
                     onTap: () {},

@@ -1,6 +1,6 @@
 part of 'package:hornbill/src/widgets/list_widgets.dart';
 
-/// A grouped, rounded-corner list of [HListItemData] rows.
+/// A grouped, rounded-corner list of [HListTile] rows.
 ///
 /// Mirrors [ListView] / [ListView.builder]'s two construction styles:
 ///
@@ -9,8 +9,8 @@ part of 'package:hornbill/src/widgets/list_widgets.dart';
 ///    ```dart
 ///    HListView(
 ///      items: [
-///        HListItemData(title: 'Wi-Fi', onTap: () {}),
-///        HListItemData(title: 'Bluetooth', onTap: () {}),
+///        HListTile(title: 'Wi-Fi', onTap: () {}),
+///        HListTile(title: 'Bluetooth', onTap: () {}),
 ///      ],
 ///    )
 ///    ```
@@ -19,7 +19,7 @@ part of 'package:hornbill/src/widgets/list_widgets.dart';
 ///    ```dart
 ///    HListView.builder(
 ///      itemCount: users.length,
-///      itemBuilder: (index) => HListItemData(title: users[index].name),
+///      itemBuilder: (index) => HListTile(title: users[index].name),
 ///    )
 ///    ```
 ///
@@ -29,7 +29,7 @@ class HListView extends StatelessWidget {
   /// Creates a grouped list from an eagerly-built [items] list.
   const HListView({
     super.key,
-    required List<HListItemData> this.items,
+    required List<HListTile> this.items,
     this.enableScroll,
     this.shrinkWrap,
     this.dense,
@@ -41,7 +41,7 @@ class HListView extends StatelessWidget {
   const HListView.builder({
     super.key,
     required int this.itemCount,
-    required HListItemData Function(int index) this.itemBuilder,
+    required HListTile Function(int index) this.itemBuilder,
     this.enableScroll,
     this.shrinkWrap,
     this.dense,
@@ -51,7 +51,7 @@ class HListView extends StatelessWidget {
   ///
   /// Null when constructed via [HListView.builder]; use [itemBuilder] and
   /// [itemCount] instead.
-  final List<HListItemData>? items;
+  final List<HListTile>? items;
 
   /// The number of rows to render, when constructed via [HListView.builder].
   ///
@@ -62,7 +62,7 @@ class HListView extends StatelessWidget {
   /// [HListView.builder].
   ///
   /// Null when constructed via [HListView.new].
-  final HListItemData Function(int index)? itemBuilder;
+  final HListTile Function(int index)? itemBuilder;
 
   /// Whether the list can be scrolled independently of its parent.
   ///
@@ -91,7 +91,7 @@ class HListView extends StatelessWidget {
   int get _count => items?.length ?? itemCount!;
 
   /// The row data at [index], regardless of which constructor was used.
-  HListItemData _itemAt(int index) =>
+  HListTile _itemAt(int index) =>
       items != null ? items![index] : itemBuilder!(index);
 
   @override
@@ -107,38 +107,12 @@ class HListView extends StatelessWidget {
       itemCount: count,
       itemBuilder: (context, index) {
         final item = _itemAt(index);
-        final hasSubtitle = item.subtitle != null && item.subtitle!.isNotEmpty;
-
         return _ListCard(
           key: ValueKey('${item.title}_$index'),
           index: index,
           itemCount: count,
           color: item.color?.withValues(alpha: 0.2),
-          child: ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0.0),
-            ),
-            contentPadding: EdgeInsets.only(
-              left: 16.0,
-              right: 16.0,
-              bottom: hasSubtitle ? 4.0 : 8.0,
-              top: hasSubtitle ? 0.0 : 8.0,
-            ),
-            dense: dense,
-            title: item.title,
-            leading: item.leading,
-            selectedColor: item.color ?? Theme.of(context).colorScheme.primary,
-            subtitle: hasSubtitle
-                ? Text(
-                    item.subtitle!,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                : null,
-            onTap: item.onTap,
-            trailing: item.suffix,
-            selected: item.selected,
-          ),
+          child: item._buildContent(context, denseOverride: dense),
         );
       },
       separatorBuilder: (context, index) =>

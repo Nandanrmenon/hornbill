@@ -25,7 +25,7 @@ class _NavigationbarScreenState extends State<NavigationbarScreen> {
                 itemBuilder: (index) {
                   return HListItemData(
                     title: Text('Chat $index'),
-                    subtitle: 'Message $index',
+                    subtitle: Text('Message $index'),
                     leading: CircleAvatar(child: Icon(Symbols.person_rounded)),
                     // suffix: Icon(Symbols.arrow_forward_rounded),
                     onTap: () {},

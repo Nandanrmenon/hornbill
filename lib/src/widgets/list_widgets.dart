@@ -10,8 +10,9 @@
 ///
 ///  * [HListHeader] — a small section header (title, optional subtitle,
 ///    icon, and trailing widget) to place above a grouped list.
+///  * [HListTile] — a standalone list tile that can be used anywhere.
 ///  * [HListView] — a grouped list of arbitrary rows. Construct eagerly
-///    with [HListView.new] and a `List<HListItemData>`, or lazily with
+///    with [HListView.new] and a `List<HListTile>`, or lazily with
 ///    [HListView.builder] and an `itemCount` + item builder callback.
 ///  * [HRadioListView] — a grouped, single-select radio list. Also
 ///    supports both [HRadioListView.new] and [HRadioListView.builder].
@@ -23,8 +24,8 @@
 /// ```dart
 /// HListView(
 ///   items: [
-///     HListItemData(title: 'Wi-Fi', subtitle: 'Connected', onTap: () {}),
-///     HListItemData(title: 'Bluetooth', onTap: () {}),
+///     HListTile(title: 'Wi-Fi', subtitle: 'Connected', onTap: () {}),
+///     HListTile(title: 'Bluetooth', onTap: () {}),
 ///   ],
 /// )
 /// ```
