@@ -1,3 +1,9 @@
+## 1.7.1
+
+- Added a landing page to the docs site for better navigation and user experience.
+- Upgrade pub packages
+- Moved the example app to our domain https://hornbill.knoxxbox.in/ for better accessibility and visibility.
+
 ## 1.7.0
 
 - New floating navigation bar with `HNavigationBar` widget.
