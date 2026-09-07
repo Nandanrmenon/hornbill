@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     {
       enforce: 'pre',
-      ...mdx(),
+      ...mdx({ providerImportSource: '@mdx-js/react' }),
     },
     react({ include: /\.(mdx|md|js|jsx|ts|tsx)$/ }),
   ],
