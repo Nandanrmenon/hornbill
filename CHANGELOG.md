@@ -1,3 +1,10 @@
+## 1.7.0
+
+- New floating navigation bar with `HNavigationBar` widget.
+- Added option to disable outline in the `HTheme`.
+- chore: Updated `HListItemData` to `HListTile`, allowing developers to use `HListTile` without `HListView`.
+- fix: HSidebar delay content layout swap until width animation completes
+
 ## 1.6.1
 
 - Added headerRowHeight & footerRowHeight for HDataTable

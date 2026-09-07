@@ -8,7 +8,7 @@ Either add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  hornbill: ^1.5.4
+  hornbill: ^1.7.0
 ```
 
 and run `flutter pub get`,
