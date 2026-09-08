@@ -3,6 +3,7 @@ import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/screens/breadcrumbs_screen.dart';
 import 'package:hornbill_example/screens/buttons_screen.dart';
 import 'package:hornbill_example/screens/cards_screen.dart';
+import 'package:hornbill_example/screens/checkbox_screen.dart';
 import 'package:hornbill_example/screens/chips_screen.dart';
 import 'package:hornbill_example/screens/datatable_screen.dart';
 import 'package:hornbill_example/screens/dialog_screen.dart';
@@ -65,6 +66,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       'toast': 'toast',
       'chips': 'chip',
       'progress-indicators': 'progress_indicators',
+      'checkbox': 'checkbox',
     };
     final slug = path.startsWith('/components/')
         ? path.substring('/components/'.length)
@@ -90,6 +92,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       'toast': 'toast',
       'chip': 'chips',
       'progress_indicators': 'progress-indicators',
+      'checkbox': 'checkbox',
     };
     return '/components/${paths[screenKey] ?? 'themes'}';
   }
@@ -183,6 +186,12 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             label: 'Switch',
             selected: _activeScreenKey == 'switch',
             onTap: () => _selectScreen('switch'),
+          ),
+          HSideBarItem(
+            icon: Symbols.check_box_rounded,
+            label: 'Checkbox',
+            selected: _activeScreenKey == 'checkbox',
+            onTap: () => _selectScreen('checkbox'),
           ),
         ],
       ),
@@ -385,6 +394,16 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                     ),
                   ),
                 ),
+                HListItemData(
+                  leading: const Icon(Symbols.check_box_rounded),
+                  title: const Text('Checkbox'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CheckboxScreen(),
+                    ),
+                  ),
+                ),
               ],
             ),
             const HListHeader(title: 'Data Presentation'),
@@ -488,6 +507,8 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         return const BreadcrumbsScreen();
       case 'cards':
         return const CardsScreen();
+      case 'checkbox':
+        return const CheckboxScreen();
       default:
         return ThemeScreen(themeController: widget.themeController);
     }
