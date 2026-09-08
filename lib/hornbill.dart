@@ -19,6 +19,7 @@ export 'src/widgets/navigation/appbar.dart';
 export 'src/widgets/navigation/breadcrumbs.dart';
 export 'src/widgets/navigation/navigation_bar.dart';
 export 'src/widgets/navigation/sidebar.dart';
+export 'src/widgets/navigation/tab.dart';
 export 'src/widgets/overlay/dialog.dart';
 export 'src/widgets/overlay/toast.dart';
 
