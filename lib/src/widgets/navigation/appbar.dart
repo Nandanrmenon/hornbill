@@ -86,6 +86,9 @@ class HAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Color? backgroundColor;
   final double elevation;
 
+  /// Optional widget displayed below the toolbar, such as [HTabBar].
+  final PreferredSizeWidget? bottom;
+
   const HAppBar({
     super.key,
     required this.title,
@@ -104,10 +107,13 @@ class HAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.mobileBreakpoint = 800,
     this.backgroundColor,
     this.elevation = 0,
+    this.bottom,
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(
+    kToolbarHeight + 10 + (bottom?.preferredSize.height ?? 0),
+  );
 
   @override
   State<HAppBar> createState() => _HAppBarState();
@@ -292,16 +298,7 @@ class _HAppBarState extends State<HAppBar> {
 
     return AppBar(
       backgroundColor:
-          widget.backgroundColor ??
-          Theme.of(context).colorScheme.surfaceContainerLow,
-      shape: hIsOutlined(context)
-          ? Border(
-              bottom: BorderSide(
-                color: Theme.of(context).colorScheme.outlineVariant,
-                width: 1,
-              ),
-            )
-          : null,
+          widget.backgroundColor ?? Theme.of(context).colorScheme.surface,
       elevation: widget.elevation,
       automaticallyImplyLeading: false,
       leading: leading,
@@ -319,6 +316,7 @@ class _HAppBarState extends State<HAppBar> {
         ],
       ),
       actions: _buildDesktopActions(),
+      bottom: widget.bottom,
     );
   }
 
@@ -328,17 +326,8 @@ class _HAppBarState extends State<HAppBar> {
 
     return AppBar(
       backgroundColor:
-          widget.backgroundColor ??
-          Theme.of(context).colorScheme.surfaceContainerLow,
+          widget.backgroundColor ?? Theme.of(context).colorScheme.surface,
       elevation: widget.elevation,
-      shape: hIsOutlined(context)
-          ? Border(
-              bottom: BorderSide(
-                color: Theme.of(context).colorScheme.outlineVariant,
-                width: 1,
-              ),
-            )
-          : null,
       // Leave auto-imply on when we're not overriding leading, so the
       // Scaffold's drawer icon still appears when relevant.
       automaticallyImplyLeading: leading == null,
@@ -356,6 +345,7 @@ class _HAppBarState extends State<HAppBar> {
         if (!showingSearch && _buildMobileOverflowMenu() != null)
           _buildMobileOverflowMenu()!,
       ],
+      bottom: widget.bottom,
     );
   }
 }

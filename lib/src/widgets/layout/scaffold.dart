@@ -1,4 +1,5 @@
 import 'package:flutter/rendering.dart';
+import 'package:hornbill/src/helpers/constants.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Wraps any [PreferredSizeWidget] (e.g. [HAppBar]) so it can be used as a
@@ -42,7 +43,8 @@ class HScaffold extends StatefulWidget {
   final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
   final Widget? drawer;
-  final Color? backgroundColor;
+  final Color? scaffoldBackground;
+  final Color? bodyBackground; // optional background for the body slivers
   final Widget? sidebar; // optional sidebar widget
   final bool pinned; // whether the app bar is pinned (default: true)
   final bool
@@ -61,7 +63,8 @@ class HScaffold extends StatefulWidget {
     this.floatingActionButton,
     this.bottomNavigationBar,
     this.drawer,
-    this.backgroundColor,
+    this.scaffoldBackground,
+    this.bodyBackground,
     this.sidebar,
     this.pinned = false,
     this.isFloatingAppBar = true,
@@ -106,7 +109,7 @@ class _HScaffoldState extends State<HScaffold> {
     final bottomBar = widget.bottomNavigationBar;
 
     return Scaffold(
-      backgroundColor: widget.backgroundColor,
+      backgroundColor: widget.scaffoldBackground,
       drawer: widget.drawer,
       floatingActionButton: widget.floatingActionButton,
       extendBody: true,
@@ -141,7 +144,18 @@ class _HScaffoldState extends State<HScaffold> {
                         widget.appBar!,
                       ),
                     ),
-                  ...widget.slivers,
+                  DecoratedSliver(
+                    decoration: BoxDecoration(
+                      color:
+                          widget.bodyBackground ??
+                          Theme.of(context).colorScheme.surfaceContainer,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(kBorderRadius),
+                        topRight: Radius.circular(kBorderRadius),
+                      ),
+                    ),
+                    sliver: SliverMainAxisGroup(slivers: widget.slivers),
+                  ),
                 ],
               ),
             ),

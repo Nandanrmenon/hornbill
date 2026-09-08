@@ -14,6 +14,7 @@ import 'package:hornbill_example/screens/progressindicator_screen.dart';
 import 'package:hornbill_example/screens/scaffold_screen.dart';
 import 'package:hornbill_example/screens/sidebar_screen.dart';
 import 'package:hornbill_example/screens/switch.dart';
+import 'package:hornbill_example/screens/tabs_screen.dart';
 import 'package:hornbill_example/screens/textinputfield_screen.dart';
 import 'package:hornbill_example/screens/theme_screen.dart';
 import 'package:hornbill_example/screens/toast_screen.dart';
@@ -67,6 +68,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       'chips': 'chip',
       'progress-indicators': 'progress_indicators',
       'checkbox': 'checkbox',
+      'tabbar': 'tabbar',
     };
     final slug = path.startsWith('/components/')
         ? path.substring('/components/'.length)
@@ -93,6 +95,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       'chip': 'chips',
       'progress_indicators': 'progress-indicators',
       'checkbox': 'checkbox',
+      'tabbar': 'tabbar',
     };
     return '/components/${paths[screenKey] ?? 'themes'}';
   }
@@ -133,6 +136,18 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         initiallyExpanded: true,
         children: [
           HSideBarItem(
+            icon: Symbols.chevron_right_rounded,
+            label: 'Breadcrumbs',
+            selected: _activeScreenKey == 'breadcrumbs',
+            onTap: () => _selectScreen('breadcrumbs'),
+          ),
+          HSideBarItem(
+            icon: Symbols.mobile_layout,
+            label: 'Dialog',
+            selected: _activeScreenKey == 'dialog',
+            onTap: () => _selectScreen('dialog'),
+          ),
+          HSideBarItem(
             icon: Symbols.menu_rounded,
             label: 'Navigation Bar',
             selected: _activeScreenKey == 'navigation_bar',
@@ -151,16 +166,10 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             onTap: () => _selectScreen('sidebar'),
           ),
           HSideBarItem(
-            icon: Symbols.mobile_layout,
-            label: 'Dialog',
-            selected: _activeScreenKey == 'dialog',
-            onTap: () => _selectScreen('dialog'),
-          ),
-          HSideBarItem(
-            icon: Symbols.chevron_right_rounded,
-            label: 'Breadcrumbs',
-            selected: _activeScreenKey == 'breadcrumbs',
-            onTap: () => _selectScreen('breadcrumbs'),
+            icon: Symbols.tab,
+            label: 'Tab Bar',
+            selected: _activeScreenKey == 'tabbar',
+            onTap: () => _selectScreen('tabbar'),
           ),
         ],
       ),
@@ -359,6 +368,16 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                     ),
                   ),
                 ),
+                HListItemData(
+                  title: const Text('Tab Bar'),
+                  leading: const Icon(Symbols.tab),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const TabbarScreen(),
+                    ),
+                  ),
+                ),
               ],
             ),
             const HListHeader(title: 'Form'),
@@ -509,6 +528,8 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         return const CardsScreen();
       case 'checkbox':
         return const CheckboxScreen();
+      case 'tabbar':
+        return const TabbarScreen();
       default:
         return ThemeScreen(themeController: widget.themeController);
     }
@@ -527,11 +548,18 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
     }
 
     return HScaffold(
-      appBar: _isDesktop ? null : const HAppBar(title: 'Hornbill Example App'),
+      appBar: _isDesktop
+          ? null
+          : HAppBar(
+              title: 'Hornbill Example App',
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+            ),
       sidebar: _isDesktop ? _buildDesktopSidebar(context) : null,
       slivers: _isDesktop
           ? _buildDesktopSlivers()
           : _buildMobileSlivers(context),
+      scaffoldBackground: Theme.of(context).colorScheme.surfaceContainer,
+      bodyBackground: Theme.of(context).colorScheme.surfaceContainerLowest,
     );
   }
 }
