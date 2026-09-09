@@ -1,3 +1,9 @@
+## 1.8.0
+- new: Added `HCheckBox`, `HTabBar`, `HTabBarView` widgets for creating checkboxes and tabbed navigation.
+- imp: Modernized `HScaffold` UI.
+- imp: Added optional validator to `HTextField` widget for input validation.
+- chore: restructured files inside `lib`.
+
 ## 1.7.1
 
 - Added a landing page to the docs site for better navigation and user experience.
