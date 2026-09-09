@@ -1,4 +1,9 @@
+## 1.8.1
+
+- fix: Change `HAppBar` title parameter to accept a `Widget` instead of a `String`, allowing for more flexibility in customizing the app bar title.
+
 ## 1.8.0
+
 - new: Added `HCheckBox`, `HTabBar`, `HTabBarView` widgets for creating checkboxes and tabbed navigation.
 - imp: Modernized `HScaffold` UI.
 - imp: Added optional validator to `HTextField` widget for input validation.
