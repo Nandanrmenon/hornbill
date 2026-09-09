@@ -16,7 +16,7 @@ class _ScaffoldScreenState extends State<ScaffoldScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return HScaffold(
       appBar: HAppBar(
-        title: 'Scaffold',
+        title: Text('Scaffold'),
         searchEnabled: true,
         onSearchChanged: (value) {
           // Handle search query changes here

@@ -14,7 +14,7 @@ class _NavigationbarScreenState extends State<NavigationbarScreen> {
   @override
   Widget build(BuildContext context) {
     return HScaffold(
-      appBar: HAppBar(title: 'Navigation Bar'),
+      appBar: HAppBar(title: Text('Navigation Bar')),
       slivers: [
         SliverToBoxAdapter(
           child: Column(

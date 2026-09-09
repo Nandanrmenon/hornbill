@@ -19,7 +19,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
   @override
   Widget build(BuildContext context) {
     return HScaffold(
-      appBar: HAppBar(title: 'Hornbill Colour Schemes'),
+      appBar: HAppBar(title: Text('Hornbill Colour Schemes')),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

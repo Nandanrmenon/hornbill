@@ -27,7 +27,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget _phoneContent(ThemeData theme) {
     return Expanded(
       child: HScaffold(
-        appBar: HAppBar(title: 'Hi there!!!'),
+        appBar: HAppBar(title: Text('Hi there!!!')),
         slivers: [
           SliverToBoxAdapter(
             child: Padding(

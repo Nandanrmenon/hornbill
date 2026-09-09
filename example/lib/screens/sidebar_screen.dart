@@ -15,7 +15,7 @@ class _SidebarScreenState extends State<SidebarScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return HScaffold(
-      appBar: HAppBar(title: 'Sidebar'),
+      appBar: HAppBar(title: Text('Sidebar')),
       slivers: [
         SliverFillRemaining(
           child: HCard(

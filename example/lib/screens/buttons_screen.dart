@@ -15,7 +15,7 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return HScaffold(
-      appBar: HAppBar(title: 'Buttons'),
+      appBar: HAppBar(title: Text('Buttons')),
       slivers: [
         SliverToBoxAdapter(child: HListHeader(title: 'Text')),
         SliverToBoxAdapter(

@@ -39,7 +39,7 @@ class _DataTableScreenState extends State<DataTableScreen> {
     );
 
     return HScaffold(
-      appBar: HAppBar(title: 'Data Table'),
+      appBar: HAppBar(title: Text('Data Table')),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

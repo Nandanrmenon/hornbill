@@ -13,7 +13,7 @@ class _ChipsScreenState extends State<ChipsScreen> {
   @override
   Widget build(BuildContext context) {
     return HScaffold(
-      appBar: HAppBar(title: 'Chips'),
+      appBar: HAppBar(title: Text('Chips')),
       slivers: [
         SliverFillRemaining(
           child: Center(

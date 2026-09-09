@@ -551,7 +551,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       appBar: _isDesktop
           ? null
           : HAppBar(
-              title: 'Hornbill Example App',
+              title: Text('Hornbill Example App'),
               backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
             ),
       sidebar: _isDesktop ? _buildDesktopSidebar(context) : null,

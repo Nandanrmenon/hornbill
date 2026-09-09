@@ -16,7 +16,7 @@ class _SwitchScreenState extends State<SwitchScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return HScaffold(
-      appBar: HAppBar(title: 'Switch'),
+      appBar: HAppBar(title: Text('Switch')),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

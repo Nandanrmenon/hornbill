@@ -54,7 +54,7 @@ class _IconsScreenState extends State<IconsScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return HScaffold(
-      appBar: HAppBar(title: 'Icons'),
+      appBar: HAppBar(title: Text('Icons')),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

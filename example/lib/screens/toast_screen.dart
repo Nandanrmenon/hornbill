@@ -14,7 +14,7 @@ class _ToastScreenState extends State<ToastScreen> {
   @override
   Widget build(BuildContext context) {
     return HScaffold(
-      appBar: HAppBar(title: 'Toast'),
+      appBar: HAppBar(title: Text('Toast')),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

@@ -12,7 +12,7 @@ class _DialogScreenState extends State<DialogScreen> {
   @override
   Widget build(BuildContext context) {
     return HScaffold(
-      appBar: HAppBar(title: 'Buttons'),
+      appBar: HAppBar(title: Text('Buttons')),
       slivers: [
         SliverToBoxAdapter(
           child: HListHeader(

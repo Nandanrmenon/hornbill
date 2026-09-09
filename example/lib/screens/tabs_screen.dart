@@ -17,7 +17,7 @@ class _TabbarScreenState extends State<TabbarScreen>
   Widget build(BuildContext context) {
     return HScaffold(
       appBar: HAppBar(
-        title: 'Tabbar',
+        title: Text('Tabbar'),
         bottom: HTabBar(
           controller: _tabController,
           tabs: const [

@@ -15,7 +15,7 @@ class _BreadcrumbsScreenState extends State<BreadcrumbsScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return HScaffold(
-      appBar: HAppBar(title: 'Breadcrumbs'),
+      appBar: HAppBar(title: Text('Breadcrumbs')),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

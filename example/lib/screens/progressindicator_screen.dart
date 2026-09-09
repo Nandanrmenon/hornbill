@@ -13,7 +13,7 @@ class _ProgressIndicatorScreenState extends State<ProgressIndicatorScreen> {
   @override
   Widget build(BuildContext context) {
     return HScaffold(
-      appBar: HAppBar(title: 'Progress Indicator'),
+      appBar: HAppBar(title: Text('Progress Indicator')),
       slivers: [
         SliverFillRemaining(
           child: Center(

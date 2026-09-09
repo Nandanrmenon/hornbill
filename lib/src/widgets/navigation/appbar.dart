@@ -39,7 +39,7 @@ class HAppBarAction {
 /// supply a custom [leading].
 class HAppBar extends StatefulWidget implements PreferredSizeWidget {
   /// Title text. Ignored on mobile while the search field is active.
-  final String title;
+  final Widget? title;
 
   /// Optional fully custom leading widget. If null, HAppBar decides
   /// automatically (back button / drawer icon / nothing).
@@ -239,10 +239,12 @@ class _HAppBarState extends State<HAppBar> {
   }
 
   Widget _buildDesktopTitleArea() {
-    return Text(
-      widget.title,
-      style: const TextStyle(fontWeight: FontWeight.w500),
+    return DefaultTextStyle(
       overflow: TextOverflow.ellipsis,
+      style: Theme.of(
+        context,
+      ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w500),
+      child: widget.title ?? const SizedBox.shrink(),
     );
   }
 
@@ -334,7 +336,13 @@ class _HAppBarState extends State<HAppBar> {
       leading: leading,
       title: showingSearch
           ? _buildSearchField(width: null)
-          : Text(widget.title, overflow: TextOverflow.ellipsis),
+          : DefaultTextStyle(
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w500),
+              child: widget.title ?? const SizedBox.shrink(),
+            ),
       actions: [
         if (widget.searchEnabled && !showingSearch)
           IconButton(

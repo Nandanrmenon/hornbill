@@ -12,7 +12,7 @@ class _CardsScreenState extends State<CardsScreen> {
   @override
   Widget build(BuildContext context) {
     return HScaffold(
-      appBar: HAppBar(title: 'Card'),
+      appBar: HAppBar(title: Text('Card')),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(

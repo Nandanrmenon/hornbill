@@ -13,7 +13,7 @@ class _TextinputfieldScreenState extends State<TextinputfieldScreen> {
   @override
   Widget build(BuildContext context) {
     return HScaffold(
-      appBar: HAppBar(title: 'Text Input Field'),
+      appBar: HAppBar(title: Text('Text Input Field')),
       slivers: [
         SliverToBoxAdapter(child: HListHeader(title: 'Text Input Field')),
         SliverToBoxAdapter(

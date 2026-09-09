@@ -13,7 +13,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
   @override
   Widget build(BuildContext context) {
     return HScaffold(
-      appBar: HAppBar(title: 'List View'),
+      appBar: HAppBar(title: Text('List View')),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
