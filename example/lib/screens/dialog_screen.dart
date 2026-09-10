@@ -25,13 +25,13 @@ class _DialogScreenState extends State<DialogScreen> {
             child: Row(
               children: [
                 HButton.filled(
-                  label: 'Open Me!',
+                  label: Text('Open Me!'),
                   onPressed: () => showHDialog(
                     context,
                     builder: (context) => HDialog(
                       actions: [
                         HButton.tonal(
-                          label: 'Close',
+                          label: Text('Close'),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],
@@ -53,14 +53,14 @@ class _DialogScreenState extends State<DialogScreen> {
               spacing: 4.0,
               children: [
                 HButton.tonal(
-                  label: 'Bottom',
+                  label: Text('Bottom'),
                   onPressed: () => showHDialog(
                     context,
                     builder: (context) => HDialog(
                       position: HDialogPosition.bottom,
                       actions: [
                         HButton.tonal(
-                          label: 'Close',
+                          label: Text('Close'),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],
@@ -69,14 +69,14 @@ class _DialogScreenState extends State<DialogScreen> {
                   ),
                 ),
                 HButton.tonal(
-                  label: 'Center',
+                  label: Text('Center'),
                   onPressed: () => showHDialog(
                     context,
                     builder: (context) => HDialog(
                       position: HDialogPosition.center,
                       actions: [
                         HButton.tonal(
-                          label: 'Close',
+                          label: Text('Close'),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],
@@ -85,14 +85,14 @@ class _DialogScreenState extends State<DialogScreen> {
                   ),
                 ),
                 HButton.tonal(
-                  label: 'Top',
+                  label: Text('Top'),
                   onPressed: () => showHDialog(
                     context,
                     builder: (context) => HDialog(
                       position: HDialogPosition.top,
                       actions: [
                         HButton.tonal(
-                          label: 'Close',
+                          label: Text('Close'),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],
@@ -116,17 +116,17 @@ class _DialogScreenState extends State<DialogScreen> {
               spacing: 4.0,
               children: [
                 HButton.tonal(
-                  label: 'Open Me!',
+                  label: Text('Open Me!'),
                   onPressed: () => showHDialog(
                     context,
                     builder: (context) => HDialog(
                       actions: [
                         HButton.filled(
-                          label: 'Save',
+                          label: Text('Save'),
                           onPressed: () => Navigator.pop(context),
                         ),
                         HButton.tonal(
-                          label: 'Close',
+                          label: Text('Close'),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],

@@ -26,30 +26,30 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
                 Row(
                   spacing: 16.0,
                   children: [
-                    HButton.plain(label: 'Text', onPressed: () {}),
+                    HButton.plain(label: Text('Text'), onPressed: () {}),
                     HButton.plain(
-                      label: 'Text',
+                      label: Text('Text'),
                       onPressed: () {},
                       showIcon: true,
                       icon: Symbols.add_rounded,
                     ),
-                    HButton.outlined(label: 'Outlined', onPressed: () {}),
+                    HButton.outlined(label: Text('Outlined'), onPressed: () {}),
                     HButton.outlined(
-                      label: 'Outlined',
+                      label: Text('Outlined'),
                       onPressed: () {},
                       showIcon: true,
                       icon: Symbols.add_rounded,
                     ),
-                    HButton.tonal(label: 'Tonal', onPressed: () {}),
+                    HButton.tonal(label: Text('Tonal'), onPressed: () {}),
                     HButton.tonal(
-                      label: 'Tonal',
+                      label: Text('Tonal'),
                       onPressed: () {},
                       showIcon: true,
                       icon: Symbols.add_rounded,
                     ),
-                    HButton.filled(label: 'Filled', onPressed: () {}),
+                    HButton.filled(label: Text('Filled'), onPressed: () {}),
                     HButton.filled(
-                      label: 'Filled',
+                      label: Text('Filled'),
                       onPressed: () {},
                       showIcon: true,
                       icon: Symbols.add_rounded,

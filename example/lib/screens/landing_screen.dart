@@ -177,7 +177,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         iconPosition: HButtonIconPosition.right,
                         onPressed: widget.onExplore,
                         icon: Symbols.arrow_forward_rounded,
-                        label: 'Explore components',
+                        label: Text('Explore components'),
                       ),
                       HButton.tonal(
                         showIcon: true,
@@ -190,7 +190,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           }
                         },
                         icon: Symbols.download,
-                        label: 'Install from pub.dev',
+                        label: Text('Install from pub.dev'),
                       ),
                       HButton.outlined(
                         showIcon: true,
@@ -203,7 +203,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           }
                         },
                         icon: Symbols.code_rounded,
-                        label: 'View Source Code',
+                        label: Text('View Source Code'),
                       ),
                     ],
                   ),

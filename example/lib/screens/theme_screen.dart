@@ -260,10 +260,10 @@ class _ExampleWidgetsState extends State<_ExampleWidgets> {
           Row(
             spacing: 8.0,
             children: [
-              HButton.filled(onPressed: () {}, label: 'Button'),
-              HButton.outlined(onPressed: () {}, label: 'Button'),
-              HButton.tonal(onPressed: () {}, label: 'Button'),
-              HButton.plain(onPressed: () {}, label: 'Button'),
+              HButton.filled(onPressed: () {}, label: Text('Button')),
+              HButton.outlined(onPressed: () {}, label: Text('Button')),
+              HButton.tonal(onPressed: () {}, label: Text('Button')),
+              HButton.plain(onPressed: () {}, label: Text('Button')),
               HIconButton.filled(onPressed: () {}, icon: Symbols.favorite),
               HIconButton.outlined(onPressed: () {}, icon: Symbols.favorite),
               HIconButton.tonal(onPressed: () {}, icon: Symbols.favorite),

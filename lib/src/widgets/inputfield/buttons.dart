@@ -16,7 +16,7 @@ enum _HButtonVariant { filled, outlined, plain, tonal }
 /// Pressing the button scales it down slightly for tactile feedback,
 /// without using Material's ElevatedButton/OutlinedButton/TextButton.
 class HButton extends StatefulWidget {
-  final String label;
+  final Widget label;
   final VoidCallback? onPressed;
 
   /// Whether to show the [icon]. If true, [icon] must be provided.
@@ -208,9 +208,7 @@ class _HButtonState extends State<HButton> {
         Icon(widget.icon, size: widget.iconSize, color: _fgColor),
         SizedBox(width: widget.gap),
       ],
-      Text(
-        widget.label,
-        overflow: TextOverflow.ellipsis,
+      DefaultTextStyle(
         style:
             (widget.textStyle ?? const TextStyle(fontWeight: FontWeight.w600))
                 .copyWith(
@@ -218,6 +216,7 @@ class _HButtonState extends State<HButton> {
                   // Slightly smaller font for compact 32px desktop view
                   fontSize: widget.textStyle?.fontSize ?? (isDesktop ? 13 : 14),
                 ),
+        child: widget.label,
       ),
       if (widget.showIcon &&
           widget.icon != null &&
