@@ -1,3 +1,10 @@
+## 1.8.3
+
+- imp: HButton and HIconButton readonly and enabled properties
+- imp: Raname Button variant from 'text' to 'plain'
+- imp: Change label property type from String to Widget
+- imp: Remove showIcon property and let icon property handle its own visibility
+
 ## 1.8.2
 
 - imp: Change HAppBar underlying widget from AppBar to SliverAppBar
