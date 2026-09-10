@@ -1,3 +1,7 @@
+## 1.8.2
+
+- imp: Change HAppBar underlying widget from AppBar to SliverAppBar
+
 ## 1.8.1
 
 - fix: Change `HAppBar` title parameter to accept a `Widget` instead of a `String`, allowing for more flexibility in customizing the app bar title.
