@@ -20,7 +20,6 @@ class HButton extends StatefulWidget {
   final VoidCallback? onPressed;
 
   /// Whether to show the [icon]. If true, [icon] must be provided.
-  final bool showIcon;
   final IconData? icon;
   final HButtonIconPosition iconPosition;
 
@@ -39,7 +38,6 @@ class HButton extends StatefulWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    this.showIcon = false,
     this.icon,
     this.iconPosition = HButtonIconPosition.left,
     this.color,
@@ -56,7 +54,6 @@ class HButton extends StatefulWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    this.showIcon = false,
     this.icon,
     this.iconPosition = HButtonIconPosition.left,
     this.color,
@@ -73,7 +70,6 @@ class HButton extends StatefulWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    this.showIcon = false,
     this.icon,
     this.iconPosition = HButtonIconPosition.left,
     this.color,
@@ -90,7 +86,6 @@ class HButton extends StatefulWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    this.showIcon = false,
     this.icon,
     this.iconPosition = HButtonIconPosition.left,
     this.color,
@@ -202,8 +197,7 @@ class _HButtonState extends State<HButton> {
     final bool isDesktop = _resolvedHeight <= 36;
 
     final children = <Widget>[
-      if (widget.showIcon &&
-          widget.icon != null &&
+      if (widget.icon != null &&
           widget.iconPosition == HButtonIconPosition.left) ...[
         Icon(widget.icon, size: widget.iconSize, color: _fgColor),
         SizedBox(width: widget.gap),
@@ -218,8 +212,7 @@ class _HButtonState extends State<HButton> {
                 ),
         child: widget.label,
       ),
-      if (widget.showIcon &&
-          widget.icon != null &&
+      if (widget.icon != null &&
           widget.iconPosition == HButtonIconPosition.right) ...[
         SizedBox(width: widget.gap),
         Icon(widget.icon, size: widget.iconSize, color: _fgColor),
