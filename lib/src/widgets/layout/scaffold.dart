@@ -2,43 +2,13 @@ import 'package:flutter/rendering.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Wraps any [PreferredSizeWidget] (e.g. [HAppBar]) so it can be used as a
-/// sliver inside a [CustomScrollView]. Pinned by default, so it behaves
-/// like a normal AppBar that stays fixed to the top while the body scrolls
-/// underneath it.
-class _SliverPreferredSizeHeaderDelegate
-    extends SliverPersistentHeaderDelegate {
-  final PreferredSizeWidget child;
-  const _SliverPreferredSizeHeaderDelegate(this.child);
-  @override
-  double get minExtent => child.preferredSize.height;
-  @override
-  double get maxExtent => child.preferredSize.height;
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    // Material elevation/shadow only kicks in once content has actually
-    // scrolled under the header.
-    return Material(
-      elevation: overlapsContent ? 2 : 0,
-      child: SizedBox.expand(child: child),
-    );
-  }
-
-  @override
-  bool shouldRebuild(covariant _SliverPreferredSizeHeaderDelegate oldDelegate) {
-    return oldDelegate.child != child;
-  }
-}
-
 class HScaffold extends StatefulWidget {
-  /// The top app bar. Must be a [PreferredSizeWidget] (e.g. [HAppBar]
-  /// or a plain [AppBar]) — it's automatically wrapped as a pinned
-  /// sliver header. Pass null for no app bar.
-  final PreferredSizeWidget? appBar;
+  /// The top app bar, as a *sliver* widget — typically an [HAppBar]. It's
+  /// placed directly into the [CustomScrollView]'s `slivers` list, so it
+  /// must build down to a real sliver (e.g. [SliverAppBar]). Pinned/floating
+  /// behavior now lives on the app bar widget itself (e.g. `HAppBar.pinned`)
+  /// rather than here. Pass null for no app bar.
+  final Widget? appBar;
   final List<Widget> slivers; // body content as slivers
   final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
@@ -46,9 +16,6 @@ class HScaffold extends StatefulWidget {
   final Color? scaffoldBackground;
   final Color? bodyBackground; // optional background for the body slivers
   final Widget? sidebar; // optional sidebar widget
-  final bool pinned; // whether the app bar is pinned (default: true)
-  final bool
-  isFloatingAppBar; // whether the app bar is floating (default: false)
 
   /// When true (default) and [bottomNavigationBar] is set, the bar slides
   /// out of view when the user scrolls down and slides back in when they
@@ -66,8 +33,6 @@ class HScaffold extends StatefulWidget {
     this.scaffoldBackground,
     this.bodyBackground,
     this.sidebar,
-    this.pinned = false,
-    this.isFloatingAppBar = true,
     this.hideBottomBarOnScroll = true,
   });
 
@@ -104,12 +69,19 @@ class _HScaffoldState extends State<HScaffold> {
     return false;
   }
 
+  Color get _scaffoldBackgroundColor =>
+      widget.scaffoldBackground ??
+      Theme.of(context).colorScheme.surfaceContainerLow;
+  Color get bodyBackground =>
+      widget.bodyBackground ??
+      Theme.of(context).colorScheme.surfaceContainerLowest;
+
   @override
   Widget build(BuildContext context) {
     final bottomBar = widget.bottomNavigationBar;
 
     return Scaffold(
-      backgroundColor: widget.scaffoldBackground,
+      backgroundColor: _scaffoldBackgroundColor,
       drawer: widget.drawer,
       floatingActionButton: widget.floatingActionButton,
       extendBody: true,
@@ -136,19 +108,13 @@ class _HScaffoldState extends State<HScaffold> {
               onNotification: _handleScrollNotification,
               child: CustomScrollView(
                 slivers: [
-                  if (widget.appBar != null)
-                    SliverPersistentHeader(
-                      pinned: widget.pinned,
-                      floating: widget.isFloatingAppBar,
-                      delegate: _SliverPreferredSizeHeaderDelegate(
-                        widget.appBar!,
-                      ),
-                    ),
+                  if (widget.appBar != null) widget.appBar!,
                   DecoratedSliver(
                     decoration: BoxDecoration(
-                      color:
-                          widget.bodyBackground ??
-                          Theme.of(context).colorScheme.surfaceContainer,
+                      // color:
+                      //     widget.bodyBackground ??
+                      //     Theme.of(context).colorScheme.surfaceContainer,
+                      color: bodyBackground,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(kBorderRadius),
                         topRight: Radius.circular(kBorderRadius),

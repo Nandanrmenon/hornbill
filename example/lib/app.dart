@@ -548,18 +548,11 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
     }
 
     return HScaffold(
-      appBar: _isDesktop
-          ? null
-          : HAppBar(
-              title: Text('Hornbill Example App'),
-              backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-            ),
+      appBar: _isDesktop ? null : HAppBar(title: Text('Hornbill Example App')),
       sidebar: _isDesktop ? _buildDesktopSidebar(context) : null,
       slivers: _isDesktop
           ? _buildDesktopSlivers()
           : _buildMobileSlivers(context),
-      scaffoldBackground: Theme.of(context).colorScheme.surfaceContainer,
-      bodyBackground: Theme.of(context).colorScheme.surfaceContainerLowest,
     );
   }
 }

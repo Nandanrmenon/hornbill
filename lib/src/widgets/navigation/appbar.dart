@@ -25,7 +25,7 @@ class HAppBarAction {
   });
 }
 
-/// A responsive AppBar.
+/// A responsive [SliverAppBar].
 ///
 /// Desktop / wide layout:
 ///   [back button?]  [title]      [search field (centered, if enabled)]      [actions...]
@@ -33,11 +33,13 @@ class HAppBarAction {
 /// Mobile / narrow layout:
 ///   [drawer or back button?]  [title  -or-  search field (if search is active)]   [overflow menu]
 ///
-/// Wrap this in a [Scaffold] as the `appBar`. If the Scaffold has a
-/// `drawer`, the hamburger icon is shown automatically (standard Flutter
-/// behavior) as long as you don't force [showBackButton] to true and don't
-/// supply a custom [leading].
-class HAppBar extends StatefulWidget implements PreferredSizeWidget {
+/// This is a *sliver* widget now — place it directly inside a
+/// [CustomScrollView]'s `slivers` list (e.g. via [HScaffold]'s `appBar`
+/// slot). It relies on [SliverAppBar]'s own handling of the top status-bar
+/// inset, so — unlike the old fixed-height [SliverPersistentHeader] wrapper
+/// — it will never render behind the status bar or leave a blank gap above
+/// it.
+class HAppBar extends StatefulWidget {
   /// Title text. Ignored on mobile while the search field is active.
   final Widget? title;
 
@@ -80,14 +82,33 @@ class HAppBar extends StatefulWidget implements PreferredSizeWidget {
   final List<HAppBarAction> actions;
 
   /// Width breakpoint (in logical pixels) below which the mobile layout
-  /// is used.
+  /// is used. Measured against the sliver's own cross-axis extent, not the
+  /// full screen width, so it stays correct next to an [HScaffold] sidebar.
   final double mobileBreakpoint;
 
   final Color? backgroundColor;
   final double elevation;
 
+  /// Elevation shown once body content has scrolled underneath the bar.
+  /// Passed straight through to [SliverAppBar.scrolledUnderElevation].
+  /// Leave null to use the framework default.
+  final double? scrolledUnderElevation;
+
   /// Optional widget displayed below the toolbar, such as [HTabBar].
   final PreferredSizeWidget? bottom;
+
+  /// Whether the app bar stays fixed to the top while the body scrolls
+  /// underneath it. Defaults to true.
+  final bool pinned;
+
+  /// Whether the app bar scrolls off with the body and slides back into
+  /// view as soon as the user scrolls up. Defaults to false.
+  final bool floating;
+
+  /// Only meaningful when [floating] is true: animate fully into view as
+  /// soon as an upward scroll starts, rather than tracking the scroll
+  /// offset exactly.
+  final bool snap;
 
   const HAppBar({
     super.key,
@@ -107,13 +128,12 @@ class HAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.mobileBreakpoint = 800,
     this.backgroundColor,
     this.elevation = 0,
+    this.scrolledUnderElevation,
     this.bottom,
+    this.pinned = false,
+    this.floating = true,
+    this.snap = false,
   });
-
-  @override
-  Size get preferredSize => Size.fromHeight(
-    kToolbarHeight + 10 + (bottom?.preferredSize.height ?? 0),
-  );
 
   @override
   State<HAppBar> createState() => _HAppBarState();
@@ -238,7 +258,7 @@ class _HAppBarState extends State<HAppBar> {
     return SizedBox(width: width, child: field);
   }
 
-  Widget _buildDesktopTitleArea() {
+  Widget _buildDesktopTitleArea(BuildContext context) {
     return DefaultTextStyle(
       overflow: TextOverflow.ellipsis,
       style: Theme.of(
@@ -287,9 +307,12 @@ class _HAppBarState extends State<HAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
+    // SliverLayoutBuilder exposes the sliver's own cross-axis extent (the
+    // actual width it will render at — e.g. screen width minus an
+    // HScaffold sidebar), which is what the breakpoint should react to.
+    return SliverLayoutBuilder(
       builder: (context, constraints) {
-        final isMobile = constraints.maxWidth < widget.mobileBreakpoint;
+        final isMobile = constraints.crossAxisExtent < widget.mobileBreakpoint;
         return isMobile ? _buildMobile(context) : _buildDesktop(context);
       },
     );
@@ -298,17 +321,22 @@ class _HAppBarState extends State<HAppBar> {
   Widget _buildDesktop(BuildContext context) {
     final leading = _buildLeading(context, isMobile: false);
 
-    return AppBar(
+    return SliverAppBar(
+      pinned: widget.pinned,
+      floating: widget.floating,
+      snap: widget.snap,
       backgroundColor:
-          widget.backgroundColor ?? Theme.of(context).colorScheme.surface,
+          widget.backgroundColor ??
+          Theme.of(context).colorScheme.surfaceContainerLow,
       elevation: widget.elevation,
+      scrolledUnderElevation: widget.scrolledUnderElevation,
       automaticallyImplyLeading: false,
       leading: leading,
       leadingWidth: leading == null ? 0 : null,
       titleSpacing: leading == null ? NavigationToolbar.kMiddleSpacing : 0,
       title: Row(
         children: [
-          Flexible(child: _buildDesktopTitleArea()),
+          Flexible(child: _buildDesktopTitleArea(context)),
           if (widget.searchEnabled) ...[
             const Spacer(),
             _buildSearchField(width: widget.desktopSearchWidth),
@@ -326,10 +354,15 @@ class _HAppBarState extends State<HAppBar> {
     final leading = _buildLeading(context, isMobile: true);
     final showingSearch = widget.searchEnabled && _searchActive;
 
-    return AppBar(
+    return SliverAppBar(
+      pinned: widget.pinned,
+      floating: widget.floating,
+      snap: widget.snap,
       backgroundColor:
-          widget.backgroundColor ?? Theme.of(context).colorScheme.surface,
+          widget.backgroundColor ??
+          Theme.of(context).colorScheme.surfaceContainerLow,
       elevation: widget.elevation,
+      scrolledUnderElevation: widget.scrolledUnderElevation,
       // Leave auto-imply on when we're not overriding leading, so the
       // Scaffold's drawer icon still appears when relevant.
       automaticallyImplyLeading: leading == null,
