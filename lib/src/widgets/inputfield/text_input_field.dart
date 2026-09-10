@@ -23,6 +23,8 @@ class HTextField extends StatefulWidget {
   final bool expands;
   final int? maxLines;
   final FormFieldValidator? validator;
+  final bool readOnly;
+  final bool enabled;
 
   const HTextField({
     super.key,
@@ -46,7 +48,9 @@ class HTextField extends StatefulWidget {
     this.autocorrect,
     this.expands = false,
     this.maxLines,
-    this.validator
+    this.validator,
+    this.readOnly = false,
+    this.enabled = true
   });
 
   @override
@@ -65,15 +69,19 @@ class _HTextFieldState extends State<HTextField> {
           child: TextFormField(
             controller: widget.controller,
             obscureText: widget.obscureText,
-            validator: widget.isRequired ? (value) {
-              if (widget.isRequired) {
-                return value == null || value.isEmpty
-                    ? '${widget.label ?? 'Field'} is required'
-                    : null;
-              }
-              return null;
-            } : widget.validator,
+            validator: widget.isRequired
+                ? (value) {
+                    if (widget.isRequired) {
+                      return value == null || value.isEmpty
+                          ? '${widget.label ?? 'Field'} is required'
+                          : null;
+                    }
+                    return null;
+                  }
+                : widget.validator,
             maxLength: widget.maxLength,
+            readOnly: widget.readOnly,
+            enabled: widget.enabled,
             decoration: InputDecoration(
               hintText: widget.hintText,
               labelText: widget.label,
