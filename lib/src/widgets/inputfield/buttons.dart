@@ -8,10 +8,10 @@ import 'package:material_ui/material_ui.dart';
 enum HButtonIconPosition { left, right }
 
 /// Internal visual style variant. Set via the named constructors below.
-enum _HButtonVariant { filled, outlined, text, tonal }
+enum _HButtonVariant { filled, outlined, plain, tonal }
 
 /// A custom button widget with four style variants:
-/// [HButton.filled], [HButton.outlined], [HButton.text], [HButton.tonal].
+/// [HButton.filled], [HButton.outlined], [HButton.plain], [HButton.tonal].
 ///
 /// Pressing the button scales it down slightly for tactile feedback,
 /// without using Material's ElevatedButton/OutlinedButton/TextButton.
@@ -69,7 +69,7 @@ class HButton extends StatefulWidget {
     this.textStyle,
   }) : _variant = _HButtonVariant.outlined;
 
-  const HButton.text({
+  const HButton.plain({
     super.key,
     required this.label,
     required this.onPressed,
@@ -84,7 +84,7 @@ class HButton extends StatefulWidget {
     this.iconSize = 16,
     this.gap = 6.0,
     this.textStyle,
-  }) : _variant = _HButtonVariant.text;
+  }) : _variant = _HButtonVariant.plain;
 
   const HButton.tonal({
     super.key,
@@ -147,7 +147,7 @@ class _HButtonState extends State<HButton> {
         case _HButtonVariant.tonal:
           return Colors.grey.shade300;
         case _HButtonVariant.outlined:
-        case _HButtonVariant.text:
+        case _HButtonVariant.plain:
           return Colors.transparent;
       }
     }
@@ -159,7 +159,7 @@ class _HButtonState extends State<HButton> {
       case _HButtonVariant.tonal:
         resting = _baseColor.withValues(alpha: 0.12);
       case _HButtonVariant.outlined:
-      case _HButtonVariant.text:
+      case _HButtonVariant.plain:
         resting = Colors.transparent;
     }
 
@@ -184,7 +184,7 @@ class _HButtonState extends State<HButton> {
         return Theme.of(context).colorScheme.onPrimary;
       case _HButtonVariant.tonal:
       case _HButtonVariant.outlined:
-      case _HButtonVariant.text:
+      case _HButtonVariant.plain:
         return _baseColor;
     }
   }

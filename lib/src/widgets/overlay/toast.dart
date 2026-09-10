@@ -451,7 +451,7 @@ class _HToastCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 6),
-            HIconButton.text(icon: Symbols.close_rounded, onPressed: onClose),
+            HIconButton.plain(icon: Symbols.close_rounded, onPressed: onClose),
           ],
         ),
       ),

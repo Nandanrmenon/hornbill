@@ -26,8 +26,8 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
                 Row(
                   spacing: 16.0,
                   children: [
-                    HButton.text(label: 'Text', onPressed: () {}),
-                    HButton.text(
+                    HButton.plain(label: 'Text', onPressed: () {}),
+                    HButton.plain(
                       label: 'Text',
                       onPressed: () {},
                       showIcon: true,
@@ -100,7 +100,7 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
                   onPressed: () {},
                   tooltip: 'Button',
                 ),
-                HIconButton.text(
+                HIconButton.plain(
                   icon: Symbols.android_rounded,
                   onPressed: () {},
                   tooltip: 'Button',
@@ -121,8 +121,8 @@ return HScaffold(
       child: Row(
         spacing: 16.0,
         children: [
-          HButton.text(label: 'Text', onPressed: () {}),
-          HButton.text(
+          HButton.plain(label: 'Text', onPressed: () {}),
+          HButton.plain(
             label: 'Text',
             onPressed: () {},
             showIcon: true,

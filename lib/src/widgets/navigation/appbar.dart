@@ -192,7 +192,7 @@ class _HAppBarState extends State<HAppBar> {
 
     // Mobile with active search: show a close/back icon that exits search.
     if (isMobile && widget.searchEnabled && _searchActive) {
-      return HIconButton.text(
+      return HIconButton.plain(
         icon: Symbols.arrow_back_ios_new_rounded,
         tooltip: 'Close search',
         onPressed: () => _setSearchActive(false),
@@ -200,7 +200,7 @@ class _HAppBarState extends State<HAppBar> {
     }
 
     if (wantsBack) {
-      return HIconButton.text(
+      return HIconButton.plain(
         icon: Symbols.arrow_back_ios_new_rounded,
         tooltip: 'Back',
         onPressed:
@@ -228,7 +228,7 @@ class _HAppBarState extends State<HAppBar> {
         prefixIcon: const Icon(Symbols.search),
         suffixIcon: _searchController.text.isEmpty
             ? null
-            : HIconButton.text(
+            : HIconButton.plain(
                 icon: Symbols.clear,
                 onPressed: () {
                   _searchController.clear();

@@ -2,10 +2,10 @@ import 'package:hornbill/src/helpers/constants.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Internal visual style variant. Set via the named constructors below.
-enum _HIconButtonVariant { filled, outlined, text, tonal }
+enum _HIconButtonVariant { filled, outlined, plain, tonal }
 
 /// A custom icon-only button with four style variants:
-/// [HIconButton.filled], [HIconButton.outlined], [HIconButton.text],
+/// [HIconButton.filled], [HIconButton.outlined], [HIconButton.plain],
 /// [HIconButton.tonal].
 ///
 /// Pressing the button scales it down slightly for tactile feedback,
@@ -44,7 +44,7 @@ class HIconButton extends StatefulWidget {
     this.tooltip,
   }) : _variant = _HIconButtonVariant.outlined;
 
-  const HIconButton.text({
+  const HIconButton.plain({
     super.key,
     required this.icon,
     required this.onPressed,
@@ -53,7 +53,7 @@ class HIconButton extends StatefulWidget {
     this.size = 44,
     this.iconSize = 20,
     this.tooltip,
-  }) : _variant = _HIconButtonVariant.text;
+  }) : _variant = _HIconButtonVariant.plain;
 
   const HIconButton.tonal({
     super.key,
@@ -100,7 +100,7 @@ class _HIconButtonState extends State<HIconButton> {
         case _HIconButtonVariant.tonal:
           return Colors.grey.shade300;
         case _HIconButtonVariant.outlined:
-        case _HIconButtonVariant.text:
+        case _HIconButtonVariant.plain:
           return Colors.transparent;
       }
     }
@@ -112,7 +112,7 @@ class _HIconButtonState extends State<HIconButton> {
       case _HIconButtonVariant.tonal:
         resting = _baseColor.withValues(alpha: 0.12);
       case _HIconButtonVariant.outlined:
-      case _HIconButtonVariant.text:
+      case _HIconButtonVariant.plain:
         resting = Colors.transparent;
     }
 
@@ -138,7 +138,7 @@ class _HIconButtonState extends State<HIconButton> {
         return _baseColor;
       case _HIconButtonVariant.outlined:
         return _baseColor;
-      case _HIconButtonVariant.text:
+      case _HIconButtonVariant.plain:
         return Theme.of(context).colorScheme.onSurface;
     }
   }
