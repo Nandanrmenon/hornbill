@@ -1,3 +1,7 @@
+## 1.8.4
+- fix: Fixed weird padding issue on HTextField
+- fix: HButton width fix, optical padding based on the icon position, color fix
+
 ## 1.8.3
 
 - imp: HButton and HIconButton readonly and enabled properties
