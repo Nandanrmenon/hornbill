@@ -1,4 +1,5 @@
-import 'package:flutter_highlight/themes/codepen-embed.dart';
+import 'package:flutter_code_view/flutter_code_view.dart';
+// import 'package:flutter_highlight/themes/codepen-embed.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/theme_controller.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -18,6 +19,8 @@ class ThemeScreen extends StatefulWidget {
 class _ThemeScreenState extends State<ThemeScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return HScaffold(
       appBar: HAppBar(title: Text('Hornbill Colour Schemes')),
       slivers: [
@@ -64,14 +67,22 @@ class _ThemeScreenState extends State<ThemeScreen> {
                   'Using a preset',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                CodeBlock(
-                  code:
+
+                FlutterCodeView(
+                  source:
                       'final theme = HTheme(colourScheme: HColourScheme.blue).lightTheme();',
-                  backgroundColor: Theme.of(
+                  themeType: isDark ? ThemeType.vs2015 : ThemeType.githubGist,
+                  language: Languages.dart,
+                  autoDetection: true,
+                  borderColor: Theme.of(context).colorScheme.outlineVariant,
+                  paddingBorder: EdgeInsets.all(1),
+                  borderRadiusCodeView: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8),
+                  showLineNumbers: true,
+                  fontSize: 14,
+                  selectionColor: Theme.of(
                     context,
-                  ).colorScheme.surfaceContainer,
-                  language: 'dart',
-                  theme: codepenEmbedTheme,
+                  ).colorScheme.tertiary.withValues(alpha: 0.3),
                 ),
                 Text(
                   'Available presets: `purple` (default), `red`, `orange`, `amber`, `yellow`, `green`, `teal`, `cyan`, `blue`, `indigo`, `pink`, `brown`, `grey`.',
@@ -83,16 +94,24 @@ class _ThemeScreenState extends State<ThemeScreen> {
                   'Using a custom `Color`',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                CodeBlock(
-                  code: '''
+
+                FlutterCodeView(
+                  source: '''
 final theme = HTheme(
   colourScheme: HColourScheme.custom(const Color(0xFF00FF00)),
 ).lightTheme();''',
-                  backgroundColor: Theme.of(
+                  themeType: isDark ? ThemeType.vs2015 : ThemeType.githubGist,
+                  language: Languages.dart,
+                  autoDetection: true,
+                  borderColor: Theme.of(context).colorScheme.outlineVariant,
+                  paddingBorder: EdgeInsets.all(1),
+                  borderRadiusCodeView: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8),
+                  showLineNumbers: true,
+                  fontSize: 14,
+                  selectionColor: Theme.of(
                     context,
-                  ).colorScheme.surfaceContainer,
-                  language: 'dart',
-                  theme: codepenEmbedTheme,
+                  ).colorScheme.tertiary.withValues(alpha: 0.3),
                 ),
 
                 // Using a custom hex string
@@ -101,8 +120,9 @@ final theme = HTheme(
                   'Using a custom hex string',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                CodeBlock(
-                  code: '''
+
+                FlutterCodeView(
+                  source: '''
 final theme = HTheme(
   colourScheme: HColourScheme.fromHex('#FF5733'),
 ).lightTheme();
@@ -110,11 +130,18 @@ final theme = HTheme(
 // The leading '#' is optional, and 8-digit ARGB hex is also supported:
 HColourScheme.fromHex('FF5733');
 HColourScheme.fromHex('#FFFF5733');''',
-                  backgroundColor: Theme.of(
+                  themeType: isDark ? ThemeType.vs2015 : ThemeType.githubGist,
+                  language: Languages.dart,
+                  autoDetection: true,
+                  borderColor: Theme.of(context).colorScheme.outlineVariant,
+                  paddingBorder: EdgeInsets.all(1),
+                  borderRadiusCodeView: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8),
+                  showLineNumbers: true,
+                  fontSize: 14,
+                  selectionColor: Theme.of(
                     context,
-                  ).colorScheme.surfaceContainer,
-                  language: 'dart',
-                  theme: codepenEmbedTheme,
+                  ).colorScheme.tertiary.withValues(alpha: 0.3),
                 ),
 
                 // Changing the scheme at runtime
@@ -126,8 +153,8 @@ HColourScheme.fromHex('#FFFF5733');''',
                 Text(
                   '`HTheme` and `HColourScheme` are plain, immutable value objects - there\'s no hidden global state to mutate. To re-theme live (like the picker above does), keep the current `HColourScheme` in some state you own (a `ChangeNotifier`, `ValueNotifier`, `setState`, your state-management solution of choice, etc.), and construct a fresh `HTheme` from it whenever `MaterialApp` rebuilds.',
                 ),
-                CodeBlock(
-                  code: '''
+                FlutterCodeView(
+                  source: '''
 // Anything that can hold a value and notify listeners works. This
 // example uses a plain ChangeNotifier.
 class ThemeController extends ChangeNotifier {
@@ -157,12 +184,18 @@ class MyApp extends StatelessWidget {
     );
   }
 }''',
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainer,
-                  language: 'dart',
-                  theme: codepenEmbedTheme,
+                  themeType: isDark ? ThemeType.vs2015 : ThemeType.githubGist,
+                  language: Languages.dart,
+                  autoDetection: true,
+                  borderColor: Theme.of(context).colorScheme.outlineVariant,
+                  paddingBorder: EdgeInsets.all(1),
+                  borderRadiusCodeView: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8),
                   showLineNumbers: true,
+                  fontSize: 14,
+                  selectionColor: Theme.of(
+                    context,
+                  ).colorScheme.tertiary.withValues(alpha: 0.3),
                 ),
                 Text(
                   'This is exactly how the swatch picker above is wired up - see `theme_controller.dart` and `main.dart` in this example app for the full, working version.',
@@ -174,8 +207,8 @@ class MyApp extends StatelessWidget {
                   'Full example',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                CodeBlock(
-                  code: '''
+                FlutterCodeView(
+                  source: '''
 import 'package:flutter/material.dart';
 import 'package:hornbill/hornbill.dart';
 
@@ -192,11 +225,18 @@ class MyApp extends StatelessWidget {
     );
   }
 }''',
-                  backgroundColor: Theme.of(
+                  themeType: isDark ? ThemeType.vs2015 : ThemeType.githubGist,
+                  language: Languages.dart,
+                  autoDetection: true,
+                  borderColor: Theme.of(context).colorScheme.outlineVariant,
+                  paddingBorder: EdgeInsets.all(1),
+                  borderRadiusCodeView: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8),
+                  showLineNumbers: true,
+                  fontSize: 14,
+                  selectionColor: Theme.of(
                     context,
-                  ).colorScheme.surfaceContainer,
-                  language: 'dart',
-                  theme: codepenEmbedTheme,
+                  ).colorScheme.tertiary.withValues(alpha: 0.3),
                 ),
               ],
             ),
@@ -257,8 +297,9 @@ class _ExampleWidgetsState extends State<_ExampleWidgets> {
             'This is a card. It uses the current colour scheme\'s surface color.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          Row(
+          Wrap(
             spacing: 8.0,
+            runSpacing: 8.0,
             children: [
               HButton.filled(onPressed: () {}, label: Text('Button')),
               HButton.outlined(onPressed: () {}, label: Text('Button')),
