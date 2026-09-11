@@ -23,8 +23,8 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
             padding: EdgeInsets.all(16.0),
             child: Column(
               children: [
-                Row(
-                  spacing: 16.0,
+                Wrap(
+                  spacing: 4.0,
                   children: [
                     HButton.plain(label: Text('Text'), onPressed: () {}),
                     HButton.plain(
@@ -106,6 +106,12 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
           ),
         ),
       ],
+      floatingActionButton: HButton.tonal(
+        label: Text('Next'),
+        onPressed: () {
+          Navigator.pushNamed(context, '/components/inputs');
+        },
+      ),
     );
   }
 }

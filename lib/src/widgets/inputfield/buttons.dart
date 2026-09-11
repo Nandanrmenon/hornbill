@@ -147,12 +147,20 @@ class _HButtonState extends State<HButton> {
       }
     }
 
+    final theme = Theme.of(context).colorScheme;
+
     final Color resting;
     switch (widget._variant) {
       case _HButtonVariant.filled:
         resting = _baseColor;
       case _HButtonVariant.tonal:
-        resting = _baseColor.withValues(alpha: 0.12);
+        // If the caller passed a custom color, fall back to an alpha blend
+        // since there's no "custom container" token to reach for.
+        // Otherwise use the real M3 tonal pairing.
+        // resting = widget.color != null
+        //     ? _baseColor.withValues(alpha: 0.12)
+        //     : theme.primaryContainer;
+        resting = theme.primaryContainer;
       case _HButtonVariant.outlined:
       case _HButtonVariant.plain:
         resting = Colors.transparent;
@@ -160,11 +168,6 @@ class _HButtonState extends State<HButton> {
 
     if (!_hovered) return resting;
 
-    // Hover state: blend a low-alpha layer of the foreground color over
-    // the resting background — the same "state layer" approach Material
-    // buttons use, so filled/tonal darken slightly and outlined/text
-    // (which rest fully transparent) pick up a faint tint instead of
-    // staying visually dead until the user actually presses.
     final overlay = _fgColor.withValues(alpha: 0.08);
     return resting == Colors.transparent
         ? overlay
@@ -174,10 +177,14 @@ class _HButtonState extends State<HButton> {
   Color get _fgColor {
     if (widget.foregroundColor != null) return widget.foregroundColor!;
     if (!_enabled) return Colors.grey.shade500;
+
+    final theme = Theme.of(context).colorScheme;
+
     switch (widget._variant) {
       case _HButtonVariant.filled:
-        return Theme.of(context).colorScheme.onPrimary;
+        return theme.onPrimary;
       case _HButtonVariant.tonal:
+        return theme.onPrimaryContainer;
       case _HButtonVariant.outlined:
       case _HButtonVariant.plain:
         return _baseColor;
@@ -190,6 +197,27 @@ class _HButtonState extends State<HButton> {
       color: _enabled ? _baseColor : Colors.grey.shade400,
       width: 1.5,
     );
+  }
+
+  EdgeInsetsGeometry get _resolvedPadding {
+    if (widget.icon == null) return widget.padding;
+
+    final resolved = widget.padding.resolve(Directionality.of(context));
+
+    return switch (widget.iconPosition) {
+      HButtonIconPosition.left => EdgeInsets.only(
+        left: 12,
+        right: 16,
+        top: resolved.top,
+        bottom: resolved.bottom,
+      ),
+      HButtonIconPosition.right => EdgeInsets.only(
+        left: 16,
+        right: 12,
+        top: resolved.top,
+        bottom: resolved.bottom,
+      ),
+    };
   }
 
   @override
@@ -207,7 +235,6 @@ class _HButtonState extends State<HButton> {
             (widget.textStyle ?? const TextStyle(fontWeight: FontWeight.w600))
                 .copyWith(
                   color: _fgColor,
-                  // Slightly smaller font for compact 32px desktop view
                   fontSize: widget.textStyle?.fontSize ?? (isDesktop ? 13 : 14),
                 ),
         child: widget.label,
@@ -218,6 +245,31 @@ class _HButtonState extends State<HButton> {
         Icon(widget.icon, size: widget.iconSize, color: _fgColor),
       ],
     ];
+
+    Widget content = AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.easeOut,
+      padding: _resolvedPadding,
+      decoration: BoxDecoration(
+        color: _backgroundColor,
+        borderRadius: BorderRadius.circular(kBorderRadiusMedium),
+        border: _border,
+      ),
+      alignment: Alignment.center,
+      child: Row(
+        mainAxisSize: widget.width != null
+            ? MainAxisSize.max
+            : MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: children,
+      ),
+    );
+
+    // Force shrink-to-content when no explicit width was requested,
+    // regardless of what constraints the parent (Column/stretch, etc.) hands down.
+    if (widget.width == null) {
+      content = IntrinsicWidth(child: content);
+    }
 
     return MouseRegion(
       cursor: _enabled ? SystemMouseCursors.click : MouseCursor.defer,
@@ -236,24 +288,7 @@ class _HButtonState extends State<HButton> {
           child: SizedBox(
             width: widget.width,
             height: _resolvedHeight,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              curve: Curves.easeOut,
-              padding: widget.padding,
-              decoration: BoxDecoration(
-                color: _backgroundColor,
-                borderRadius: BorderRadius.circular(kBorderRadiusMedium),
-                border: _border,
-              ),
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisSize: widget.width != null
-                    ? MainAxisSize.max
-                    : MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: children,
-              ),
-            ),
+            child: content,
           ),
         ),
       ),
