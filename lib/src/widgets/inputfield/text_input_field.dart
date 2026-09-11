@@ -25,6 +25,7 @@ class HTextField extends StatefulWidget {
   final FormFieldValidator? validator;
   final bool readOnly;
   final bool enabled;
+  final bool autofocus;
 
   const HTextField({
     super.key,
@@ -50,7 +51,8 @@ class HTextField extends StatefulWidget {
     this.maxLines,
     this.validator,
     this.readOnly = false,
-    this.enabled = true
+    this.enabled = true,
+    this.autofocus = false,
   });
 
   @override
@@ -64,9 +66,10 @@ class _HTextFieldState extends State<HTextField> {
       crossAxisAlignment: .center,
       spacing: widget.icon != null ? 8.0 : 4.0,
       children: [
-        (widget.icon ?? const SizedBox.shrink()),
+        if (widget.icon != null) widget.icon!,
         Flexible(
           child: TextFormField(
+            autofocus: widget.autofocus,
             controller: widget.controller,
             obscureText: widget.obscureText,
             validator: widget.isRequired
