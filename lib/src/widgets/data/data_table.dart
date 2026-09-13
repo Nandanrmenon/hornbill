@@ -276,7 +276,8 @@ class _HDataTableState extends State<HDataTable> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final resolvedEven = widget.evenRowColor ?? theme.colorScheme.surface;
+    final resolvedEven =
+        widget.evenRowColor ?? theme.colorScheme.surfaceContainerLowest;
     final resolvedOdd =
         widget.oddRowColor ?? theme.colorScheme.surfaceContainerLow;
     final resolvedSelected =
@@ -284,10 +285,8 @@ class _HDataTableState extends State<HDataTable> {
         theme.colorScheme.primaryContainer.withValues(alpha: 0.4);
     final resolvedHover =
         widget.hoverRowColor ??
-        theme.colorScheme.onSurface.withValues(alpha: 0.04);
-    final resolvedHeading =
-        widget.headingRowColor ??
-        theme.colorScheme.primaryContainer.withValues(alpha: 0.12);
+        theme.colorScheme.primary.withValues(alpha: 0.04);
+    final resolvedHeading = widget.headingRowColor ?? theme.colorScheme.surface;
     final resolvedDivider =
         widget.dividerColor ?? theme.colorScheme.outlineVariant;
 
@@ -457,8 +456,11 @@ class _HDataTableState extends State<HDataTable> {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         border: hIsOutlined(context)
-          ? Border.all(color: theme.colorScheme.outlineVariant)
-          : null,
+            ? Border.all(
+                color: theme.colorScheme.outlineVariant,
+                strokeAlign: BorderSide.strokeAlignOutside,
+              )
+            : null,
         borderRadius: BorderRadius.circular(kBorderRadiusSmall),
       ),
       margin: const EdgeInsets.only(bottom: 32),

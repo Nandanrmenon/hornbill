@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:hornbill/hornbill.dart';
+import 'package:material_ui/material_ui.dart';
 
 class DataTableScreen extends StatefulWidget {
   const DataTableScreen({super.key});
@@ -40,8 +40,9 @@ class _DataTableScreenState extends State<DataTableScreen> {
 
     return HScaffold(
       appBar: HAppBar(title: Text('Data Table')),
+      hideBottomBarOnScroll: false,
       slivers: [
-        SliverToBoxAdapter(
+        SliverFillRemaining(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: HDataTable(
