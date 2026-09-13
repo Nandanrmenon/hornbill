@@ -14,7 +14,7 @@ class HTextField extends StatefulWidget {
   final FocusNode? focusNode;
   final void Function(String)? onFieldSubmitted;
   final Icon? icon;
-  final Widget? trailingWidget;
+  final Widget? suffix;
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
   final VoidCallback? onEditingComplete;
@@ -41,7 +41,7 @@ class HTextField extends StatefulWidget {
     this.focusNode,
     this.onFieldSubmitted,
     this.icon,
-    this.trailingWidget,
+    this.suffix,
     this.inputFormatters,
     this.maxLength,
     this.onEditingComplete,
@@ -88,7 +88,7 @@ class _HTextFieldState extends State<HTextField> {
             decoration: InputDecoration(
               hintText: widget.hintText,
               labelText: widget.label,
-              suffixIcon: widget.trailingWidget,
+              suffixIcon: widget.suffix,
               counterText: widget.counterText,
               errorText: widget.errorText,
               prefixText: widget.prefixText,

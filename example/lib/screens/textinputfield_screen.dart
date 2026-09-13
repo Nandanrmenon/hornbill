@@ -38,7 +38,7 @@ class _TextinputfieldScreenState extends State<TextinputfieldScreen> {
                   icon: Icon(Symbols.person),
                   label: 'Label w/ trailing widget',
                   hintText: 'Hint Text',
-                  trailingWidget: IconButton(
+                  suffix: IconButton(
                     onPressed: () {},
                     icon: Icon(Symbols.date_range),
                   ),
@@ -51,7 +51,7 @@ class _TextinputfieldScreenState extends State<TextinputfieldScreen> {
                       child: HTextField(
                         label: 'Label w/ trailing widget',
                         hintText: 'Hint Text',
-                        trailingWidget: IconButton(
+                        suffix: IconButton(
                           onPressed: () {},
                           icon: Icon(Symbols.date_range),
                         ),
