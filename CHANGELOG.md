@@ -1,4 +1,12 @@
+## 1.8.5
+
+- imp: Added onLongPress callback to HListTile for better interactivity.
+- fix: remove primarycontainer with alpha and use surface color instead
+- fix: Resolve "Rename trailingWidget property of HTextField"
+- fix: Use CupertinoPageTransitionsBuilder for iOS and macOS
+
 ## 1.8.4
+
 - fix: Fixed weird padding issue on HTextField
 - fix: HButton width fix, optical padding based on the icon position, color fix
 
