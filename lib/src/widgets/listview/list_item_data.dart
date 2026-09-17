@@ -19,6 +19,7 @@ class HListTile extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.onTap,
+    this.onLongPress,
     this.leading,
     this.suffix,
     this.selected = false,
@@ -37,6 +38,8 @@ class HListTile extends StatelessWidget {
 
   /// Called when the row is tapped. If null, the row is not interactive.
   final VoidCallback? onTap;
+
+  final VoidCallback? onLongPress;
 
   /// Widget shown at the start of the row (e.g. an [Icon] or [CircleAvatar]).
   final Widget? leading;
@@ -85,6 +88,7 @@ class HListTile extends StatelessWidget {
       selectedColor: color ?? Theme.of(context).colorScheme.primary,
       subtitle: hasSubtitle ? subtitle! : null,
       onTap: onTap,
+      onLongPress: onLongPress,
       trailing: suffix,
       selected: selected,
     );
