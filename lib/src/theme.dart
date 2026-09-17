@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -167,9 +168,9 @@ PageTransitionsTheme pageTransitionTheme() {
   return PageTransitionsTheme(
     builders: {
       TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
-      TargetPlatform.iOS: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
-      TargetPlatform.macOS: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
       TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
     },
   );
