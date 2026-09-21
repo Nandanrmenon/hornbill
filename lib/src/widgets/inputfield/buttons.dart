@@ -122,10 +122,14 @@ class _HButtonState extends State<HButton> {
   double get _resolvedHeight {
     if (widget.height != null) return widget.height!;
 
-    final bool isDesktop =
+    final bool isNativeDesktop =
         !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
 
-    return isDesktop ? 32.0 : 44.0;
+    final bool isWideWeb =
+        kIsWeb &&
+        MediaQuery.sizeOf(context).width >= 800; // pick your breakpoint
+
+    return (isNativeDesktop || isWideWeb) ? 32.0 : 44.0;
   }
 
   // ---- Style resolution per variant ----
