@@ -41,63 +41,60 @@ class _DataTableScreenState extends State<DataTableScreen> {
     return HScaffold(
       appBar: HAppBar(title: Text('Data Table')),
       hideBottomBarOnScroll: false,
-      slivers: [
-        SliverFillRemaining(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: HDataTable(
-              onSelectAll: (value) {
+      extendBody: false,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: HDataTable(
+          onSelectAll: (value) {
+            setState(() {
+              if (value == true) {
+                _selectedIndices.addAll(
+                  List.generate(
+                    currentPageRecords.length,
+                    (i) => startIndex + i,
+                  ),
+                );
+              } else {
+                _selectedIndices.removeAll(
+                  List.generate(
+                    currentPageRecords.length,
+                    (i) => startIndex + i,
+                  ),
+                );
+              }
+            });
+          },
+          showCheckboxColumn: true,
+          columns: [
+            HDataColumn(label: Text('Column 1'), minWidth: 300, width: 300),
+            HDataColumn(label: Text('Column 2'), minWidth: 300, width: 300),
+            HDataColumn(label: Text('Column 3'), minWidth: 300, width: 300),
+          ],
+          rows: List.generate(currentPageRecords.length, (localIndex) {
+            int globalIndex = startIndex + localIndex;
+            final record = currentPageRecords[localIndex];
+            bool isSelected = _selectedIndices.contains(globalIndex);
+
+            return HDataRow(
+              selected: isSelected,
+              onSelectChanged: (selected) {
                 setState(() {
-                  if (value == true) {
-                    _selectedIndices.addAll(
-                      List.generate(
-                        currentPageRecords.length,
-                        (i) => startIndex + i,
-                      ),
-                    );
+                  if (selected == true) {
+                    _selectedIndices.add(globalIndex);
                   } else {
-                    _selectedIndices.removeAll(
-                      List.generate(
-                        currentPageRecords.length,
-                        (i) => startIndex + i,
-                      ),
-                    );
+                    _selectedIndices.remove(globalIndex);
                   }
                 });
               },
-              showCheckboxColumn: true,
-              columns: [
-                HDataColumn(label: Text('Column 1'), minWidth: 300, width: 300),
-                HDataColumn(label: Text('Column 2'), minWidth: 300, width: 300),
-                HDataColumn(label: Text('Column 3'), minWidth: 300, width: 300),
+              cells: [
+                HDataCell(Text(record['col1']!)),
+                HDataCell(Text(record['col2']!)),
+                HDataCell(Text(record['col3']!)),
               ],
-              rows: List.generate(currentPageRecords.length, (localIndex) {
-                int globalIndex = startIndex + localIndex;
-                final record = currentPageRecords[localIndex];
-                bool isSelected = _selectedIndices.contains(globalIndex);
-
-                return HDataRow(
-                  selected: isSelected,
-                  onSelectChanged: (selected) {
-                    setState(() {
-                      if (selected == true) {
-                        _selectedIndices.add(globalIndex);
-                      } else {
-                        _selectedIndices.remove(globalIndex);
-                      }
-                    });
-                  },
-                  cells: [
-                    HDataCell(Text(record['col1']!)),
-                    HDataCell(Text(record['col2']!)),
-                    HDataCell(Text(record['col3']!)),
-                  ],
-                );
-              }),
-            ),
-          ),
+            );
+          }),
         ),
-      ],
+      ),
       bottomNavigationBar: HPageNavigation(
         pageNr: _currentPage,
         totalPages: totalPages,
