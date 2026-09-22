@@ -1,3 +1,9 @@
+## 1.8.6
+
+- imp: Add `body` as an option to avoid using `CustomScrollView`.
+- fix: change `HButton` and `HIconButton` height based on platform and screen size.
+- chore: pub package upgrade
+
 ## 1.8.5
 
 - imp: Added onLongPress callback to HListTile for better interactivity.
