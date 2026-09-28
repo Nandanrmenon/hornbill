@@ -45,7 +45,7 @@ class _HDropDownFieldState extends State<HDropDownField> {
       crossAxisAlignment: CrossAxisAlignment.center,
       spacing: widget.icon != null ? 8.0 : 4.0,
       children: [
-        widget.icon ?? const SizedBox.shrink(),
+        if (widget.icon != null) widget.icon!,
         Flexible(
           child: LayoutBuilder(
             builder: (context, constraints) {
