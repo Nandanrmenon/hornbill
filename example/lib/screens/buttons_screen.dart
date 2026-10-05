@@ -11,73 +11,182 @@ class ButtonsScreen extends StatefulWidget {
 }
 
 class _ButtonsScreenState extends State<ButtonsScreen> {
+  bool _loading = false;
+
+  String _title(String s) => s[0].toUpperCase() + s.substring(1);
+
+  Widget _wrap(List<Widget> children) => Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: children,
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return HScaffold(
-      appBar: HAppBar(title: Text('Buttons')),
+      appBar: HAppBar(title: const Text('Buttons')),
       slivers: [
-        SliverToBoxAdapter(child: HListHeader(title: 'Text')),
+        // ---- Variants ----
+        SliverToBoxAdapter(child: HListHeader(title: 'Variants')),
+        SliverToBoxAdapter(
+          child: _wrap([
+            for (final v in HButtonVariant.values)
+              HButton(
+                variant: v,
+                label: Text(_title(v.name)),
+                onPressed: () {},
+              ),
+          ]),
+        ),
+
+        // ---- Colors ----
+        SliverToBoxAdapter(child: HListHeader(title: 'Colors')),
+        SliverToBoxAdapter(
+          child: _wrap([
+            for (final c in HButtonColor.values)
+              HButton(
+                color: c,
+                label: Text(
+                  c == HButtonColor.defaultColor ? 'Default' : _title(c.name),
+                ),
+                onPressed: () {},
+              ),
+          ]),
+        ),
+        SliverToBoxAdapter(
+          child: _wrap([
+            for (final c in HButtonColor.values)
+              HButton(
+                variant: HButtonVariant.flat,
+                color: c,
+                label: Text(
+                  c == HButtonColor.defaultColor ? 'Default' : _title(c.name),
+                ),
+                onPressed: () {},
+              ),
+          ]),
+        ),
+
+        // ---- Sizes ----
+        SliverToBoxAdapter(child: HListHeader(title: 'Sizes')),
+        SliverToBoxAdapter(
+          child: _wrap([
+            for (final s in HButtonSize.values)
+              HButton(
+                color: HButtonColor.primary,
+                size: s,
+                label: Text(_title(s.name)),
+                onPressed: () {},
+              ),
+          ]),
+        ),
+
+        // ---- Icons ----
+        SliverToBoxAdapter(child: HListHeader(title: 'Icons')),
+        SliverToBoxAdapter(
+          child: _wrap([
+            HButton(
+              color: HButtonColor.primary,
+              icon: Symbols.add_rounded,
+              label: const Text('Start icon'),
+              onPressed: () {},
+            ),
+            HButton(
+              variant: HButtonVariant.bordered,
+              color: HButtonColor.secondary,
+              icon: Symbols.arrow_forward_rounded,
+              iconPosition: HButtonIconPosition.right,
+              label: const Text('End icon'),
+              onPressed: () {},
+            ),
+            HButton(
+              variant: HButtonVariant.flat,
+              color: HButtonColor.danger,
+              icon: Symbols.delete_rounded,
+              onPressed: () {},
+            ),
+            HButton(
+              variant: HButtonVariant.shadow,
+              color: HButtonColor.success,
+              icon: Symbols.check_rounded,
+              onPressed: () {},
+            ),
+          ]),
+        ),
+
+        // ---- States ----
+        SliverToBoxAdapter(child: HListHeader(title: 'States')),
+        SliverToBoxAdapter(
+          child: _wrap([
+            HButton(
+              color: HButtonColor.primary,
+              isLoading: _loading,
+              label: Text(_loading ? 'Loading' : 'Tap to load'),
+              onPressed: () async {
+                setState(() => _loading = true);
+                await Future.delayed(const Duration(seconds: 2));
+                if (mounted) setState(() => _loading = false);
+              },
+            ),
+            HButton(
+              color: HButtonColor.primary,
+              label: const Text('Disabled'),
+              onPressed: null,
+            ),
+            HButton(
+              variant: HButtonVariant.bordered,
+              color: HButtonColor.primary,
+              label: const Text('Disabled'),
+              onPressed: null,
+            ),
+          ]),
+        ),
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Wrap(
-                  spacing: 4.0,
-                  children: [
-                    HButton.plain(label: Text('Text'), onPressed: () {}),
-                    HButton.plain(
-                      label: Text('Text'),
-                      onPressed: () {},
-                      icon: Symbols.add_rounded,
-                    ),
-                    HButton.outlined(label: Text('Outlined'), onPressed: () {}),
-                    HButton.outlined(
-                      label: Text('Outlined'),
-                      onPressed: () {},
-                      icon: Symbols.add_rounded,
-                    ),
-                    HButton.tonal(label: Text('Tonal'), onPressed: () {}),
-                    HButton.tonal(
-                      label: Text('Tonal'),
-                      onPressed: () {},
-                      icon: Symbols.add_rounded,
-                    ),
-                    HButton.filled(label: Text('Filled'), onPressed: () {}),
-                    HButton.filled(
-                      label: Text('Filled'),
-                      onPressed: () {},
-                      icon: Symbols.add_rounded,
-                    ),
-                  ],
-                ),
-                HListHeader(title: ' Usage'),
-                FlutterCodeView(
-                  source: sampleButtonCode,
-                  themeType: isDark ? ThemeType.vs2015 : ThemeType.githubGist,
-                  language: Languages.dart,
-                  autoDetection: true,
-                  borderColor: Theme.of(context).colorScheme.outlineVariant,
-                  paddingBorder: EdgeInsets.all(1),
-                  borderRadiusCodeView: BorderRadius.circular(8),
-                  borderRadius: BorderRadius.circular(8),
-                  showLineNumbers: true,
-                  fontSize: 14,
-                  selectionColor: Theme.of(
-                    context,
-                  ).colorScheme.tertiary.withValues(alpha: 0.3),
-                ),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: HButton(
+              fullWidth: true,
+              color: HButtonColor.primary,
+              label: const Text('Full width'),
+              onPressed: () {},
             ),
           ),
         ),
 
-        // Icons
-        SliverToBoxAdapter(child: HListHeader(title: 'Filled')),
+        // ---- Usage ----
+        SliverToBoxAdapter(child: HListHeader(title: 'Usage')),
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
+            child: FlutterCodeView(
+              source: sampleButtonCode,
+              themeType: isDark ? ThemeType.vs2015 : ThemeType.githubGist,
+              language: Languages.dart,
+              autoDetection: true,
+              borderColor: Theme.of(context).colorScheme.outlineVariant,
+              paddingBorder: const EdgeInsets.all(1),
+              borderRadiusCodeView: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8),
+              showLineNumbers: true,
+              fontSize: 14,
+              selectionColor: Theme.of(
+                context,
+              ).colorScheme.tertiary.withValues(alpha: 0.3),
+            ),
+          ),
+        ),
+
+        // ---- Icon buttons ----
+        SliverToBoxAdapter(child: HListHeader(title: 'Icon buttons')),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Row(
               spacing: 16.0,
               children: [
@@ -106,8 +215,12 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
           ),
         ),
       ],
-      floatingActionButton: HButton.tonal(
-        label: Text('Next'),
+      floatingActionButton: HButton(
+        variant: HButtonVariant.shadow,
+        color: HButtonColor.primary,
+        label: const Text('Next'),
+        icon: Symbols.arrow_forward_rounded,
+        iconPosition: HButtonIconPosition.right,
         onPressed: () {
           Navigator.pushNamed(context, '/components/inputs');
         },
@@ -117,42 +230,37 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
 }
 
 String sampleButtonCode = '''
-return HScaffold(
-  slivers: [
-    SliverToBoxAdapter(
-      child: Row(
-        spacing: 16.0,
-        children: [
-          HButton.plain(label: 'Text', onPressed: () {}),
-          HButton.plain(
-            label: 'Text',
-            onPressed: () {},
-            showIcon: true,
-            icon: Symbols.add_rounded,
-          ),
-          HButton.outlined(label: 'Outlined', onPressed: () {}),
-          HButton.outlined(
-            label: 'Outlined',
-            onPressed: () {},
-            showIcon: true,
-            icon: Symbols.add_rounded,
-          ),
-          HButton.tonal(label: 'Tonal', onPressed: () {}),
-          HButton.tonal(
-            label: 'Tonal',
-            onPressed: () {},
-            showIcon: true,
-            icon: Symbols.add_rounded,
-          ),
-          HButton.filled(label: 'Filled', onPressed: () {}),
-          HButton.filled(
-            label: 'Filled',
-            onPressed: () {},
-            showIcon: true,
-            icon: Symbols.add_rounded,
-          ),
-        ],
-      ),
-    ),
-  ],
-);''';
+// Variant + color + size
+HButton(
+  label: Text('Save'),
+  variant: HButtonVariant.solid,   // solid, bordered, light, flat,
+                                   // faded, shadow, ghost
+  color: HButtonColor.primary,     // defaultColor, primary, secondary,
+                                   // success, warning, danger
+  size: HButtonSize.md,            // sm, md, lg
+  onPressed: () {},
+)
+
+// With an icon
+HButton(
+  label: Text('Next'),
+  icon: Symbols.arrow_forward_rounded,
+  iconPosition: HButtonIconPosition.right,
+  variant: HButtonVariant.flat,
+  color: HButtonColor.secondary,
+  onPressed: () {},
+)
+
+// Icon only (no label)
+HButton(
+  icon: Symbols.delete_rounded,
+  variant: HButtonVariant.flat,
+  color: HButtonColor.danger,
+  onPressed: () {},
+)
+
+// Loading / full width / disabled
+HButton(label: Text('Submit'), isLoading: true, onPressed: () {});
+HButton(label: Text('Continue'), fullWidth: true, onPressed: () {});
+HButton(label: Text('Disabled'), onPressed: null);
+''';

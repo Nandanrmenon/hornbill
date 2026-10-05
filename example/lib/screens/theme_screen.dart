@@ -279,6 +279,8 @@ class _ColourSchemePicker extends StatelessWidget {
   }
 }
 
+/// Drop-in replacement for `_ExampleWidgets` in theme_screen.dart.
+/// Everything else in that file stays the same.
 class _ExampleWidgets extends StatefulWidget {
   @override
   State<_ExampleWidgets> createState() => _ExampleWidgetsState();
@@ -286,42 +288,80 @@ class _ExampleWidgets extends StatefulWidget {
 
 class _ExampleWidgetsState extends State<_ExampleWidgets> {
   bool switchValue = false;
+
   @override
   Widget build(BuildContext context) {
     return HCard(
       child: Column(
-        crossAxisAlignment: .start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 16.0,
         children: [
           Text(
             'This is a card. It uses the current colour scheme\'s surface color.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
+
+          // Buttons: `primary` follows the live colour scheme, so these
+          // re-theme as you tap the swatches above.
           Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              HButton.filled(onPressed: () {}, label: Text('Button')),
-              HButton.outlined(onPressed: () {}, label: Text('Button')),
-              HButton.tonal(onPressed: () {}, label: Text('Button')),
-              HButton.plain(onPressed: () {}, label: Text('Button')),
+              for (final v in [
+                HButtonVariant.solid,
+                HButtonVariant.bordered,
+                HButtonVariant.light,
+                HButtonVariant.flat,
+                HButtonVariant.faded,
+                HButtonVariant.ghost,
+                HButtonVariant.shadow,
+              ])
+                HButton(
+                  variant: v,
+                  color: HButtonColor.primary,
+                  label: Text(v.name[0].toUpperCase() + v.name.substring(1)),
+                  onPressed: () {},
+                ),
+            ],
+          ),
+
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              HButton(
+                color: HButtonColor.primary,
+                icon: Symbols.add_rounded,
+                label: const Text('Add'),
+                onPressed: () {},
+              ),
+              HButton(
+                variant: HButtonVariant.flat,
+                color: HButtonColor.primary,
+                icon: Symbols.favorite,
+                onPressed: () {},
+              ),
+              HButton(
+                color: HButtonColor.primary,
+                label: const Text('Disabled'),
+                onPressed: null,
+              ),
               HIconButton.filled(onPressed: () {}, icon: Symbols.favorite),
               HIconButton.outlined(onPressed: () {}, icon: Symbols.favorite),
               HIconButton.tonal(onPressed: () {}, icon: Symbols.favorite),
               HIconButton.plain(onPressed: () {}, icon: Symbols.favorite),
             ],
           ),
+
           HTextField(label: 'Text field'),
           Row(
             spacing: 4.0,
             children: [
               HSwitch(
                 value: switchValue,
-                onChanged: (value) {
-                  setState(() {
-                    switchValue = value;
-                  });
-                },
+                onChanged: (value) => setState(() => switchValue = value),
               ),
               Flexible(child: HProgressIndicator(value: 0.9)),
             ],

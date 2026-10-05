@@ -29,7 +29,7 @@ class _ToastScreenState extends State<ToastScreen> {
                   child: Row(
                     spacing: 8.0,
                     children: [
-                      HButton.filled(
+                      HButton(
                         label: Text('Success'),
                         onPressed: () {
                           HToast.show(
@@ -39,7 +39,7 @@ class _ToastScreenState extends State<ToastScreen> {
                           );
                         },
                       ),
-                      HButton.filled(
+                      HButton(
                         label: Text('Info'),
                         onPressed: () {
                           HToast.show(
@@ -49,7 +49,7 @@ class _ToastScreenState extends State<ToastScreen> {
                           );
                         },
                       ),
-                      HButton.filled(
+                      HButton(
                         label: Text('Warning'),
                         onPressed: () {
                           HToast.show(
@@ -59,7 +59,7 @@ class _ToastScreenState extends State<ToastScreen> {
                           );
                         },
                       ),
-                      HButton.filled(
+                      HButton(
                         label: Text('Error'),
                         onPressed: () {
                           HToast.show(

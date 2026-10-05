@@ -172,13 +172,15 @@ class _LandingScreenState extends State<LandingScreen> {
                   Row(
                     spacing: 8.0,
                     children: [
-                      HButton.filled(
+                      HButton(
+                        color: HButtonColor.primary,
                         iconPosition: HButtonIconPosition.right,
                         onPressed: widget.onExplore,
                         icon: Symbols.arrow_forward_rounded,
                         label: Text('Explore components'),
                       ),
-                      HButton.tonal(
+                      HButton(
+                        variant: HButtonVariant.flat,
                         iconPosition: HButtonIconPosition.right,
                         onPressed: () async {
                           if (!await launchUrl(_hornbillPackageUrl)) {
@@ -190,7 +192,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         icon: Symbols.download,
                         label: Text('Install from pub.dev'),
                       ),
-                      HButton.outlined(
+                      HButton(
                         iconPosition: HButtonIconPosition.right,
                         onPressed: () async {
                           if (!await launchUrl(_hornbillCodeUrl)) {
