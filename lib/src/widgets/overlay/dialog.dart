@@ -193,9 +193,19 @@ class HDialog extends StatelessWidget {
     const r = Radius.circular(kBorderRadius);
     switch (resolved) {
       case HDialogPosition.bottom:
-        return const BorderRadius.only(topLeft: r, topRight: r);
+        return const BorderRadius.only(
+          topLeft: r,
+          topRight: r,
+          bottomLeft: r,
+          bottomRight: r,
+        );
       case HDialogPosition.top:
-        return const BorderRadius.only(bottomLeft: r, bottomRight: r);
+        return const BorderRadius.only(
+          topLeft: r,
+          topRight: r,
+          bottomLeft: r,
+          bottomRight: r,
+        );
       case HDialogPosition.center:
       case HDialogPosition.auto:
         return BorderRadius.circular(16);
@@ -273,9 +283,12 @@ class HDialog extends StatelessWidget {
     final card = Material(
       type: MaterialType.transparency,
       child: Container(
-        width: edgeToEdge ? screenSize.width : null,
+        // Bottom/top dialogs fill the available width (screen width minus
+        // the left/right margin); centered ones hug their content up to
+        // [maxWidth].
+        width: edgeToEdge ? double.infinity : null,
         constraints: BoxConstraints(
-          maxWidth: edgeToEdge ? screenSize.width : maxWidth,
+          maxWidth: edgeToEdge ? double.infinity : maxWidth,
           maxHeight: screenSize.height * maxHeightFactor,
         ),
         padding: padding,
@@ -298,29 +311,41 @@ class HDialog extends StatelessWidget {
             ),
           ],
         ),
-        child: SafeArea(
-          top: resolved != HDialogPosition.bottom,
-          bottom: resolved != HDialogPosition.top,
-          left: false,
-          right: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Flexible(child: _buildBody(context)),
-              if (actionsWidget != null) ...[
-                SizedBox(height: actionsSpacing * 1.5),
-                actionsWidget,
-              ],
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Flexible(child: _buildBody(context)),
+            if (actionsWidget != null) ...[
+              SizedBox(height: actionsSpacing * 1.5),
+              actionsWidget,
             ],
-          ),
+          ],
         ),
       ),
     );
 
-    return Align(
-      alignment: _alignmentFor(resolved),
-      child: edgeToEdge ? card : Padding(padding: margin, child: card),
+    // When the keyboard is open, shrink the area the dialog lives in by the
+    // keyboard's height. This does two things:
+    //  * a bottom-docked dialog rides up on top of the keyboard, and a
+    //    centered one re-centers in the remaining space;
+    //  * the card's max height is automatically capped to that remaining
+    //    space, so `content` scrolls instead of being covered. A focused
+    //    TextField inside `content` is scrolled into view.
+    // (While the keyboard is up, MediaQuery.padding.bottom is already 0, so
+    // the SafeArea below doesn't add the nav-bar inset on top of this.)
+    final keyboard = MediaQuery.viewInsetsOf(context).bottom;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: keyboard),
+      child: SafeArea(
+        // Keeps the dialog clear of the status bar, notch and the system
+        // navigation bar / gesture area.
+        child: Align(
+          alignment: _alignmentFor(resolved),
+          child: Padding(padding: margin, child: card),
+        ),
+      ),
     );
   }
 }
