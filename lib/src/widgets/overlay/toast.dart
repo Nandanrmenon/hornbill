@@ -1,466 +1,612 @@
-// h_toast.dart
-//
-// A stackable toast notification system for Flutter.
-//
-// Usage:
-//   HToast.show(context, message: "Saved successfully", type: HToastType.success);
-//   HToast.success(context, "Saved successfully");
-//   HToast.error(context, "Something went wrong");
-//
-// Multiple toasts stack on top of each other (peeking cards). Hovering over
-// the stack (desktop/web) expands it into a full vertical list showing every
-// active toast. Moving the mouse away collapses it back into a stack.
-//
-// Drop this file into your project and import it wherever you need toasts.
-
 import 'dart:async';
 
-import 'package:hornbill/hornbill.dart';
 import 'package:hornbill/src/helpers/constants.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Visual style / severity of a toast.
-enum HToastType { info, success, error, warning }
+/// Width at which toasts switch from the mobile layout to the desktop layout.
+const double kHToastWideBreakpoint = 600;
 
-/// Where the toast stack is anchored on screen.
-enum HToastPosition { topRight, topLeft, bottomRight, bottomLeft }
+/// Semantic type. `info` follows the theme's primary colour.
+enum HToastType { info, success, warning, error }
 
-/// Internal model representing a single active toast.
-class _HToastItem {
-  final String id;
-  final String message;
-  final HToastType type;
-  final Duration duration;
-  Timer? timer;
+enum HToastPosition {
+  topLeft,
+  topCenter,
+  topRight,
+  bottomLeft,
+  bottomCenter,
+  bottomRight;
 
-  _HToastItem({
-    required this.id,
-    required this.message,
-    required this.type,
-    required this.duration,
-  });
+  bool get isTop => name.startsWith('top');
+  bool get isLeft => name.endsWith('Left');
+  bool get isRight => name.endsWith('Right');
+
+  Alignment get alignment => switch (this) {
+    topLeft => Alignment.topLeft,
+    topCenter => Alignment.topCenter,
+    topRight => Alignment.topRight,
+    bottomLeft => Alignment.bottomLeft,
+    bottomCenter => Alignment.bottomCenter,
+    bottomRight => Alignment.bottomRight,
+  };
 }
 
-/// Static API for showing stackable toast notifications.
+/// Returned by [HToast.show] so a toast can be dismissed early.
+class HToastHandle {
+  final VoidCallback dismiss;
+  const HToastHandle._(this.dismiss);
+}
+
+/// Adaptive toast notifications.
 ///
-/// Call [HToast.show] (or the convenience helpers [HToast.info],
-/// [HToast.success], [HToast.error], [HToast.warning]) from anywhere you
-/// have a [BuildContext]. Each corner ([HToastPosition]) gets its own
-/// independent stack, so you can show toasts in different corners at the
-/// same time if you want to.
+/// * Wide screens (>= [kHToastWideBreakpoint]): fixed 400px card,
+///   default position **top center**.
+/// * Narrow screens: full-width card (16px margin), default position
+///   **bottom center**, lifts above the keyboard, swipe sideways to dismiss.
+///
+/// Pass [position] to force a position on every screen size.
 class HToast {
   HToast._();
 
-  // ---- Default fallbacks (used when a param isn't passed to show()) ----
-  static const HToastPosition defaultPosition = HToastPosition.topRight;
-  static const EdgeInsets defaultMargin = EdgeInsets.all(16);
-  static const double defaultWidth = 320;
+  /// Max toasts visible at once; the oldest is dismissed first.
+  static int maxVisible = 3;
 
-  // ---- Internal state, keyed per-position so stacks are independent ----
-  static final Map<HToastPosition, OverlayEntry> _overlayEntries = {};
-  static final Map<HToastPosition, GlobalKey<_HToastStackState>> _stackKeys =
-      {};
-  static final Map<HToastPosition, List<_HToastItem>> _itemsByPosition = {};
-  static int _counter = 0;
-
-  /// Shows a new toast. Returns the toast's id, which can be passed to
-  /// [dismiss] to remove it early.
-  ///
-  /// [position] controls which corner the toast (and its stack) appears in.
-  /// [margin] and [width] are optional overrides for that stack.
-  static String show(
+  static HToastHandle show(
     BuildContext context, {
-    required String message,
+    required String title,
+    String? description,
     HToastType type = HToastType.info,
-    Duration duration = const Duration(seconds: 3),
-    HToastPosition position = defaultPosition,
-    EdgeInsets margin = defaultMargin,
-    double width = defaultWidth,
+    IconData? icon,
+    bool showIcon = true,
+    Duration? duration = const Duration(seconds: 4),
+    HToastPosition? position,
+    String? actionLabel,
+    VoidCallback? onAction,
+    bool dismissible = true,
   }) {
-    final overlay = Overlay.of(context, rootOverlay: true);
-    _ensureOverlay(overlay, position, margin, width);
-
-    final id = 'htoast_${_counter++}';
-    final item = _HToastItem(
-      id: id,
-      message: message,
+    final data = _ToastData(
+      title: title,
+      description: description,
       type: type,
+      icon: showIcon ? (icon ?? _defaultIcon(type)) : null,
       duration: duration,
+      position: position,
+      actionLabel: actionLabel,
+      onAction: onAction,
+      dismissible: dismissible,
     );
-    item.timer = Timer(duration, () => _remove(position, id));
-    _itemsByPosition[position]!.add(item);
-    _stackKeys[position]?.currentState?.refresh();
-    return id;
+    _ToastManager.instance.add(context, data);
+    return HToastHandle._(() => data.key.currentState?.dismiss());
   }
 
-  static String info(
-    BuildContext context,
-    String message, {
-    Duration duration = const Duration(seconds: 3),
-    HToastPosition position = defaultPosition,
-  }) => show(
-    context,
-    message: message,
-    type: HToastType.info,
-    duration: duration,
-    position: position,
-  );
+  static void dismissAll() => _ToastManager.instance.dismissAll();
 
-  static String success(
-    BuildContext context,
-    String message, {
-    Duration duration = const Duration(seconds: 3),
-    HToastPosition position = defaultPosition,
-  }) => show(
-    context,
-    message: message,
-    type: HToastType.success,
-    duration: duration,
-    position: position,
-  );
+  static IconData _defaultIcon(HToastType t) => switch (t) {
+    HToastType.success => Icons.check_circle_rounded,
+    HToastType.warning => Icons.warning_rounded,
+    HToastType.error => Icons.error_rounded,
+    HToastType.info => Icons.info_rounded,
+  };
+}
 
-  static String error(
-    BuildContext context,
-    String message, {
-    Duration duration = const Duration(seconds: 4),
-    HToastPosition position = defaultPosition,
-  }) => show(
-    context,
-    message: message,
-    type: HToastType.error,
-    duration: duration,
-    position: position,
-  );
+// ---------------------------------------------------------------------------
+// Internals
+// ---------------------------------------------------------------------------
 
-  static String warning(
-    BuildContext context,
-    String message, {
-    Duration duration = const Duration(seconds: 3),
-    HToastPosition position = defaultPosition,
-  }) => show(
-    context,
-    message: message,
-    type: HToastType.warning,
-    duration: duration,
-    position: position,
-  );
+class _ToastData {
+  _ToastData({
+    required this.title,
+    required this.description,
+    required this.type,
+    required this.icon,
+    required this.duration,
+    required this.position,
+    required this.actionLabel,
+    required this.onAction,
+    required this.dismissible,
+  }) : id = _nextId++;
 
-  /// Dismisses a single toast by id (returned from [show]).
-  /// If you know which [position] it was shown in, pass it for an O(1)
-  /// lookup; otherwise every stack is searched.
-  static void dismiss(String id, [HToastPosition? position]) {
-    if (position != null) {
-      _remove(position, id);
-      return;
+  static int _nextId = 0;
+
+  final int id;
+  final String title;
+  final String? description;
+  final HToastType type;
+  final IconData? icon;
+  final Duration? duration;
+  final HToastPosition? position;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+  final bool dismissible;
+
+  bool closing = false;
+
+  /// Last measured height, used to lay the expanded stack out.
+  double height = 64;
+  final GlobalKey<_ToastItemState> key = GlobalKey<_ToastItemState>();
+}
+
+class _ToastManager {
+  _ToastManager._();
+  static final instance = _ToastManager._();
+
+  final ValueNotifier<List<_ToastData>> toasts = ValueNotifier([]);
+  OverlayEntry? _entry;
+
+  /// True while the pointer is over the toast stack (pauses auto-dismiss).
+  final ValueNotifier<bool> hovering = ValueNotifier(false);
+
+  void add(BuildContext context, _ToastData data) {
+    if (_entry == null || !_entry!.mounted) {
+      _entry = OverlayEntry(builder: (_) => const _ToastHost());
+      Overlay.of(context, rootOverlay: true).insert(_entry!);
     }
-    for (final pos in _itemsByPosition.keys.toList()) {
-      _remove(pos, id);
-    }
-  }
+    toasts.value = [...toasts.value, data];
 
-  /// Dismisses every currently visible toast in every stack.
-  static void dismissAll() {
-    for (final pos in _itemsByPosition.keys.toList()) {
-      for (final item in _itemsByPosition[pos]!) {
-        item.timer?.cancel();
-      }
-      _itemsByPosition[pos]!.clear();
-      _overlayEntries[pos]?.remove();
-      _overlayEntries.remove(pos);
+    // Evict the oldest toasts beyond the limit.
+    var active = toasts.value.where((t) => !t.closing).toList();
+    while (active.length > HToast.maxVisible) {
+      active.first.key.currentState?.dismiss();
+      active.first.closing = true;
+      active = active.sublist(1);
     }
   }
 
-  static void _ensureOverlay(
-    OverlayState overlay,
-    HToastPosition position,
-    EdgeInsets margin,
-    double width,
-  ) {
-    _itemsByPosition.putIfAbsent(position, () => []);
-    if (_overlayEntries[position] != null) return;
-
-    final stackKey = GlobalKey<_HToastStackState>();
-    _stackKeys[position] = stackKey;
-
-    final entry = OverlayEntry(
-      builder: (context) => _HToastStack(
-        key: stackKey,
-        items: _itemsByPosition[position]!,
-        position: position,
-        margin: margin,
-        width: width,
-        onDismiss: (id) => _remove(position, id),
-      ),
-    );
-    _overlayEntries[position] = entry;
-    overlay.insert(entry);
+  void remove(int id) {
+    toasts.value = toasts.value.where((t) => t.id != id).toList();
+    if (toasts.value.isEmpty) {
+      hovering.value = false;
+      _entry?.remove();
+      _entry?.dispose();
+      _entry = null;
+    }
   }
 
-  static void _remove(HToastPosition position, String id) {
-    final items = _itemsByPosition[position];
-    if (items == null) return;
-    final index = items.indexWhere((e) => e.id == id);
-    if (index == -1) return;
-    items[index].timer?.cancel();
-    items.removeAt(index);
-    _stackKeys[position]?.currentState?.refresh();
-
-    if (items.isEmpty) {
-      _overlayEntries[position]?.remove();
-      _overlayEntries.remove(position);
-      _stackKeys.remove(position);
+  void dismissAll() {
+    for (final t in [...toasts.value]) {
+      t.key.currentState?.dismiss();
     }
   }
 }
 
-/// The overlay widget that lays out and animates the toast stack.
-class _HToastStack extends StatefulWidget {
-  final List<_HToastItem> items;
-  final HToastPosition position;
-  final EdgeInsets margin;
-  final double width;
-  final void Function(String id) onDismiss;
+class _ToastHost extends StatelessWidget {
+  const _ToastHost();
 
-  const _HToastStack({
-    super.key,
-    required this.items,
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final wide = media.size.width >= kHToastWideBreakpoint;
+
+    return Positioned.fill(
+      child: Material(
+        type: MaterialType.transparency,
+        child: ValueListenableBuilder<List<_ToastData>>(
+          valueListenable: _ToastManager.instance.toasts,
+          builder: (context, list, _) {
+            final groups = <HToastPosition, List<_ToastData>>{};
+            for (final t in list) {
+              final pos =
+                  t.position ??
+                  (wide
+                      ? HToastPosition.topCenter
+                      : HToastPosition.bottomCenter);
+              groups.putIfAbsent(pos, () => []).add(t);
+            }
+
+            return Stack(
+              children: [
+                for (final entry in groups.entries)
+                  _buildGroup(context, media, wide, entry.key, entry.value),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGroup(
+    BuildContext context,
+    MediaQueryData media,
+    bool wide,
+    HToastPosition pos,
+    List<_ToastData> items,
+  ) {
+    final bottomInset = media.viewInsets.bottom > media.padding.bottom
+        ? media
+              .viewInsets
+              .bottom // lift above the keyboard
+        : media.padding.bottom;
+
+    return Align(
+      alignment: pos.alignment,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          16 + media.padding.left,
+          16 + media.padding.top,
+          16 + media.padding.right,
+          16 + bottomInset,
+        ),
+        child: _ToastGroup(position: pos, items: items, wide: wide),
+      ),
+    );
+  }
+}
+
+/// Lays out the toasts of one position.
+///
+/// Collapsed (default): toasts overlap like a deck of cards - the newest is in
+/// front, older ones peek out behind it, slightly smaller and faded.
+/// Expanded (desktop hover): toasts spread out into a normal list.
+///
+/// Both states use the same [Stack] and every toast is animated between the
+/// two, so expanding *and* collapsing are smooth.
+class _ToastGroup extends StatefulWidget {
+  const _ToastGroup({
     required this.position,
-    required this.margin,
-    required this.width,
-    required this.onDismiss,
+    required this.items,
+    required this.wide,
   });
 
+  final HToastPosition position;
+
+  /// Oldest -> newest.
+  final List<_ToastData> items;
+  final bool wide;
+
   @override
-  State<_HToastStack> createState() => _HToastStackState();
+  State<_ToastGroup> createState() => _ToastGroupState();
 }
 
-class _HToastStackState extends State<_HToastStack> {
+class _ToastGroupState extends State<_ToastGroup> {
+  static const _duration = Duration(milliseconds: 300);
+  static const _curve = Curves.easeOutCubic;
+  static const _gap = 8.0; // spacing when expanded
+  static const _peek = 12.0; // offset per card when collapsed
+
   bool _expanded = false;
 
-  static const double _cardHeight = 60;
-  static const double _expandedGap = 8;
-  static const double _collapsedOffset = 8;
-  static const double _collapsedScaleStep = 0.06;
-  static const int _maxCollapsedPeek = 3;
-
-  void refresh() {
-    if (mounted) setState(() {});
+  void _setHover(bool v) {
+    _ToastManager.instance.hovering.value = v;
+    if (widget.wide) setState(() => _expanded = v);
   }
 
-  bool get _isTop =>
-      widget.position == HToastPosition.topRight ||
-      widget.position == HToastPosition.topLeft;
-
-  bool get _isLeft =>
-      widget.position == HToastPosition.topLeft ||
-      widget.position == HToastPosition.bottomLeft;
-
-  void _pauseTimers() {
-    for (final item in widget.items) {
-      item.timer?.cancel();
-    }
-  }
-
-  void _resumeTimers() {
-    for (final item in widget.items) {
-      item.timer = Timer(item.duration, () => widget.onDismiss(item.id));
-    }
+  @override
+  void dispose() {
+    _ToastManager.instance.hovering.value = false;
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.items.isEmpty) return const SizedBox.shrink();
+    final pos = widget.position;
+    final wide = widget.wide;
+    final items = widget.items.reversed.toList(); // newest first
+    final visible = items.length < HToast.maxVisible
+        ? items.length
+        : HToast.maxVisible;
 
-    // Newest toast first (drawn on top of the stack when collapsed).
-    final newestFirst = List<_HToastItem>.from(widget.items.reversed);
+    // Height of the whole stack in each state.
+    final collapsedHeight = items.first.height + (visible - 1) * _peek;
+    final expandedHeight =
+        items.fold<double>(0, (sum, t) => sum + t.height) +
+        _gap * (items.length - 1);
 
-    final double stackHeight = _expanded
-        ? newestFirst.length * _cardHeight +
-              (newestFirst.length - 1) * _expandedGap
-        : _cardHeight +
-              (newestFirst.length > 1
-                  ? (newestFirst.length - 1).clamp(0, _maxCollapsedPeek) *
-                        _collapsedOffset
-                  : 0);
+    var offset = 0.0; // running offset for the expanded layout
+    final slots = <Widget>[];
+    for (var i = 0; i < items.length; i++) {
+      final t = items[i];
 
-    return Positioned(
-      top: _isTop ? widget.margin.top : null,
-      bottom: !_isTop ? widget.margin.bottom : null,
-      left: _isLeft ? widget.margin.left : null,
-      right: !_isLeft ? widget.margin.right : null,
-      child: MouseRegion(
-        onEnter: (_) {
-          _pauseTimers();
-          setState(() => _expanded = true);
-        },
-        onExit: (_) {
-          _resumeTimers();
-          setState(() => _expanded = false);
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOut,
-          width: widget.width,
-          height: stackHeight,
-          child: Stack(
-            clipBehavior: Clip.none,
-            // Build oldest -> newest so the newest card paints on top.
-            children: List.generate(newestFirst.length, (i) {
-              final item = newestFirst[i]; // i = 0 is newest
-              final reverseOrder = newestFirst.length - 1 - i;
-              return _buildPositionedCard(
-                item: item,
-                index: i,
-                zOrderKeyIndex: reverseOrder,
-              );
-            }).reversed.toList(),
-          ),
-        ),
-      ),
-    );
-  }
+      final double y, scale, opacity;
+      if (_expanded) {
+        y = offset;
+        scale = 1;
+        opacity = 1;
+      } else {
+        y = i * _peek;
+        scale = 1 - i * 0.06;
+        opacity = i == 0
+            ? 1
+            : i < HToast.maxVisible
+            ? 1 - i * 0.2
+            : 0;
+      }
+      offset += t.height + _gap;
 
-  Widget _buildPositionedCard({
-    required _HToastItem item,
-    required int index, // 0 = newest
-    required int zOrderKeyIndex,
-  }) {
-    late double top;
-    late double scale;
-    late double opacity;
-
-    if (_expanded) {
-      top = index * (_cardHeight + _expandedGap);
-      scale = 1.0;
-      opacity = 1.0;
-    } else {
-      final peekIndex = index.clamp(0, _maxCollapsedPeek);
-      top = peekIndex * _collapsedOffset;
-      scale = 1 - (peekIndex * _collapsedScaleStep);
-      opacity = index > _maxCollapsedPeek ? 0.0 : 1.0;
-    }
-
-    return AnimatedPositioned(
-      key: ValueKey(item.id),
-      duration: const Duration(milliseconds: 220),
-      curve: Curves.easeOut,
-      top: _isTop ? top : null,
-      bottom: !_isTop ? top : null,
-      left: 0,
-      right: 0,
-      height: _cardHeight,
-      child: IgnorePointer(
-        ignoring: !_expanded && index != 0,
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 180),
-          opacity: opacity,
+      slots.add(
+        AnimatedPositioned(
+          key: ValueKey(t.id),
+          duration: _duration,
+          curve: _curve,
+          left: 0,
+          right: 0,
+          top: pos.isTop ? y : null,
+          bottom: pos.isTop ? null : y,
           child: AnimatedScale(
-            duration: const Duration(milliseconds: 220),
-            curve: Curves.easeOut,
             scale: scale,
-            alignment: _isTop ? Alignment.topCenter : Alignment.bottomCenter,
-            child: _HToastCard(
-              item: item,
-              onClose: () => widget.onDismiss(item.id),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Visual representation of a single toast.
-class _HToastCard extends StatelessWidget {
-  final _HToastItem item;
-  final VoidCallback onClose;
-
-  const _HToastCard({required this.item, required this.onClose});
-
-  _ToastStyle _styleFor(HToastType type, Brightness brightness) {
-    switch (type) {
-      case HToastType.success:
-        return const _ToastStyle(
-          color: Color(0xFF2E7D32),
-          icon: Symbols.check_circle_rounded,
-        );
-      case HToastType.error:
-        return const _ToastStyle(
-          color: Color(0xFFC62828),
-          icon: Symbols.error_rounded,
-        );
-      case HToastType.warning:
-        return const _ToastStyle(
-          color: Color(0xFFEF6C00),
-          icon: Symbols.warning_rounded,
-        );
-      case HToastType.info:
-        return const _ToastStyle(
-          color: Color(0xFF1565C0),
-          icon: Symbols.info_rounded,
-        );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final style = _styleFor(item.type, brightness);
-    // final bg = Theme.of(context).colorScheme.surfaceContainerLow;
-    final bg = style.color.withValues(alpha: 0.3);
-    final textColor = Theme.of(context).colorScheme.onSurface;
-
-    return Material(
-      // color: Colors.transparent,
-      borderRadius: BorderRadius.circular(kBorderRadius),
-      clipBehavior: Clip.antiAlias,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(kBorderRadius),
-            border: hIsOutlined(context)
-              ? Border.all(color: style.color)
-              : null,
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(
-                context,
-              ).colorScheme.shadow.withValues(alpha: 0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Icon(style.icon, color: textColor),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                item.message,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w500,
-                  height: 1.25,
+            alignment: pos.isTop ? Alignment.topCenter : Alignment.bottomCenter,
+            duration: _duration,
+            curve: _curve,
+            child: AnimatedOpacity(
+              opacity: opacity.toDouble(),
+              duration: _duration,
+              child: IgnorePointer(
+                ignoring: !_expanded && i > 0,
+                child: _MeasureSize(
+                  onChange: (size) {
+                    if (t.height != size.height) {
+                      t.height = size.height;
+                      if (mounted) setState(() {});
+                    }
+                  },
+                  child: _ToastItem(
+                    key: t.key,
+                    data: t,
+                    wide: wide,
+                    position: pos,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(width: 6),
-            HIconButton.plain(icon: Symbols.close_rounded, onPressed: onClose),
-          ],
+          ),
+        ),
+      );
+    }
+
+    return MouseRegion(
+      onEnter: (_) => _setHover(true),
+      onExit: (_) => _setHover(false),
+      child: AnimatedContainer(
+        duration: _duration,
+        curve: _curve,
+        width: wide ? 400 : double.infinity,
+        height: _expanded ? expandedHeight : collapsedHeight,
+        child: Stack(
+          clipBehavior: Clip.none,
+          // Paint oldest first so the newest ends up in front.
+          children: slots.reversed.toList(),
         ),
       ),
     );
   }
 }
 
-class _ToastStyle {
-  final Color color;
-  final IconData icon;
-  const _ToastStyle({required this.color, required this.icon});
+/// Reports its child's size after layout.
+class _MeasureSize extends StatefulWidget {
+  const _MeasureSize({required this.onChange, required this.child});
+
+  final ValueChanged<Size> onChange;
+  final Widget child;
+
+  @override
+  State<_MeasureSize> createState() => _MeasureSizeState();
+}
+
+class _MeasureSizeState extends State<_MeasureSize> {
+  Size? _last;
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final size = context.size;
+      if (size != null && size != _last) {
+        _last = size;
+        widget.onChange(size);
+      }
+    });
+    return widget.child;
+  }
+}
+
+class _ToastItem extends StatefulWidget {
+  const _ToastItem({
+    super.key,
+    required this.data,
+    required this.wide,
+    required this.position,
+  });
+
+  final _ToastData data;
+  final bool wide;
+  final HToastPosition position;
+
+  @override
+  State<_ToastItem> createState() => _ToastItemState();
+}
+
+class _ToastItemState extends State<_ToastItem>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 280),
+    reverseDuration: const Duration(milliseconds: 180),
+  );
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _c.forward();
+    _startTimer();
+    _ToastManager.instance.hovering.addListener(_onHover);
+  }
+
+  void _onHover() {
+    if (_ToastManager.instance.hovering.value) {
+      _timer?.cancel();
+    } else {
+      _startTimer();
+    }
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    final d = widget.data.duration;
+    if (d == null || widget.data.closing) return;
+    _timer = Timer(d, dismiss);
+  }
+
+  void dismiss() {
+    if (!mounted) return;
+    widget.data.closing = true;
+    _timer?.cancel();
+    _c.reverse().whenComplete(() {
+      _ToastManager.instance.remove(widget.data.id);
+    });
+  }
+
+  @override
+  void dispose() {
+    _ToastManager.instance.hovering.removeListener(_onHover);
+    _timer?.cancel();
+    _c.dispose();
+    super.dispose();
+  }
+
+  // ---- Colors ----
+
+  Color _base(ColorScheme s) => switch (widget.data.type) {
+    HToastType.info => s.primary,
+    HToastType.success => const Color(0xFF17C964),
+    HToastType.warning => const Color(0xFFF5A524),
+    HToastType.error => const Color(0xFFF31260),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final d = widget.data;
+    final base = _base(scheme);
+
+    final bg = scheme.surfaceContainerLow;
+    final fg = scheme.onSurface;
+    final accent = base;
+    final border = scheme.outlineVariant;
+
+    Widget card = Container(
+      width: widget.wide ? 400 : null,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(kBorderRadius),
+        border: Border.all(color: border, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.14),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (d.icon != null) ...[
+            Icon(d.icon, size: 22, color: accent),
+            const SizedBox(width: 12),
+          ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  d.title,
+                  style: TextStyle(
+                    color: fg,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    height: 1.3,
+                  ),
+                ),
+                if (d.description != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      d.description!,
+                      style: TextStyle(
+                        color: fg.withValues(alpha: 0.75),
+                        fontSize: 13,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (d.actionLabel != null) ...[
+            const SizedBox(width: 12),
+            InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () {
+                d.onAction?.call();
+                dismiss();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                child: Text(
+                  d.actionLabel!,
+                  style: TextStyle(
+                    color: accent,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+          if (d.dismissible) ...[
+            const SizedBox(width: 4),
+            InkWell(
+              customBorder: const CircleBorder(),
+              onTap: dismiss,
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: Icon(
+                  Icons.close_rounded,
+                  size: 18,
+                  color: fg.withValues(alpha: 0.6),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+
+    // Swipe sideways to dismiss (mainly for touch devices).
+    if (d.dismissible) {
+      card = Dismissible(
+        key: ValueKey(d.id),
+        direction: DismissDirection.horizontal,
+        onDismissed: (_) {
+          d.closing = true;
+          _timer?.cancel();
+          _ToastManager.instance.remove(d.id);
+        },
+        child: card,
+      );
+    }
+
+    final curved = CurvedAnimation(
+      parent: _c,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+    final pos = widget.position;
+    final begin = pos.isLeft && widget.wide
+        ? const Offset(-0.3, 0)
+        : pos.isRight && widget.wide
+        ? const Offset(0.3, 0)
+        : Offset(0, pos.isTop ? -0.4 : 0.4);
+
+    return FadeTransition(
+      opacity: curved,
+      child: SlideTransition(
+        position: Tween<Offset>(begin: begin, end: Offset.zero).animate(curved),
+        child: card,
+      ),
+    );
+  }
 }

@@ -22,8 +22,7 @@ class _ScaffoldScreenState extends State<ScaffoldScreen> {
           // Handle search query changes here
         },
         showBackButton: true,
-        onBackPressed: () =>
-            HToast.show(context, message: 'Back button pressed'),
+        onBackPressed: () => HToast.show(context, title: 'Back button pressed'),
         actions: [
           HAppBarAction(label: 'Action 1', icon: Symbols.abc, onPressed: () {}),
         ],

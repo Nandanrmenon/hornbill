@@ -225,9 +225,11 @@ class _IconsScreenState extends State<IconsScreen> {
                     // Show notification
                     if (context.mounted) {
                       HToast.show(
+                        title: 'Copied',
                         context,
-                        message: 'Copied "$snippet" to clipboard',
-                        type: HToastType.info,
+                        description: 'Copied "$snippet" to clipboard',
+                        // message: 'Copied "$snippet" to clipboard',
+                        // variant: HToastVariant.bordered,
                       );
                     }
                   },
