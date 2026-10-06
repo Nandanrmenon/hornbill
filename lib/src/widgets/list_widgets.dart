@@ -52,10 +52,10 @@ import 'package:material_ui/material_ui.dart';
 const double _kOuterRadius = 12.0;
 
 /// Corner radius applied to items in the middle of a grouped list.
-const double _kInnerRadius = 4.0;
+const double _kInnerRadius = 0.0;
 
 /// Vertical gap between consecutive rows.
-const double _kItemSpacing = 4.0;
+const double _kItemSpacing = 2.0;
 
 BorderRadius _cardRadius(int index, int itemCount) {
   final isFirst = index == 0;
@@ -88,7 +88,7 @@ class _ListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = HColors.of(context);
-    final base = c.backgroundStrong;
+    final base = c.backgroundMuted;
     return ClipRRect(
       borderRadius: _cardRadius(index, itemCount),
       child: ColoredBox(
@@ -617,12 +617,22 @@ class HListView extends StatelessWidget {
           child: _TileRow(tile: item, denseOverride: dense),
         );
       },
-      separatorBuilder: (context, index) =>
-          const SizedBox(height: _kItemSpacing),
+      separatorBuilder: (context, index) => _ListSeparator(),
     );
   }
 }
 
+class _ListSeparator extends StatelessWidget {
+  const _ListSeparator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: _kItemSpacing,
+      color: HColors.of(context).backgroundStrong,
+    );
+  }
+}
 // -----------------------------------------------------------------------------
 // Compatibility wrappers
 // -----------------------------------------------------------------------------
