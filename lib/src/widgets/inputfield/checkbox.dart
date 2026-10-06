@@ -293,6 +293,9 @@ class _MarkPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final t = progress.value;
+    if (t <= 0) return; // zero-length + round cap = a dot
+
     final w = size.width;
     final h = size.height;
 
@@ -316,10 +319,7 @@ class _MarkPainter extends CustomPainter {
       ..strokeJoin = StrokeJoin.round;
 
     for (final metric in path.computeMetrics()) {
-      canvas.drawPath(
-        metric.extractPath(0, metric.length * progress.value),
-        paint,
-      );
+      canvas.drawPath(metric.extractPath(0, metric.length * t), paint);
     }
   }
 
