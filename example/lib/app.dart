@@ -13,6 +13,7 @@ import 'package:hornbill_example/screens/navigationbar_screen.dart';
 import 'package:hornbill_example/screens/progressindicator_screen.dart';
 import 'package:hornbill_example/screens/scaffold_screen.dart';
 import 'package:hornbill_example/screens/sidebar_screen.dart';
+import 'package:hornbill_example/screens/spinner_screen.dart';
 import 'package:hornbill_example/screens/switch.dart';
 import 'package:hornbill_example/screens/tabs_screen.dart';
 import 'package:hornbill_example/screens/textinputfield_screen.dart';
@@ -69,6 +70,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       'progress-indicators': 'progress_indicators',
       'checkbox': 'checkbox',
       'tabbar': 'tabbar',
+      'spinner': 'spinner',
     };
     final slug = path.startsWith('/components/')
         ? path.substring('/components/'.length)
@@ -96,6 +98,7 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       'progress_indicators': 'progress-indicators',
       'checkbox': 'checkbox',
       'tabbar': 'tabbar',
+      'spinner': 'spinner',
     };
     return '/components/${paths[screenKey] ?? 'themes'}';
   }
@@ -234,6 +237,12 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         label: 'Feedback',
         initiallyExpanded: true,
         children: [
+          HSideBarItem(
+            icon: Symbols.message,
+            label: 'Spinner',
+            selected: _activeScreenKey == 'spinner',
+            onTap: () => _selectScreen('spinner'),
+          ),
           HSideBarItem(
             icon: Symbols.message,
             label: 'Toast',
@@ -464,6 +473,26 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             HListView(
               items: [
                 HListItemData(
+                  leading: const Icon(Symbols.progress_activity),
+                  title: const Text('Spinner'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SpinnerScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
+                  leading: const Icon(Symbols.label),
+                  title: const Text('Toast'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ToastScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
                   leading: const Icon(Symbols.label),
                   title: const Text('Chip'),
                   onTap: () => Navigator.push(
@@ -530,6 +559,8 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         return const CheckboxScreen();
       case 'tabbar':
         return const TabbarScreen();
+      case 'spinner':
+        return const SpinnerScreen();
       default:
         return ThemeScreen(themeController: widget.themeController);
     }

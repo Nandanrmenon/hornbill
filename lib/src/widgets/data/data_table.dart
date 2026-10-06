@@ -1,4 +1,3 @@
-import 'package:hornbill/src/helpers/constants.dart';
 import 'package:hornbill/src/theme.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -276,19 +275,14 @@ class _HDataTableState extends State<HDataTable> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final resolvedEven =
-        widget.evenRowColor ?? theme.colorScheme.surfaceContainerLowest;
-    final resolvedOdd =
-        widget.oddRowColor ?? theme.colorScheme.surfaceContainerLow;
-    final resolvedSelected =
-        widget.selectedRowColor ??
-        theme.colorScheme.primaryContainer.withValues(alpha: 0.4);
+    final hbColors = HColors.of(context);
+    final resolvedEven = widget.evenRowColor ?? hbColors.backgroundSubtle;
+    final resolvedOdd = widget.oddRowColor ?? hbColors.background;
+    final resolvedSelected = widget.selectedRowColor ?? hbColors.primary.soft;
     final resolvedHover =
-        widget.hoverRowColor ??
-        theme.colorScheme.primary.withValues(alpha: 0.04);
-    final resolvedHeading = widget.headingRowColor ?? theme.colorScheme.surface;
-    final resolvedDivider =
-        widget.dividerColor ?? theme.colorScheme.outlineVariant;
+        widget.hoverRowColor ?? hbColors.primary.soft.withValues(alpha: 0.8);
+    final resolvedHeading = widget.headingRowColor ?? hbColors.backgroundMuted;
+    final resolvedDivider = widget.dividerColor ?? hbColors.border;
 
     Widget body;
     if (widget.loading) {
@@ -303,7 +297,7 @@ class _HDataTableState extends State<HDataTable> {
               Text(
                 'No data',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+                  color: hbColors.mutedForeground,
                 ),
               ),
         ),
@@ -457,7 +451,7 @@ class _HDataTableState extends State<HDataTable> {
       decoration: BoxDecoration(
         border: hIsOutlined(context)
             ? Border.all(
-                color: theme.colorScheme.outlineVariant,
+                color: HColors.of(context).border,
                 strokeAlign: BorderSide.strokeAlignOutside,
               )
             : null,
@@ -476,7 +470,7 @@ class _HDataTableState extends State<HDataTable> {
     final headingStyle = TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.bold,
-      color: theme.colorScheme.primary,
+      color: HColors.of(context).primary.onSoft,
     );
 
     return Container(

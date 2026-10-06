@@ -1,4 +1,4 @@
-import 'package:hornbill/src/theme.dart';
+import 'package:hornbill/hornbill.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -42,15 +42,15 @@ class _HPageNavigationState extends State<HPageNavigation> {
     final isSelected = pageIndex == widget.pageNr;
     return Material(
       color: isSelected
-          ? Theme.of(context).colorScheme.primaryContainer
-          : Theme.of(context).colorScheme.surfaceContainer,
+          ? HColors.of(context).primary.soft
+          : HColors.of(context).backgroundSubtle,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(999),
         side: hIsOutlined(context)
             ? BorderSide(
                 color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.outlineVariant,
+                    ? HColors.of(context).primary.base
+                    : HColors.of(context).neutral[300]!,
               )
             : BorderSide.none,
       ),
@@ -137,15 +137,15 @@ class _HPageNavigationState extends State<HPageNavigation> {
       spacing: 8,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton.filledTonal(
+        HButton(
           onPressed: (widget.pageNr > 0)
               ? () => widget.onPageSelected(0)
               : null,
-          icon: const Icon(Symbols.first_page),
+          icon: Symbols.first_page,
         ),
-        IconButton.filled(
+        HButton(
           onPressed: (widget.pageNr > 0) ? widget.onPrevious : null,
-          icon: const Icon(Symbols.chevron_left),
+          icon: Symbols.chevron_left,
         ),
         Row(
           spacing: 2.0,
@@ -156,17 +156,17 @@ class _HPageNavigationState extends State<HPageNavigation> {
                   : _buildPageButton(pageIndex),
           ],
         ),
-        IconButton.filled(
+        HButton(
           onPressed: (widget.pageNr + 1 < widget.totalPages)
               ? widget.onNext
               : null,
-          icon: const Icon(Symbols.chevron_right),
+          icon: Symbols.chevron_right,
         ),
-        IconButton.filledTonal(
+        HButton(
           onPressed: (widget.pageNr < widget.totalPages - 1)
               ? () => widget.onPageSelected(widget.totalPages - 1)
               : null,
-          icon: const Icon(Symbols.last_page),
+          icon: Symbols.last_page,
         ),
       ],
     );

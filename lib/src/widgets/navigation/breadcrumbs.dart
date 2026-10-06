@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
+import 'package:hornbill/hornbill.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -59,9 +60,9 @@ class HBreadcrumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
-    final linkColor = color ?? theme.primary;
-    final currentTextColor = currentColor ?? theme.onSurface;
+    final theme = HColors.of(context);
+    final linkColor = color ?? theme.primary.base;
+    final currentTextColor = currentColor ?? theme.primary.base;
     final visible = _visibleItems();
     final fontSize = _isDesktop ? 13.0 : 14.0;
 
@@ -84,7 +85,7 @@ class HBreadcrumb extends StatelessWidget {
                 child: Icon(
                   separatorIcon,
                   size: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: HColors.of(context).mutedForeground,
                 ),
               ),
           ],

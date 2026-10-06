@@ -1,5 +1,4 @@
 import 'package:hornbill/hornbill.dart';
-import 'package:hornbill/src/helpers/constants.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -192,17 +191,18 @@ class _HAppBarState extends State<HAppBar> {
 
     // Mobile with active search: show a close/back icon that exits search.
     if (isMobile && widget.searchEnabled && _searchActive) {
-      return HIconButton.plain(
+      return HButton(
         icon: Symbols.arrow_back_ios_new_rounded,
-        tooltip: 'Close search',
+        // tooltip: 'Close search',
         onPressed: () => _setSearchActive(false),
       );
     }
 
     if (wantsBack) {
-      return HIconButton.plain(
+      return HButton(
         icon: Symbols.arrow_back_ios_new_rounded,
-        tooltip: 'Back',
+        // tooltip: 'Back',
+        variant: HButtonVariant.light,
         onPressed:
             widget.onBackPressed ??
             () {
@@ -228,7 +228,7 @@ class _HAppBarState extends State<HAppBar> {
         prefixIcon: const Icon(Symbols.search),
         suffixIcon: _searchController.text.isEmpty
             ? null
-            : HIconButton.plain(
+            : HButton(
                 icon: Symbols.clear,
                 onPressed: () {
                   _searchController.clear();
@@ -326,12 +326,11 @@ class _HAppBarState extends State<HAppBar> {
       floating: widget.floating,
       snap: widget.snap,
       backgroundColor:
-          widget.backgroundColor ??
-          Theme.of(context).colorScheme.surfaceContainerLow,
+          widget.backgroundColor ?? HColors.of(context).backgroundMuted,
       elevation: widget.elevation,
       scrolledUnderElevation: widget.scrolledUnderElevation,
       automaticallyImplyLeading: false,
-      leading: leading,
+      leading: leading == null ? null : UnconstrainedBox(child: leading),
       leadingWidth: leading == null ? 0 : null,
       titleSpacing: leading == null ? NavigationToolbar.kMiddleSpacing : 0,
       title: Row(
@@ -359,14 +358,13 @@ class _HAppBarState extends State<HAppBar> {
       floating: widget.floating,
       snap: widget.snap,
       backgroundColor:
-          widget.backgroundColor ??
-          Theme.of(context).colorScheme.surfaceContainerLow,
+          widget.backgroundColor ?? HColors.of(context).backgroundMuted,
       elevation: widget.elevation,
       scrolledUnderElevation: widget.scrolledUnderElevation,
       // Leave auto-imply on when we're not overriding leading, so the
       // Scaffold's drawer icon still appears when relevant.
       automaticallyImplyLeading: leading == null,
-      leading: leading,
+      leading: leading == null ? null : UnconstrainedBox(child: leading),
       title: showingSearch
           ? _buildSearchField(width: null)
           : DefaultTextStyle(
@@ -378,9 +376,10 @@ class _HAppBarState extends State<HAppBar> {
             ),
       actions: [
         if (widget.searchEnabled && !showingSearch)
-          IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: 'Search',
+          HButton(
+            icon: Symbols.search,
+            // tooltip: 'Search',
+            variant: HButtonVariant.light,
             onPressed: () => _setSearchActive(true),
           ),
         if (!showingSearch && _buildMobileOverflowMenu() != null)

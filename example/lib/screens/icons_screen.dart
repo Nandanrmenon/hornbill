@@ -213,7 +213,7 @@ class _IconsScreenState extends State<IconsScreen> {
                 iconData = SymbolsGet.get(iconName, SymbolStyle.outlined);
               }
 
-              return HCard(
+              return HFilledCard(
                 padding: const EdgeInsetsGeometry.all(0),
                 child: InkWell(
                   onTap: () async {

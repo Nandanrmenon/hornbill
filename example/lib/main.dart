@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
             colourScheme: _themeController.colourScheme,
             appBarFontFamily: GoogleFonts.googleSansFlex().fontFamily,
           ).darkTheme(),
-          themeMode: ThemeMode.system,
+          themeMode: ThemeMode.light,
           initialRoute: '/',
           onGenerateRoute: (settings) {
             final path = settings.name ?? '/';

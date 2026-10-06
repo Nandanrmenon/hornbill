@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:hornbill/src/helpers/constants.dart';
+import 'package:hornbill/hornbill.dart' show HColors;
 import 'package:material_ui/material_ui.dart';
 
 /// Width at which toasts switch from the mobile layout to the desktop layout.
@@ -466,30 +466,30 @@ class _ToastItemState extends State<_ToastItem>
 
   // ---- Colors ----
 
-  Color _base(ColorScheme s) => switch (widget.data.type) {
-    HToastType.info => s.primary,
-    HToastType.success => const Color(0xFF17C964),
-    HToastType.warning => const Color(0xFFF5A524),
-    HToastType.error => const Color(0xFFF31260),
+  Color _base(HColors c) => switch (widget.data.type) {
+    HToastType.info => c.primary.base,
+    HToastType.success => c.success.base,
+    HToastType.warning => c.warning.base,
+    HToastType.error => c.danger.base,
   };
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final colors = HColors.of(context);
     final d = widget.data;
-    final base = _base(scheme);
+    final base = _base(colors);
 
-    final bg = scheme.surfaceContainerLow;
-    final fg = scheme.onSurface;
+    final bg = colors.content1;
+    final fg = colors.foreground;
     final accent = base;
-    final border = scheme.outlineVariant;
+    final border = base.withValues(alpha: 0.5);
 
     Widget card = Container(
       width: widget.wide ? 400 : null,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(kBorderRadius),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: border, width: 1),
         boxShadow: [
           BoxShadow(

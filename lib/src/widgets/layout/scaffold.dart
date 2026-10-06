@@ -1,5 +1,5 @@
 import 'package:flutter/rendering.dart';
-import 'package:hornbill/src/helpers/constants.dart';
+import 'package:hornbill/hornbill.dart';
 // Only kept for `Theme` / `Theme.of(context).colorScheme` — no other
 // material_ui or Material widgets (Scaffold, etc.) are used here anymore.
 // `Material`/`MaterialType.transparency` here is just plumbing — it gives
@@ -124,11 +124,9 @@ class HScaffoldState extends State<HScaffold> {
   }
 
   Color get _scaffoldBackgroundColor =>
-      widget.scaffoldBackground ??
-      Theme.of(context).colorScheme.surfaceContainerLow;
+      widget.scaffoldBackground ?? HColors.of(context).backgroundMuted;
   Color get _bodyBackgroundColor =>
-      widget.bodyBackground ??
-      Theme.of(context).colorScheme.surfaceContainerLowest;
+      widget.bodyBackground ?? HColors.of(context).background;
 
   @override
   Widget build(BuildContext context) {

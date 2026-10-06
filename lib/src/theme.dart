@@ -1,61 +1,20 @@
 import 'package:flutter/cupertino.dart';
+import 'package:hornbill/src/helpers/colors.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Preset colour schemes for the Hornbill theme.
-/// Use like `HColourScheme.red`, `HColourScheme.blue`, etc.
-class HColourScheme {
-  const HColourScheme._(this.seedColor);
-
-  final Color seedColor;
-
-  /// Build a custom scheme from a [Color].
-  factory HColourScheme.custom(Color color) => HColourScheme._(color);
-
-  /// Build a custom scheme from a hex string.
-  ///
-  /// Accepts formats like `"#RRGGBB"`, `"RRGGBB"`, `"#AARRGGBB"`,
-  /// `"AARRGGBB"`, with or without the leading `#`.
-  factory HColourScheme.fromHex(String hex) {
-    var value = hex.trim().replaceFirst('#', '');
-    if (value.length == 6) {
-      value = 'FF$value'; // assume fully opaque if no alpha given
-    }
-    if (value.length != 8) {
-      throw FormatException('Invalid hex colour: $hex');
-    }
-    final intValue = int.parse(value, radix: 16);
-    return HColourScheme._(Color(intValue));
-  }
-
-  // --- Presets -------------------------------------------------------
-
-  static const purple = HColourScheme._(Color(0xFF591DC1)); // original default
-  static const red = HColourScheme._(Color(0xFFB3261E));
-  static const orange = HColourScheme._(Color(0xFFE8710A));
-  static const amber = HColourScheme._(Color(0xFFC77800));
-  static const yellow = HColourScheme._(Color(0xFFAE9200));
-  static const green = HColourScheme._(Color(0xFF2E7D32));
-  static const teal = HColourScheme._(Color(0xFF00796B));
-  static const cyan = HColourScheme._(Color(0xFF00838F));
-  static const blue = HColourScheme._(Color(0xFF1565C0));
-  static const indigo = HColourScheme._(Color(0xFF3F51B5));
-  static const pink = HColourScheme._(Color(0xFFD81B60));
-  static const brown = HColourScheme._(Color(0xFF6D4C41));
-  static const grey = HColourScheme._(Color(0xFF616161));
-}
+export 'package:hornbill/src/helpers/colors.dart';
+export 'package:hornbill/src/helpers/constants.dart';
 
 class HTheme {
   const HTheme({
     this.colourScheme = HColourScheme.purple,
-    this.dynamicSchemeVariant = DynamicSchemeVariant.tonalSpot,
     this.appBarFontFamily,
     this.fontFamily,
     this.outlined = true,
   });
 
   final HColourScheme colourScheme;
-  final DynamicSchemeVariant dynamicSchemeVariant;
   final String? appBarFontFamily;
   final String? fontFamily;
   final bool outlined;
@@ -64,77 +23,74 @@ class HTheme {
 
   ThemeData darkTheme() => _buildTheme(Brightness.dark);
 
-  /// True neutral seed (R=G=B → zero chroma), so surfaces/outlines never
-  /// pick up a tint from the accent colour regardless of scheme variant.
-  static const _neutralSeed = Color(0xFF767680);
-
-  ColorScheme _buildColorScheme(Brightness brightness) {
-    final tinted = ColorScheme.fromSeed(
-      seedColor: colourScheme.seedColor,
-      brightness: brightness,
-      dynamicSchemeVariant: dynamicSchemeVariant,
-    );
-
-    final neutral = ColorScheme.fromSeed(
-      seedColor: _neutralSeed,
-      brightness: brightness,
-      dynamicSchemeVariant: DynamicSchemeVariant.monochrome,
-    );
-
-    // Keep primary/secondary/tertiary tones from the tinted scheme,
-    // but pull every surface/outline tone from the untinted neutral one.
-    return tinted.copyWith(
-      surface: neutral.surface,
-      onSurface: neutral.onSurface,
-      onSurfaceVariant: neutral.onSurfaceVariant,
-      surfaceDim: neutral.surfaceDim,
-      surfaceBright: neutral.surfaceBright,
-      surfaceContainerLowest: neutral.surfaceContainerLowest,
-      surfaceContainerLow: neutral.surfaceContainerLow,
-      surfaceContainer: neutral.surfaceContainer,
-      surfaceContainerHigh: neutral.surfaceContainerHigh,
-      surfaceContainerHighest: neutral.surfaceContainerHighest,
-      outline: neutral.outline,
-      outlineVariant: neutral.outlineVariant,
-      shadow: neutral.shadow,
-      scrim: neutral.scrim,
-      inverseSurface: neutral.inverseSurface,
-      onInverseSurface: neutral.onInverseSurface,
-    );
-  }
+  /// The generated colour tokens for [brightness].
+  HColors colors(Brightness brightness) =>
+      HColors.fromScheme(colourScheme, brightness);
 
   ThemeData _buildTheme(Brightness brightness) {
-    final colorScheme = _buildColorScheme(brightness);
+    final c = colors(brightness);
 
-    return ThemeData(
+    // No ColorScheme is passed. Every colour Hornbill uses comes from HColors
+    // (registered below as a ThemeExtension) and is applied explicitly to the
+    // component themes here.
+    final base = ThemeData(
       useMaterial3: true,
-      colorScheme: colorScheme,
-      extensions: [HThemeExtension(outlined: outlined)],
+      brightness: brightness,
+      extensions: [
+        HThemeExtension(outlined: outlined),
+        c,
+      ],
       fontFamily: fontFamily,
       splashFactory: NoSplash.splashFactory,
+      scaffoldBackgroundColor: c.background,
+      canvasColor: c.background,
+      cardColor: c.content1,
+      primaryColor: c.primary.base,
+      hoverColor: c.foreground.withValues(alpha: 0.06),
+      focusColor: c.foreground.withValues(alpha: 0.10),
+      iconTheme: IconThemeData(color: c.foreground),
+      dividerTheme: DividerThemeData(color: c.border, thickness: 1, space: 1),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: c.primary.base,
+        selectionColor: c.primary.base.withValues(alpha: 0.3),
+        selectionHandleColor: c.primary.base,
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: c.primary.base,
+        linearTrackColor: c.content3,
+        circularTrackColor: c.content3,
+      ),
       pageTransitionsTheme: pageTransitionTheme(),
       appBarTheme: appBarTheme(
-        colorScheme,
+        c,
         fontFamily: appBarFontFamily,
         outlined: outlined,
       ),
-      cardTheme: cardTheme(colorScheme, outlined: outlined),
-      filledButtonTheme: filledButtonTheme(colorScheme),
-      outlinedButtonTheme: outlinedButtonTheme(colorScheme),
-      iconButtonTheme: iconButtonTheme(colorScheme),
-      segmentedButtonTheme: segmentedButtonTheme(colorScheme),
-      switchTheme: switchTheme(colorScheme),
-      menuTheme: menuTheme(colorScheme, outlined: outlined),
-      navigationBarTheme: navigationBarTheme(colorScheme),
-      navigationRailTheme: navigationRailTheme(colorScheme),
-      popupMenuTheme: popupMenuTheme(colorScheme, outlined: outlined),
-      dropdownMenuTheme: dropdownMenuTheme(colorScheme, outlined: outlined),
-      inputDecorationTheme: inputDecorationTheme(colorScheme),
-      bottomSheetTheme: bottomSheetTheme(colorScheme),
-      dialogTheme: dialogTheme(colorScheme, outlined: outlined),
-      checkboxTheme: checkboxTheme(colorScheme),
-      searchBarTheme: searchBarTheme(colorScheme, outlined: outlined),
-      listTileTheme: listTileTheme(colorScheme),
+      cardTheme: cardTheme(c, outlined: outlined),
+      filledButtonTheme: filledButtonTheme(c),
+      outlinedButtonTheme: outlinedButtonTheme(c),
+      iconButtonTheme: iconButtonTheme(c),
+      segmentedButtonTheme: segmentedButtonTheme(c),
+      switchTheme: switchTheme(c),
+      menuTheme: menuTheme(c, outlined: outlined),
+      navigationBarTheme: navigationBarTheme(c),
+      navigationRailTheme: navigationRailTheme(c),
+      popupMenuTheme: popupMenuTheme(c, outlined: outlined),
+      dropdownMenuTheme: dropdownMenuTheme(c, outlined: outlined),
+      inputDecorationTheme: inputDecorationTheme(c),
+      bottomSheetTheme: bottomSheetTheme(c),
+      dialogTheme: dialogTheme(c, outlined: outlined),
+      checkboxTheme: checkboxTheme(c),
+      searchBarTheme: searchBarTheme(c, outlined: outlined),
+      listTileTheme: listTileTheme(c),
+    );
+
+    // Text colours.
+    return base.copyWith(
+      textTheme: base.textTheme.apply(
+        bodyColor: c.foreground,
+        displayColor: c.foreground,
+      ),
     );
   }
 }
@@ -176,41 +132,50 @@ PageTransitionsTheme pageTransitionTheme() {
   );
 }
 
-AppBarTheme appBarTheme(
-  ColorScheme scheme, {
-  String? fontFamily,
-  bool outlined = true,
-}) {
+AppBarTheme appBarTheme(HColors c, {String? fontFamily, bool outlined = true}) {
   return AppBarTheme(
     centerTitle: false,
     scrolledUnderElevation: 0,
-    backgroundColor: scheme.surface,
+    surfaceTintColor: Colors.transparent,
+    backgroundColor: c.background,
+    foregroundColor: c.foreground,
+    iconTheme: IconThemeData(color: c.foreground),
     titleTextStyle: TextStyle(
       fontFamily: fontFamily,
       fontSize: 22,
       fontVariations: [FontVariation('wght', 600), FontVariation('ROND', 100)],
-      color: scheme.onSurface,
+      color: c.foreground,
     ),
   );
 }
 
-CardThemeData cardTheme(ColorScheme scheme, {bool outlined = true}) {
+CardThemeData cardTheme(HColors c, {bool outlined = true}) {
   return CardThemeData(
     elevation: 0,
-    color: scheme.surfaceContainer,
+    color: c.content1,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(24),
       side: outlined
-          ? BorderSide(width: 2, color: scheme.outlineVariant, strokeAlign: 0)
+          ? BorderSide(width: 2, color: c.border, strokeAlign: 0)
           : BorderSide.none,
     ),
   );
 }
 
-FilledButtonThemeData filledButtonTheme(ColorScheme scheme) {
+FilledButtonThemeData filledButtonTheme(HColors c) {
   return FilledButtonThemeData(
     style: ButtonStyle(
       elevation: WidgetStatePropertyAll(0),
+      backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+        return states.contains(WidgetState.disabled)
+            ? c.content3
+            : c.primary.base;
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+        return states.contains(WidgetState.disabled)
+            ? c.mutedForeground
+            : c.primary.onBase;
+      }),
       shape: WidgetStateProperty.resolveWith<OutlinedBorder>((states) {
         return RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(kBorderRadius),
@@ -220,9 +185,14 @@ FilledButtonThemeData filledButtonTheme(ColorScheme scheme) {
   );
 }
 
-OutlinedButtonThemeData outlinedButtonTheme(ColorScheme scheme) {
+OutlinedButtonThemeData outlinedButtonTheme(HColors c) {
   return OutlinedButtonThemeData(
     style: ButtonStyle(
+      foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+        return states.contains(WidgetState.disabled)
+            ? c.mutedForeground
+            : c.primary.base;
+      }),
       shape: WidgetStateProperty.resolveWith<OutlinedBorder>((states) {
         return RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(kBorderRadius),
@@ -230,20 +200,18 @@ OutlinedButtonThemeData outlinedButtonTheme(ColorScheme scheme) {
       }),
       backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.hovered)) {
-          return scheme.surfaceContainerHighest;
+          return c.content3;
         }
-        return scheme.primaryContainer.withValues(
-          alpha: 0.2,
-        ); // Use the default background color
+        return c.primary.soft.withValues(alpha: 0.2);
       }),
       side: WidgetStateProperty.resolveWith<BorderSide>((states) {
-        return BorderSide(width: 2, color: scheme.primaryFixedDim);
+        return BorderSide(width: 2, color: c.primary.shade(300));
       }),
     ),
   );
 }
 
-IconButtonThemeData iconButtonTheme(ColorScheme scheme) {
+IconButtonThemeData iconButtonTheme(HColors c) {
   return IconButtonThemeData(
     style: ButtonStyle(
       shape: WidgetStateProperty.resolveWith<OutlinedBorder>((states) {
@@ -255,17 +223,16 @@ IconButtonThemeData iconButtonTheme(ColorScheme scheme) {
   );
 }
 
-SegmentedButtonThemeData segmentedButtonTheme(ColorScheme scheme) {
+SegmentedButtonThemeData segmentedButtonTheme(HColors c) {
   return SegmentedButtonThemeData(
     style: ButtonStyle(
       backgroundColor: WidgetStateProperty.resolveWith<Color?>((
         Set<WidgetState> states,
       ) {
         if (states.contains(WidgetState.selected)) {
-          return scheme.tertiaryContainer;
+          return c.tertiary.soft;
         }
-        return scheme
-            .surfaceContainerHighest; // Use the default background color
+        return c.content3;
       }),
       padding: WidgetStateProperty.resolveWith<EdgeInsetsGeometry?>((states) {
         return const EdgeInsets.symmetric(
@@ -277,9 +244,9 @@ SegmentedButtonThemeData segmentedButtonTheme(ColorScheme scheme) {
         Set<WidgetState> states,
       ) {
         if (states.contains(WidgetState.selected)) {
-          return scheme.onTertiaryContainer;
+          return c.tertiary.onSoft;
         }
-        return scheme.onSurface; // Use the default icon color
+        return c.foreground;
       }),
       shape: WidgetStateProperty.resolveWith<OutlinedBorder>((states) {
         return RoundedRectangleBorder(
@@ -293,13 +260,13 @@ SegmentedButtonThemeData segmentedButtonTheme(ColorScheme scheme) {
   );
 }
 
-SwitchThemeData switchTheme(ColorScheme scheme) {
+SwitchThemeData switchTheme(HColors c) {
   return SwitchThemeData(
     thumbColor: WidgetStateProperty.resolveWith<Color?>((
       Set<WidgetState> states,
     ) {
       if (states.contains(WidgetState.selected)) {
-        return scheme.tertiaryFixed;
+        return c.tertiary.onBase;
       }
       return null; // Use the default thumb color
     }),
@@ -307,17 +274,17 @@ SwitchThemeData switchTheme(ColorScheme scheme) {
       Set<WidgetState> states,
     ) {
       if (states.contains(WidgetState.selected)) {
-        return scheme.tertiary;
+        return c.tertiary.base;
       }
-      return scheme.surfaceContainerHigh;
+      return c.content2;
     }),
     trackOutlineColor: WidgetStateProperty.resolveWith<Color?>((
       Set<WidgetState> states,
     ) {
       if (states.contains(WidgetState.selected)) {
-        return scheme.tertiary;
+        return c.tertiary.base;
       }
-      return scheme.outlineVariant;
+      return c.border;
     }),
     trackOutlineWidth: WidgetStateProperty.resolveWith<double?>((
       Set<WidgetState> states,
@@ -327,18 +294,18 @@ SwitchThemeData switchTheme(ColorScheme scheme) {
   );
 }
 
-MenuThemeData menuTheme(ColorScheme scheme, {bool outlined = true}) {
-  return MenuThemeData(style: menuStyle(scheme, outlined: outlined));
+MenuThemeData menuTheme(HColors c, {bool outlined = true}) {
+  return MenuThemeData(style: menuStyle(c, outlined: outlined));
 }
 
-MenuStyle menuStyle(ColorScheme scheme, {bool outlined = true}) {
+MenuStyle menuStyle(HColors c, {bool outlined = true}) {
   return MenuStyle(
-    backgroundColor: WidgetStatePropertyAll(scheme.surfaceContainer),
+    backgroundColor: WidgetStatePropertyAll(c.content1),
     elevation: WidgetStatePropertyAll(0),
     shape: WidgetStatePropertyAll(
       RoundedRectangleBorder(
         side: outlined
-            ? BorderSide(width: 2, color: scheme.outlineVariant)
+            ? BorderSide(width: 2, color: c.border)
             : BorderSide.none,
         borderRadius: BorderRadius.circular(kBorderRadiusMedium),
       ),
@@ -346,130 +313,130 @@ MenuStyle menuStyle(ColorScheme scheme, {bool outlined = true}) {
   );
 }
 
-DropdownMenuThemeData dropdownMenuTheme(
-  ColorScheme scheme, {
-  bool outlined = true,
-}) {
+DropdownMenuThemeData dropdownMenuTheme(HColors c, {bool outlined = true}) {
   return DropdownMenuThemeData(
-    menuStyle: menuStyle(scheme, outlined: outlined),
-    inputDecorationTheme: inputDecorationTheme(scheme),
+    menuStyle: menuStyle(c, outlined: outlined),
+    inputDecorationTheme: inputDecorationTheme(c),
   );
 }
 
-NavigationBarThemeData navigationBarTheme(ColorScheme scheme) {
+NavigationBarThemeData navigationBarTheme(HColors c) {
   return NavigationBarThemeData(
-    backgroundColor: scheme.surfaceContainerLowest,
+    backgroundColor: c.background,
     iconTheme: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
-        return IconThemeData(color: scheme.primary);
+        return IconThemeData(color: c.primary.base);
       }
-      return IconThemeData(color: scheme.onSurface);
+      return IconThemeData(color: c.foreground);
     }),
     indicatorColor: Colors.transparent,
   );
 }
 
-NavigationRailThemeData navigationRailTheme(ColorScheme scheme) {
+NavigationRailThemeData navigationRailTheme(HColors c) {
   return NavigationRailThemeData(
-    backgroundColor: scheme.surfaceContainer,
+    backgroundColor: c.content1,
     groupAlignment: 0.0,
-    selectedIconTheme: IconThemeData(color: scheme.onPrimaryContainer),
+    selectedIconTheme: IconThemeData(color: c.primary.onSoft),
     labelType: NavigationRailLabelType.selected,
-    unselectedIconTheme: IconThemeData(color: scheme.onSurface),
-    selectedLabelTextStyle: TextStyle(color: scheme.onPrimaryContainer),
-    unselectedLabelTextStyle: TextStyle(color: scheme.onSurface),
+    unselectedIconTheme: IconThemeData(color: c.foreground),
+    selectedLabelTextStyle: TextStyle(color: c.primary.onSoft),
+    unselectedLabelTextStyle: TextStyle(color: c.foreground),
   );
 }
 
-PopupMenuThemeData popupMenuTheme(ColorScheme scheme, {bool outlined = true}) {
+PopupMenuThemeData popupMenuTheme(HColors c, {bool outlined = true}) {
   return PopupMenuThemeData(
     elevation: 1,
-    color: scheme.surfaceContainerHighest,
+    color: c.content3,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(kBorderRadius),
-      side: outlined
-          ? BorderSide(color: scheme.outlineVariant)
-          : BorderSide.none,
+      side: outlined ? BorderSide(color: c.border) : BorderSide.none,
     ),
   );
 }
 
-InputDecorationTheme inputDecorationTheme(ColorScheme scheme) {
+InputDecorationTheme inputDecorationTheme(HColors c) {
   return InputDecorationTheme(
-    border: OutlineInputBorder(borderSide: BorderSide(width: 2)),
+    filled: true,
+    fillColor: c.backgroundSubtle,
+    floatingLabelStyle: TextStyle(color: c.primary.base),
+    border: OutlineInputBorder(
+      borderSide: BorderSide(width: 2, color: c.border),
+    ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(kBorderRadiusMedium),
-      borderSide: BorderSide(width: 2, color: scheme.outlineVariant),
+      borderSide: BorderSide(width: 2, color: c.border),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(kBorderRadiusMedium),
-      borderSide: BorderSide(color: scheme.primary, width: 2),
+      borderSide: BorderSide(color: c.primary.base, width: 2),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(kBorderRadiusMedium),
-      borderSide: BorderSide(color: scheme.error, width: 2),
+      borderSide: BorderSide(color: c.danger.base, width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(kBorderRadiusMedium),
-      borderSide: BorderSide(color: scheme.error, width: 2),
+      borderSide: BorderSide(color: c.danger.base, width: 2),
     ),
   );
 }
 
-BottomSheetThemeData bottomSheetTheme(ColorScheme scheme) {
+BottomSheetThemeData bottomSheetTheme(HColors c) {
   return BottomSheetThemeData(
-    backgroundColor: scheme.surface,
+    backgroundColor: c.background,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
   );
 }
 
-DialogThemeData dialogTheme(ColorScheme scheme, {bool outlined = true}) {
+DialogThemeData dialogTheme(HColors c, {bool outlined = true}) {
   return DialogThemeData(
-    backgroundColor: scheme.surfaceContainer,
+    backgroundColor: c.content1,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
   );
 }
 
-CheckboxThemeData checkboxTheme(ColorScheme scheme) {
+CheckboxThemeData checkboxTheme(HColors c) {
   return CheckboxThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
     checkColor: WidgetStateProperty.resolveWith<Color?>((
       Set<WidgetState> states,
     ) {
       if (states.contains(WidgetState.selected)) {
-        return scheme.onPrimary;
+        return c.primary.onBase;
       }
-      return null; // Use the default check color
+      return null;
     }),
     fillColor: WidgetStateProperty.resolveWith<Color?>((
       Set<WidgetState> states,
     ) {
       if (states.contains(WidgetState.selected)) {
-        return scheme.primary;
+        return c.primary.base;
       }
-      return null; // Use the default fill color
+      return null;
     }),
-    side: BorderSide(color: scheme.onSurfaceVariant, width: 1.5),
+    side: BorderSide(color: c.mutedForeground, width: 1.5),
   );
 }
 
-SearchBarThemeData searchBarTheme(ColorScheme scheme, {bool outlined = true}) {
+SearchBarThemeData searchBarTheme(HColors c, {bool outlined = true}) {
   return SearchBarThemeData(
     shape: WidgetStatePropertyAll(
       RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(kBorderRadiusRounded),
         side: outlined
-            ? BorderSide(width: 1, color: scheme.outlineVariant, strokeAlign: 0)
+            ? BorderSide(width: 1, color: c.border, strokeAlign: 0)
             : BorderSide.none,
       ),
     ),
-    backgroundColor: WidgetStatePropertyAll(scheme.surfaceContainer),
+    backgroundColor: WidgetStatePropertyAll(c.content1),
   );
 }
 
-ListTileThemeData listTileTheme(ColorScheme scheme) {
+ListTileThemeData listTileTheme(HColors c) {
   return ListTileThemeData(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(kBorderRadius),

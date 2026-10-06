@@ -1,3 +1,4 @@
+import 'package:hornbill/hornbill.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:hornbill/src/helpers/constants.dart';
 
@@ -37,7 +38,7 @@ class HProgressIndicator extends StatefulWidget {
   const HProgressIndicator({
     super.key,
     this.value,
-    this.height = 16,
+    this.height = 8,
     this.borderRadius,
     this.backgroundColor,
     this.progressColor,
@@ -94,9 +95,7 @@ class _HProgressIndicatorState extends State<HProgressIndicator>
       borderRadius: radius,
       child: Container(
         height: widget.height,
-        color:
-            widget.backgroundColor ??
-            Theme.of(context).colorScheme.surfaceContainerHigh,
+        color: widget.backgroundColor ?? HColors.of(context).content3,
         child: widget.value == null
             ? AnimatedBuilder(
                 animation: _indeterminateController,
@@ -105,7 +104,7 @@ class _HProgressIndicatorState extends State<HProgressIndicator>
                     progress: _indeterminateController.value,
                     color:
                         widget.progressColor ??
-                        Theme.of(context).colorScheme.primary,
+                        HColors.of(context).primary.base,
                     gradient: widget.gradient,
                   );
                 },
@@ -126,7 +125,7 @@ class _HProgressIndicatorState extends State<HProgressIndicator>
                               : radius,
                           color: widget.gradient == null
                               ? (widget.progressColor ??
-                                    Theme.of(context).colorScheme.primary)
+                                    HColors.of(context).primary.base)
                               : null,
                           gradient: widget.gradient,
                         ),

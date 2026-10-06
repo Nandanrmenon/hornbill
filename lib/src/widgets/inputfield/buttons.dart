@@ -1,4 +1,6 @@
 import 'package:flutter/services.dart';
+import 'package:hornbill/hornbill.dart' show HColors, HSpinner;
+import 'package:hornbill/src/widgets/feedback/tooltip.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Position of the icon relative to the label.
@@ -16,6 +18,7 @@ enum HButtonSize { sm, md, lg }
 class HButton extends StatefulWidget {
   /// Null label + non-null [icon] => square icon-only button.
   final Widget? label;
+  final String? tooltip;
   final IconData? icon;
   final HButtonIconPosition iconPosition;
   final VoidCallback? onPressed;
@@ -33,6 +36,7 @@ class HButton extends StatefulWidget {
   const HButton({
     super.key,
     this.label,
+    this.tooltip,
     this.icon,
     this.iconPosition = HButtonIconPosition.left,
     required this.onPressed,
@@ -65,9 +69,23 @@ class _Style {
 }
 
 class _HButtonState extends State<HButton> {
+  /// Gap between the button edge and the focus ring's inner edge.
+  static const double _ringGap = 2;
+
+  /// Thickness of the focus ring border.
+  static const double _ringWidth = 2;
+
   bool _pressed = false;
   bool _hovered = false;
   bool _focused = false;
+
+  final FocusNode _focusNode = FocusNode(debugLabel: 'HButton');
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   bool get _enabled => widget.onPressed != null && !widget.isLoading;
   bool get _iconOnly => widget.label == null;
@@ -102,32 +120,26 @@ class _HButtonState extends State<HButton> {
   // ---- Color tokens ----
   /// (base color, color used on top of the base)
   (Color, Color) _palette(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final dark = Theme.of(context).brightness == Brightness.dark;
+    final c = HColors.of(context);
     return switch (widget.color) {
-      HButtonColor.defaultColor =>
-        dark
-            ? (const Color(0xFF3F3F46), Colors.white)
-            : (const Color(0xFFE4E4E7), const Color(0xFF11181C)),
-      HButtonColor.primary => (scheme.primary, scheme.onPrimary),
-      HButtonColor.secondary => (scheme.secondary, scheme.onSecondary),
-      HButtonColor.success => (const Color(0xFF17C964), Colors.black),
-      HButtonColor.warning => (const Color(0xFFF5A524), Colors.black),
-      HButtonColor.danger => (const Color(0xFFF31260), Colors.white),
+      HButtonColor.defaultColor => (c.neutral[200]!, c.foreground),
+      HButtonColor.primary => (c.primary.base, c.primary.onBase),
+      HButtonColor.secondary => (c.secondary.base, c.secondary.onBase),
+      HButtonColor.success => (c.success.base, c.success.onBase),
+      HButtonColor.warning => (c.warning.base, c.warning.onBase),
+      HButtonColor.danger => (c.danger.base, c.danger.onBase),
     };
   }
 
   _Style _resolve(BuildContext context) {
     final (base, onBase) = _palette(context);
-    final dark = Theme.of(context).brightness == Brightness.dark;
+    final c = HColors.of(context);
     final isDefault = widget.color == HButtonColor.defaultColor;
-    final foreground = dark ? Colors.white : const Color(0xFF11181C);
+    final foreground = c.foreground;
 
     // "default" color needs neutral borders/text on non-solid variants.
     final accent = isDefault ? foreground : base;
-    final neutralBorder = dark
-        ? const Color(0xFF52525B)
-        : const Color(0xFFD4D4D8);
+    final neutralBorder = c.neutral[300]!;
     final borderColor = isDefault ? neutralBorder : base;
 
     switch (widget.variant) {
@@ -156,13 +168,13 @@ class _HButtonState extends State<HButton> {
         );
         return _Style(bg: bg, fg: accent, hoverBg: bg, hoverFg: accent);
       case HButtonVariant.faded:
-        final bg = dark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5);
+        final bg = c.neutral[100]!;
         return _Style(
           bg: bg,
           fg: accent,
           hoverBg: bg,
           hoverFg: accent,
-          border: dark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+          border: c.neutral[200],
         );
       case HButtonVariant.ghost:
         return _Style(
@@ -198,7 +210,6 @@ class _HButtonState extends State<HButton> {
         ? 0.5
         : (hovered && s.hoverUsesOpacity ? 0.8 : 1.0);
 
-    final surface = Theme.of(context).colorScheme.surface;
     final shadows = <BoxShadow>[
       if (widget.variant == HButtonVariant.shadow)
         BoxShadow(
@@ -207,14 +218,6 @@ class _HButtonState extends State<HButton> {
           spreadRadius: -3,
           offset: const Offset(0, 8),
         ),
-      // Focus ring: 2px ring with 2px offset (keyboard focus only).
-      if (_focused) ...[
-        BoxShadow(color: surface, spreadRadius: 2),
-        BoxShadow(
-          color: base == Colors.transparent ? fg : _ringColor(context),
-          spreadRadius: 4,
-        ),
-      ],
     ];
 
     final textStyle = (widget.textStyle ?? const TextStyle()).copyWith(
@@ -228,7 +231,7 @@ class _HButtonState extends State<HButton> {
         ? SizedBox(
             width: _iconSize - 4,
             height: _iconSize - 4,
-            child: CircularProgressIndicator(strokeWidth: 2, color: fg),
+            child: HSpinner(color: fg),
           )
         : (widget.icon != null
               ? Icon(widget.icon, size: _iconSize, color: fg)
@@ -278,43 +281,89 @@ class _HButtonState extends State<HButton> {
       ),
     );
 
+    // Focus ring: a separate border layer drawn outside the button, with a
+    // 2px gap between the button and the ring. It paints outside the
+    // button's bounds, so toggling focus never shifts layout.
+    const ringOutset = _ringGap + _ringWidth;
+    content = Stack(
+      // passthrough so the button still fills the width when fullWidth is set.
+      fit: StackFit.passthrough,
+      clipBehavior: Clip.none,
+      children: [
+        content,
+        Positioned(
+          left: -ringOutset,
+          right: -ringOutset,
+          top: -ringOutset,
+          bottom: -ringOutset,
+          child: IgnorePointer(
+            child: AnimatedOpacity(
+              opacity: _focused ? 1 : 0,
+              duration: const Duration(milliseconds: 150),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(_radius + ringOutset),
+                  border: Border.all(
+                    color: _ringColor(context),
+                    width: _ringWidth,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+
     content = widget.fullWidth
         ? SizedBox(width: double.infinity, child: content)
         : IntrinsicWidth(child: content);
 
-    return FocusableActionDetector(
-      enabled: _enabled,
-      mouseCursor: _enabled
-          ? SystemMouseCursors.click
-          : SystemMouseCursors.basic,
-      onShowHoverHighlight: (v) => setState(() => _hovered = v),
-      onShowFocusHighlight: (v) => setState(() => _focused = v),
-      shortcuts: const {
-        SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
-        SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+    // Flutter doesn't clear focus when you click empty space, so the ring
+    // would stay forever. Drop focus when a tap lands outside this button.
+    return TapRegion(
+      onTapOutside: (_) {
+        if (_focusNode.hasFocus) _focusNode.unfocus();
       },
-      actions: {
-        ActivateIntent: CallbackAction<ActivateIntent>(
-          onInvoke: (_) {
-            _activate();
-            return null;
-          },
-        ),
-      },
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapDown: (_) => _setPressed(true),
-        onTapUp: (_) => _setPressed(false),
-        onTapCancel: () => _setPressed(false),
-        onTap: _enabled ? widget.onPressed : null,
-        child: AnimatedScale(
-          scale: _pressed ? 0.97 : 1.0, // HeroUI: scale-[0.97] on press
-          duration: const Duration(milliseconds: 120),
-          curve: Curves.easeOut,
-          child: AnimatedOpacity(
-            opacity: opacity,
-            duration: const Duration(milliseconds: 150),
-            child: content,
+      child: FocusableActionDetector(
+        focusNode: _focusNode,
+        enabled: _enabled,
+        mouseCursor: _enabled
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
+        onShowHoverHighlight: (v) => setState(() => _hovered = v),
+        onShowFocusHighlight: (v) => setState(() => _focused = v),
+        shortcuts: const {
+          SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+        },
+        actions: {
+          ActivateIntent: CallbackAction<ActivateIntent>(
+            onInvoke: (_) {
+              _activate();
+              return null;
+            },
+          ),
+        },
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: (_) => _setPressed(true),
+          onTapUp: (_) => _setPressed(false),
+          onTapCancel: () => _setPressed(false),
+          onTap: _enabled ? widget.onPressed : null,
+          child: AnimatedScale(
+            scale: _pressed ? 0.97 : 1.0, // HeroUI: scale-[0.97] on press
+            duration: const Duration(milliseconds: 120),
+            curve: Curves.easeOut,
+            child: AnimatedOpacity(
+              opacity: opacity,
+              duration: const Duration(milliseconds: 150),
+              child: widget.label != null
+                  ? content
+                  : widget.label == null && widget.tooltip != null
+                  ? HTooltip(message: widget.tooltip!, child: content)
+                  : content,
+            ),
           ),
         ),
       ),
@@ -322,7 +371,6 @@ class _HButtonState extends State<HButton> {
   }
 
   Color _ringColor(BuildContext context) {
-    // HeroUI uses the focus color (blue) for every button.
-    return const Color(0xFF006FEE);
+    return HColors.of(context).primary.base;
   }
 }

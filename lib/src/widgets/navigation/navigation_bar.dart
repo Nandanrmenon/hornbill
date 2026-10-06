@@ -1,4 +1,3 @@
-import 'package:hornbill/src/helpers/constants.dart';
 import 'package:hornbill/src/theme.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -103,11 +102,17 @@ class _HNavigationBarState extends State<HNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
-    final bgColor = widget.backgroundColor ?? theme.surfaceContainerLowest;
-    final borderColor = theme.surfaceContainerHigh;
-    final selectedColor = widget.selectedColor ?? theme.primary;
-    final unselectedColor = widget.unselectedColor ?? theme.onSurfaceVariant;
+    final colors = HColors.of(context);
+    final bgColor = widget.backgroundColor ?? colors.backgroundSubtle;
+    final borderColor = colors.border;
+    // `colors.primary` is an HColorRole (not a Color), so use `.base`. The old
+    // `as Color` cast would throw at runtime.
+    final Color selectedColor = widget.selectedColor ?? colors.foreground;
+    // `backgroundMuted` is a ~4% tint of the background, which made unselected
+    // icons/labels nearly invisible. Use the muted text colour instead.
+    final Color unselectedColor =
+        widget.unselectedColor ?? colors.mutedForeground;
+    final Color indicatorColor = widget.indicatorColor ?? colors.neutral[100]!;
     final radius = BorderRadius.circular(kBorderRadiusRounded);
 
     return SafeArea(
@@ -190,16 +195,23 @@ class _HNavigationBarState extends State<HNavigationBar> {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Material(
-                color: bgColor,
-                shape: RoundedRectangleBorder(
-                    side: hIsOutlined(context)
-                      ? BorderSide(color: borderColor)
-                      : BorderSide.none,
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: bgColor,
                   borderRadius: radius,
+                  border: hIsOutlined(context)
+                      ? Border.all(color: borderColor)
+                      : null,
+                  boxShadow: widget.elevation > 0
+                      ? [
+                          BoxShadow(
+                            color: colors.shadow.withValues(alpha: 0.12),
+                            blurRadius: widget.elevation * 6,
+                            offset: Offset(0, widget.elevation * 2),
+                          ),
+                        ]
+                      : null,
                 ),
-                elevation: widget.elevation,
-                clipBehavior: Clip.antiAlias,
                 child: Padding(
                   padding: widget.padding,
                   child: SizedBox(
@@ -223,9 +235,7 @@ class _HNavigationBarState extends State<HNavigationBar> {
                           height: widget.indicatorHeight,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              color:
-                                  widget.indicatorColor ??
-                                  selectedColor.withValues(alpha: 0.12),
+                              color: indicatorColor,
                               borderRadius: radius,
                             ),
                           ),
@@ -235,7 +245,7 @@ class _HNavigationBarState extends State<HNavigationBar> {
                           children: List.generate(widget.items.length, (index) {
                             final item = widget.items[index];
                             final selected = index == widget.currentIndex;
-                            final color = selected
+                            final Color color = selected
                                 ? selectedColor
                                 : unselectedColor;
 

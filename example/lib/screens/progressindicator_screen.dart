@@ -24,19 +24,16 @@ class _ProgressIndicatorScreenState extends State<ProgressIndicatorScreen> {
                 children: [
                   HProgressIndicator(),
                   HProgressIndicator(
-                    progressColor: Theme.of(context).colorScheme.tertiary,
+                    progressColor: HColors.of(context).tertiary.base,
                   ),
                   HProgressIndicator(
-                    progressColor: Theme.of(
-                      context,
-                    ).colorScheme.surfaceContainer,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    backgroundColor: HColors.of(context).primary.base,
                   ),
                   HProgressIndicator(
                     gradient: LinearGradient(
                       colors: [
-                        Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.tertiary,
+                        HColors.of(context).primary.base,
+                        HColors.of(context).secondary.base,
                       ],
                     ),
                   ),

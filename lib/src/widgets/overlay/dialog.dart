@@ -21,7 +21,6 @@
 // tablet) viewports. Pass `position:` on the [HDialog] to override that.
 
 import 'package:hornbill/hornbill.dart';
-import 'package:hornbill/src/helpers/constants.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Where an [HDialog] should be placed on screen.
@@ -293,13 +292,10 @@ class HDialog extends StatelessWidget {
         ),
         padding: padding,
         decoration: BoxDecoration(
-          color: backgroundColor ?? Theme.of(context).colorScheme.surface,
+          color: backgroundColor ?? HColors.of(context).backgroundSubtle,
           borderRadius: _radiusFor(resolved),
           border: hIsOutlined(context)
-              ? Border.all(
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                  width: 1,
-                )
+              ? Border.all(color: HColors.of(context).borderStrong, width: 1)
               : null,
           boxShadow: [
             BoxShadow(

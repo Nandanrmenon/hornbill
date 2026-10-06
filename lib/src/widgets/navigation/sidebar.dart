@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:hornbill/src/helpers/constants.dart';
-import 'package:hornbill/src/theme.dart';
+import 'package:hornbill/hornbill.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -99,6 +98,11 @@ class _HSideBarState extends State<HSideBar> {
   // expand direction needs to be delayed.
   late bool _contentCollapsed = widget.initiallyCollapsed;
 
+  final ScrollController _scrollController = ScrollController();
+
+  bool _showTopGradient = false;
+  bool _showBottomGradient = false;
+
   void _toggleCollapsed() {
     final wasCollapsed = _collapsed;
     setState(() {
@@ -119,17 +123,45 @@ class _HSideBarState extends State<HSideBar> {
     }
   }
 
+  void _updateScrollGradients() {
+    if (!_scrollController.hasClients) return;
+
+    final position = _scrollController.position;
+
+    final showTop = position.pixels > 0;
+    final showBottom = position.pixels < position.maxScrollExtent;
+
+    if (showTop != _showTopGradient || showBottom != _showBottomGradient) {
+      setState(() {
+        _showTopGradient = showTop;
+        _showBottomGradient = showBottom;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_updateScrollGradients);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateScrollGradients();
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_updateScrollGradients);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = HColors.of(context);
 
     return Material(
-      color: widget.backgroundColor ?? theme.colorScheme.surfaceContainerLow,
-      shape: Border(
-        right: hIsOutlined(context)
-            ? BorderSide(color: theme.colorScheme.outlineVariant)
-            : BorderSide.none,
-      ),
+      color: widget.backgroundColor ?? theme.backgroundMuted,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
@@ -140,36 +172,88 @@ class _HSideBarState extends State<HSideBar> {
           children: [
             _buildHeader(theme),
             Expanded(
-              child: ListView.builder(
-                padding: widget.padding,
-                itemCount: widget.items.length,
-                itemBuilder: (context, index) {
-                  final item = widget.items[index];
-                  if (item is HSideBarItem) {
-                    return HSideBarItem(
-                      key: item.key,
-                      icon: item.icon,
-                      label: item.label,
-                      trailing: _contentCollapsed
-                          ? null
-                          : item.trailing, // was _collapsed
-                      selected: item.selected || widget.selectedIndex == index,
-                      collapsed: _contentCollapsed, // was _collapsed
-                      initiallyExpanded: item.initiallyExpanded,
-                      onTap:
-                          item.onTap ??
-                          (item.children == null &&
-                                  widget.onItemSelected != null
-                              ? () => widget.onItemSelected!(index)
-                              : null),
-                      children: item.children,
-                    );
-                  }
-                  return item;
-                },
+              child: Stack(
+                children: [
+                  ListView.builder(
+                    controller: _scrollController,
+                    padding: widget.padding,
+                    itemCount: widget.items.length,
+                    itemBuilder: (context, index) {
+                      final item = widget.items[index];
+
+                      if (item is HSideBarItem) {
+                        return HSideBarItem(
+                          key: item.key,
+                          icon: item.icon,
+                          label: item.label,
+                          trailing: _contentCollapsed ? null : item.trailing,
+                          selected:
+                              item.selected || widget.selectedIndex == index,
+                          collapsed: _contentCollapsed,
+                          initiallyExpanded: item.initiallyExpanded,
+                          onTap:
+                              item.onTap ??
+                              (item.children == null &&
+                                      widget.onItemSelected != null
+                                  ? () => widget.onItemSelected!(index)
+                                  : null),
+                          children: item.children,
+                        );
+                      }
+
+                      return item;
+                    },
+                  ),
+
+                  // Top scroll indicator
+                  if (_showTopGradient)
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 32,
+                      child: IgnorePointer(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                theme.backgroundMuted,
+                                theme.backgroundMuted.withValues(alpha: 0),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  // Bottom scroll indicator
+                  if (_showBottomGradient)
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: 32,
+                      child: IgnorePointer(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [
+                                theme.backgroundMuted,
+                                theme.backgroundMuted.withValues(alpha: 0),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
-            if (widget.footer != null) const Divider(height: 1),
+            // if (widget.footer != null) Divider(height: 1, color: theme.border),
             ?_buildFooter(),
           ],
         ),
@@ -177,49 +261,45 @@ class _HSideBarState extends State<HSideBar> {
     );
   }
 
-  Widget _buildHeader(ThemeData theme) {
+  Widget _buildHeader(HColors theme) {
     if (widget.header == null && !widget.collapsible) {
       return const SizedBox.shrink();
     }
 
     final toggleButton = widget.collapsible
-        ? IconButton(
-            tooltip: _collapsed ? 'Expand' : 'Collapse',
-            icon: Icon(
-              _collapsed
-                  ? Symbols.left_panel_close_rounded
-                  : Symbols.left_panel_open_rounded,
-            ),
+        ? HButton(
+            // tooltip: _collapsed ? 'Expand' : 'Collapse',
+            variant: HButtonVariant.light,
+            icon: _collapsed
+                ? Symbols.left_panel_close_rounded
+                : Symbols.left_panel_open_rounded,
             onPressed: _toggleCollapsed,
           )
         : null;
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: _contentCollapsed
-              ? Center(child: toggleButton)
-              : Row(
-                  children: [
-                    if (widget.header != null)
-                      Expanded(
-                        child: DefaultTextStyle(
-                          style:
-                              widget.headerTextStyle ??
-                              theme.textTheme.titleMedium!.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                          child: widget.header!,
-                        ),
+    return Material(
+      color: theme.backgroundMuted,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        child: _contentCollapsed
+            ? Center(child: toggleButton)
+            : Row(
+                children: [
+                  if (widget.header != null)
+                    Expanded(
+                      child: DefaultTextStyle(
+                        style:
+                            widget.headerTextStyle ??
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                        child: widget.header!,
                       ),
-                    ?toggleButton,
-                  ],
-                ),
-        ),
-        if (widget.header != null || widget.collapsible)
-          const Divider(height: 1),
-      ],
+                    ),
+                  ?toggleButton,
+                ],
+              ),
+      ),
     );
   }
 
@@ -343,6 +423,8 @@ class _HSideBarItemState extends State<HSideBarItem> {
   bool _pressed = false;
   bool _hovered = false;
 
+  Color? _lastBackground;
+
   bool get _isGroup => widget.children != null && widget.children!.isNotEmpty;
 
   /// Whether any item in [items], at any depth, has `selected: true`.
@@ -398,7 +480,7 @@ class _HSideBarItemState extends State<HSideBarItem> {
 
     final renderBox = context.findRenderObject() as RenderBox?;
     final triggerWidth = renderBox?.size.width ?? 72;
-    final theme = Theme.of(context);
+    final theme = HColors.of(context);
 
     _flyoutEntry = OverlayEntry(
       builder: (context) {
@@ -413,11 +495,11 @@ class _HSideBarItemState extends State<HSideBarItem> {
               onExit: _handleFlyoutExit,
               child: StatefulBuilder(
                 builder: (context, setState) => Material(
-                  color: theme.colorScheme.surfaceContainerLow,
+                  color: theme.backgroundSubtle,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(kBorderRadiusMedium),
                     side: hIsOutlined(context)
-                        ? BorderSide(color: theme.colorScheme.outlineVariant)
+                        ? BorderSide(color: theme.border)
                         : BorderSide.none,
                   ),
                   clipBehavior: Clip.antiAlias,
@@ -431,10 +513,11 @@ class _HSideBarItemState extends State<HSideBarItem> {
                           padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
                           child: Text(
                             widget.label,
-                            style: theme.textTheme.labelMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
+                            style: Theme.of(context).textTheme.labelMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.mutedForeground,
+                                ),
                           ),
                         ),
                         ...widget.children!,
@@ -507,10 +590,9 @@ class _HSideBarItemState extends State<HSideBarItem> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final activeColor = widget.selectedColor ?? theme.colorScheme.primary;
-    final activeBg =
-        widget.selectedBackgroundColor ??
-        theme.colorScheme.primaryContainer.withValues(alpha: 0.5);
+    final hbColors = HColors.of(context);
+    final activeColor = widget.selectedColor ?? hbColors.primary.onSoft;
+    final activeBg = widget.selectedBackgroundColor ?? hbColors.primary.soft;
     final collapsed = widget.collapsed;
     final canTap = widget.onTap != null || (_isGroup && !collapsed);
 
@@ -524,14 +606,17 @@ class _HSideBarItemState extends State<HSideBarItem> {
     // hover so tappable rows visibly react before the press animation
     // kicks in — without this, nothing changes until the user is
     // already pressing down, which reads as "not clickable".
-    final Color backgroundColor;
-    if (widget.selected) {
-      backgroundColor = activeBg;
-    } else if (canTap && _hovered) {
-      backgroundColor = theme.colorScheme.onSurface.withValues(alpha: 0.06);
-    } else {
-      backgroundColor = Colors.transparent;
-    }
+    final Color? visibleBackground = widget.selected
+        ? activeBg
+        : (canTap && _hovered)
+        ? hbColors.content3.withValues(alpha: 0.9)
+        : null;
+    if (visibleBackground != null) _lastBackground = visibleBackground;
+
+    final Color backgroundColor =
+        visibleBackground ??
+        (_lastBackground ?? hbColors.content3.withValues(alpha: 0.4))
+            .withValues(alpha: 0);
 
     final trailingWidget = collapsed
         ? null
@@ -540,9 +625,8 @@ class _HSideBarItemState extends State<HSideBarItem> {
             turns: _expanded ? 0.25 : 0,
             duration: const Duration(milliseconds: 150),
             child: Material(
-              color: hasSelectedChild
-                  ? activeColor.withValues(alpha: 0.1)
-                  : Colors.transparent,
+              color: activeColor.withValues(alpha: hasSelectedChild ? 0.1 : 0),
+
               borderRadius: BorderRadius.circular(kBorderRadiusRounded),
               child: Icon(
                 Symbols.chevron_right_rounded,
@@ -591,7 +675,7 @@ class _HSideBarItemState extends State<HSideBarItem> {
                                   fill: widget.selected ? 1 : 0,
                                   color: widget.selected || hasSelectedChild
                                       ? activeColor
-                                      : theme.iconTheme.color?.withValues(
+                                      : hbColors.foreground.withValues(
                                           alpha: 0.7,
                                         ),
                                 )
@@ -603,7 +687,9 @@ class _HSideBarItemState extends State<HSideBarItem> {
                                     fontWeight: FontWeight.w500,
                                     color: widget.selected
                                         ? activeColor
-                                        : theme.colorScheme.onSurfaceVariant,
+                                        : hbColors.foreground.withValues(
+                                            alpha: 0.7,
+                                          ),
                                   ),
                                 ),
                           // Small badge on the icon itself when a nested
@@ -622,8 +708,9 @@ class _HSideBarItemState extends State<HSideBarItem> {
                                   color: activeColor,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color:
-                                        theme.colorScheme.surfaceContainerLow,
+                                    color: hbColors.primary.onBase.withValues(
+                                      alpha: 0.7,
+                                    ),
                                     width: 1.5,
                                   ),
                                 ),
@@ -641,7 +728,7 @@ class _HSideBarItemState extends State<HSideBarItem> {
                             fill: widget.selected ? 1 : 0,
                             color: widget.selected || hasSelectedChild
                                 ? activeColor
-                                : theme.iconTheme.color?.withValues(alpha: 0.7),
+                                : hbColors.foreground.withValues(alpha: 0.7),
                           ),
                           const SizedBox(width: 12),
                         ],
@@ -653,7 +740,9 @@ class _HSideBarItemState extends State<HSideBarItem> {
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: widget.selected || hasSelectedChild
                                       ? activeColor
-                                      : theme.colorScheme.onSurfaceVariant,
+                                      : hbColors.foreground.withValues(
+                                          alpha: 0.7,
+                                        ),
                                   fontWeight: widget.selected
                                       ? FontWeight.w500
                                       : hasSelectedChild
@@ -830,9 +919,9 @@ class _HSideBarAccountTileState extends State<HSideBarAccountTile> {
 
   Widget _buildAvatar(ThemeData theme, {double size = 32}) {
     if (widget.avatar != null) return widget.avatar!;
-    return CircleAvatar(
-      radius: size / 2,
-      backgroundColor: theme.colorScheme.primaryContainer,
+    return HAvatar(
+      status: true,
+      size: HAvatarSize.sm,
       child: Text(
         widget.title.isNotEmpty ? widget.title[0].toUpperCase() : '?',
         style: theme.textTheme.labelLarge?.copyWith(
@@ -878,7 +967,7 @@ class _HSideBarAccountTileState extends State<HSideBarAccountTile> {
             ? BorderSide(color: theme.colorScheme.outlineVariant)
             : BorderSide.none,
       ),
-      color: theme.colorScheme.surfaceContainerLowest,
+      color: HColors.of(context).backgroundMuted,
       items: [
         PopupMenuItem<void>(
           enabled: false,
@@ -922,14 +1011,12 @@ class _HSideBarAccountTileState extends State<HSideBarAccountTile> {
               child: Row(
                 children: [
                   account.avatar ??
-                      CircleAvatar(
-                        radius: 12,
-                        backgroundColor: theme.colorScheme.surfaceContainerHigh,
+                      HAvatar(
+                        size: HAvatarSize.sm,
                         child: Text(
                           account.title.isNotEmpty
                               ? account.title[0].toUpperCase()
                               : '?',
-                          style: theme.textTheme.labelSmall,
                         ),
                       ),
                   const SizedBox(width: 10),
@@ -985,11 +1072,12 @@ class _HSideBarAccountTileState extends State<HSideBarAccountTile> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final hbColors = HColors.of(context);
     final collapsed = widget.collapsed;
 
-    final backgroundColor = _hovered
-        ? theme.colorScheme.onSurface.withValues(alpha: 0.06)
-        : Colors.transparent;
+    final backgroundColor = hbColors.backgroundStrong.withValues(
+      alpha: _hovered ? 1 : 0,
+    );
 
     final tile = MouseRegion(
       cursor: SystemMouseCursors.click,

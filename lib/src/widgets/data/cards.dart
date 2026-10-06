@@ -66,21 +66,19 @@ class HCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = HColors.of(context);
     final radius = BorderRadius.circular(borderRadius);
 
     return Card(
       clipBehavior: clipBehavior,
       margin: margin,
       elevation: 0,
-      color: selected ? colorScheme.primaryContainer : colorScheme.surface,
+      color: selected ? colorScheme.primary.base : colorScheme.backgroundMuted,
       shape: RoundedRectangleBorder(
         borderRadius: radius,
         side: hIsOutlined(context)
             ? BorderSide(
-                color: selected
-                    ? colorScheme.primary
-                    : colorScheme.outlineVariant,
+                color: selected ? colorScheme.primary.base : colorScheme.border,
                 width: selected ? 1.5 : 1,
               )
             : BorderSide.none,
@@ -89,7 +87,7 @@ class HCard extends StatelessWidget {
         onTap: onTap,
         onLongPress: onLongPress,
         borderRadius: radius,
-        splashBase: colorScheme.primary,
+        splashBase: colorScheme.primary.base,
         child: Padding(padding: padding, child: child),
       ),
     );
@@ -125,7 +123,7 @@ class HElevatedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = HColors.of(context);
     final radius = BorderRadius.circular(borderRadius);
 
     return Card(
@@ -133,13 +131,13 @@ class HElevatedCard extends StatelessWidget {
       margin: margin,
       elevation: elevation,
       shadowColor: colorScheme.shadow.withValues(alpha: 0.25),
-      color: colorScheme.surfaceContainer,
+      color: colorScheme.backgroundMuted,
       shape: RoundedRectangleBorder(borderRadius: radius),
       child: _interactive(
         onTap: onTap,
         onLongPress: onLongPress,
         borderRadius: radius,
-        splashBase: colorScheme.primary,
+        splashBase: colorScheme.primary.base,
         child: Padding(padding: padding, child: child),
       ),
     );
@@ -170,27 +168,26 @@ class HFilledCard extends StatelessWidget {
   final double borderRadius;
   final Clip clipBehavior;
 
-  /// Override the fill color; defaults to [ColorScheme.surfaceContainerLow].
   final Color? color;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = HColors.of(context);
     final radius = BorderRadius.circular(borderRadius);
 
     return Card(
       clipBehavior: clipBehavior,
       margin: margin,
       elevation: 0,
-      color: color ?? colorScheme.surfaceContainerLow,
+      color: color ?? colorScheme.backgroundMuted,
       shape: RoundedRectangleBorder(borderRadius: radius),
       child: _interactive(
         onTap: onTap,
         onLongPress: onLongPress,
         borderRadius: radius,
-        splashBase: colorScheme.primary,
+        splashBase: colorScheme.primary.base,
         child: Padding(padding: padding, child: child),
       ),
     );
@@ -229,7 +226,7 @@ class HGradientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = HColors.of(context);
     final radius = BorderRadius.circular(borderRadius);
 
     final effectiveGradient =
@@ -237,7 +234,7 @@ class HGradientCard extends StatelessWidget {
         LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [colorScheme.primaryContainer, colorScheme.tertiaryContainer],
+          colors: [colorScheme.primary.soft, colorScheme.tertiary.soft],
         );
 
     return Container(
@@ -247,7 +244,7 @@ class HGradientCard extends StatelessWidget {
         borderRadius: radius,
         gradient: effectiveGradient,
         border: showBorder && hIsOutlined(context)
-            ? Border.all(color: colorScheme.outlineVariant)
+            ? Border.all(color: colorScheme.border, width: 1)
             : null,
       ),
       // HGradientCard uses a Container, not a Card, so it has no Material
@@ -257,7 +254,7 @@ class HGradientCard extends StatelessWidget {
         onTap: onTap,
         onLongPress: onLongPress,
         borderRadius: radius,
-        splashBase: colorScheme.onPrimaryContainer,
+        splashBase: colorScheme.primary.base,
         needsMaterial: true,
         child: Padding(padding: padding, child: child),
       ),
@@ -299,22 +296,22 @@ class HStatusCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
-  Color _accentColor(ColorScheme colorScheme) {
+  Color _accentColor(HColors colorScheme) {
     switch (status) {
       case HStatus.success:
-        return Colors.green;
+        return colorScheme.success.base;
       case HStatus.warning:
-        return Colors.orange;
+        return colorScheme.warning.base;
       case HStatus.error:
-        return colorScheme.error;
+        return colorScheme.danger.base;
       case HStatus.info:
-        return colorScheme.primary;
+        return colorScheme.primary.base;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = HColors.of(context);
     final accent = _accentColor(colorScheme);
     final radius = BorderRadius.circular(borderRadius);
 

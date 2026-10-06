@@ -29,7 +29,8 @@ class _LandingScreenState extends State<LandingScreen> {
       child: HScaffold(
         appBar: HAppBar(title: Text('Hi there!!!')),
         slivers: [
-          SliverToBoxAdapter(
+          SliverFillRemaining(
+            hasScrollBody: false,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -100,7 +101,7 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colours = theme.colorScheme;
+    final colours = HColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return HScaffold(
       slivers: [
@@ -113,7 +114,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 24,
                 children: [
-                  Icon(Symbols.flare, size: 48, color: colours.primary),
+                  Icon(Symbols.flare, size: 48, color: colours.primary.base),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 4.0,
@@ -146,7 +147,7 @@ class _LandingScreenState extends State<LandingScreen> {
         ),
         SliverToBoxAdapter(
           child: Material(
-            color: colours.surfaceContainerLowest,
+            color: colours.backgroundMuted,
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 48.0,
@@ -215,7 +216,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: colours.outlineVariant,
+                            color: colours.border,
                             width: 4,
                             strokeAlign: BorderSide.strokeAlignOutside,
                           ),
@@ -224,7 +225,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         child: Column(
                           children: [
                             Material(
-                              color: colours.surfaceContainerLow,
+                              color: colours.background,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
@@ -244,23 +245,28 @@ class _LandingScreenState extends State<LandingScreen> {
                               ),
                             ),
                             _phoneContent(theme),
-                            Container(
-                              color: colours.surfaceContainerLow,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(Symbols.arrow_back_2_rounded, fill: 1),
-                                    Icon(Symbols.circle, size: 16, fill: 1),
-                                    Icon(
-                                      Symbols.square_rounded,
-                                      size: 16,
-                                      fill: 1,
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Container(
+                                    width: 128,
+                                    height: 4,
+                                    decoration: BoxDecoration(
+                                      color: colours.foreground,
+                                      borderRadius: BorderRadius.circular(99),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  // Icon(Symbols.arrow_back_2_rounded, fill: 1),
+                                  // Icon(Symbols.circle, size: 16, fill: 1),
+                                  // Icon(
+                                  //   Symbols.square_rounded,
+                                  //   size: 16,
+                                  //   fill: 1,
+                                  // ),
+                                ],
                               ),
                             ),
                           ],

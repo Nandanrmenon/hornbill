@@ -1,6 +1,4 @@
-import 'package:hornbill/src/helpers/constants.dart';
 import 'package:hornbill/src/theme.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 class HSwitch extends StatefulWidget {
@@ -23,7 +21,7 @@ class HSwitch extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.width = 48,
-    this.height = 32,
+    this.height = 24,
     this.duration = const Duration(milliseconds: 200),
     this.curve = Curves.easeInOut,
     this.showCheckIcon = false,
@@ -38,7 +36,7 @@ class _HSwitchState extends State<HSwitch> {
   bool _dragging = false;
   double _dragExtent = 0;
 
-  double get _thumbSize => widget.height - 6;
+  double get _thumbSize => widget.height + 2;
 
   void _handleTap() {
     widget.onChanged(!widget.value);
@@ -92,12 +90,14 @@ class _HSwitchState extends State<HSwitch> {
             // color: widget.value
             //     ? Theme.of(context).colorScheme.primary
             //     : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38),
-            color: Theme.of(context).colorScheme.surfaceContainer,
-            border: hIsOutlined(context)
-                ? Border.all(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  )
-                : null,
+            color: widget.value
+                ? HColors.of(context).primary.base
+                : HColors.of(context).neutral[200],
+            // border: hIsOutlined(context)
+            //     ? Border.all(
+            //         color: Theme.of(context).colorScheme.outlineVariant,
+            //       )
+            //     : null,
             borderRadius: BorderRadius.circular(kBorderRadius),
           ),
           child: AnimatedAlign(
@@ -105,16 +105,13 @@ class _HSwitchState extends State<HSwitch> {
             curve: widget.curve,
             alignment: Alignment(alignmentX, 0),
             child: AnimatedContainer(
-              duration: Duration(milliseconds: 100),
+              duration: const Duration(milliseconds: 100),
               width: _thumbSize,
               height: _thumbSize,
               decoration: BoxDecoration(
-                // color: Theme.of(context).colorScheme.surface,
                 color: widget.value
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.38),
+                    ? HColors.of(context).primary.onBase
+                    : HColors.of(context).neutral[50],
                 borderRadius: BorderRadius.circular(kBorderRadius),
                 boxShadow: [
                   BoxShadow(
@@ -124,20 +121,56 @@ class _HSwitchState extends State<HSwitch> {
                   ),
                 ],
               ),
-              child: widget.value
-                  ? Visibility(
-                      visible: widget.showCheckIcon,
-                      child: Icon(
-                        widget.checkIcon ?? Symbols.check_rounded,
-                        size: _thumbSize * 0.6,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    )
-                  : null,
+              child: Center(
+                child: CustomPaint(
+                  size: Size(_thumbSize * 0.6, _thumbSize * 0.6),
+                  painter: _SwitchIconPainter(
+                    isOn: widget.value,
+                    color: widget.value
+                        ? HColors.of(context).primary.base
+                        : HColors.of(context).mutedForeground,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class _SwitchIconPainter extends CustomPainter {
+  final bool isOn;
+  final Color color;
+
+  const _SwitchIconPainter({required this.isOn, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = size.width * 0.09
+      ..strokeCap = StrokeCap.round;
+
+    final center = Offset(size.width / 2, size.height / 2);
+
+    if (isOn) {
+      // iOS-style vertical "I"
+      canvas.drawLine(
+        Offset(center.dx, size.height * 0.18),
+        Offset(center.dx, size.height * 0.82),
+        paint,
+      );
+    } else {
+      // iOS-style "O"
+      canvas.drawCircle(center, size.width * 0.31, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _SwitchIconPainter oldDelegate) {
+    return oldDelegate.isOn != isOn || oldDelegate.color != color;
   }
 }

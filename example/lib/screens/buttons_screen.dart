@@ -39,6 +39,7 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
             for (final v in HButtonVariant.values)
               HButton(
                 variant: v,
+                color: HButtonColor.primary,
                 label: Text(_title(v.name)),
                 onPressed: () {},
               ),
@@ -185,46 +186,27 @@ class _ButtonsScreenState extends State<ButtonsScreen> {
         // ---- Icon buttons ----
         SliverToBoxAdapter(child: HListHeader(title: 'Icon buttons')),
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              spacing: 16.0,
-              children: [
-                HIconButton.filled(
-                  icon: Symbols.android_rounded,
-                  onPressed: () {},
-                  tooltip: 'Button',
-                ),
-                HIconButton.outlined(
-                  icon: Symbols.android_rounded,
-                  onPressed: () {},
-                  tooltip: 'Button',
-                ),
-                HIconButton.tonal(
-                  icon: Symbols.android_rounded,
-                  onPressed: () {},
-                  tooltip: 'Button',
-                ),
-                HIconButton.plain(
-                  icon: Symbols.android_rounded,
-                  onPressed: () {},
-                  tooltip: 'Button',
-                ),
-              ],
-            ),
-          ),
+          child: _wrap([
+            for (final v in HButtonVariant.values)
+              HButton(
+                icon: Symbols.android_rounded,
+                variant: v,
+                tooltip: _title(v.name),
+                onPressed: () {},
+              ),
+          ]),
         ),
       ],
-      floatingActionButton: HButton(
-        variant: HButtonVariant.shadow,
-        color: HButtonColor.primary,
-        label: const Text('Next'),
-        icon: Symbols.arrow_forward_rounded,
-        iconPosition: HButtonIconPosition.right,
-        onPressed: () {
-          Navigator.pushNamed(context, '/components/inputs');
-        },
-      ),
+      // floatingActionButton: HButton(
+      //   variant: HButtonVariant.shadow,
+      //   color: HButtonColor.primary,
+      //   label: const Text('Next'),
+      //   icon: Symbols.arrow_forward_rounded,
+      //   iconPosition: HButtonIconPosition.right,
+      //   onPressed: () {
+      //     Navigator.pushNamed(context, '/components/inputs');
+      //   },
+      // ),
     );
   }
 }
