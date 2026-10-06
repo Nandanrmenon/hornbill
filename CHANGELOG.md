@@ -1,3 +1,8 @@
+## 2.0.1
+- imp: Change `HListView` style from M3E to Hornbill style
+- fix: `HCheckbox` skip painting checkmark when there's nothing to draw
+- fix: add disabled border style for `HTextfield`
+
 ## 2.0.0 - Milestone
 
 - feat: Introducing `HColors`, Hornbill's own colour system. Widgets read colours with `context.hColors` (or `HColors.of(context)`) instead of `Theme.of(context).colorScheme`. HTheme generates an HColors from an [HColourScheme] seed for light and dark, and registers it on the ThemeData as a ThemeExtension.
