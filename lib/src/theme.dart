@@ -380,6 +380,10 @@ InputDecorationTheme inputDecorationTheme(HColors c) {
       borderRadius: BorderRadius.circular(kBorderRadiusMedium),
       borderSide: BorderSide(color: c.danger.base, width: 2),
     ),
+    disabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(kBorderRadiusMedium),
+      borderSide: BorderSide(width: 2, color: c.content2),
+    ),
   );
 }
 
