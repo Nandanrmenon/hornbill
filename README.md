@@ -8,7 +8,7 @@ Either add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  hornbill: ^1.8.6
+  hornbill: ^2.0.0
 ```
 
 and run `flutter pub get`,
@@ -24,8 +24,8 @@ $ flutter pub add hornbill
 There are various widget available in this package. Here are some of the widgets available in this package:
 
 - `HAppBar`
+- `HAvatar`
 - `HButton`
-- `HIconButton`
 - `HNavigationBar`
 - `HDialog`
 - `HSideBar`
@@ -41,6 +41,9 @@ There are various widget available in this package. Here are some of the widgets
 - `HCard`
 - `HProgressIndicator`
 - `HSwitch`
+- `HSpinner`
 - `HTheme`
+- `HToast`
+- `HTooltip`
 
 You can find the documentation for these widgets in the [example app](https://hornbill-example.vercel.app/) (WIP). The example app is also available in the [GitLab repository](https://gitlab.knoxxbox.in/nahnah/hornbill/-/tree/main/example).

@@ -1,3 +1,16 @@
+## 2.0.0 - Milestone
+
+- feat: Introducing `HColors`, Hornbill's own colour system. Widgets read colours with `context.hColors` (or `HColors.of(context)`) instead of `Theme.of(context).colorScheme`. HTheme generates an HColors from an [HColourScheme] seed for light and dark, and registers it on the ThemeData as a ThemeExtension.
+- feat: [BREAKING] `HIconButton` has been removed completely. For icon button, you can use `HButton`.
+- feat: Added `HSpinner` for loading feedback.
+- feat: Added `HAvatar` which can display character, image, or icon.
+- feat: Added `HTooltip` as a visual feedback for widgets without labels.
+- imp: `HCheckbox` has now labels.
+- imp: [BREAKING] `HButtons` no longer have `.plain`, `.filled`, `.outlined`, & `.tonal` variants. Instead, there are `HButtonVariant { solid, bordered, light, flat, faded, shadow, ghost }` with `HButtonColor { defaultColor, primary, secondary, success, warning, danger }`.
+- fix: `HDialog` has now padding for mobile devices.
+- fix: `HToast` now respects smaller devices.
+- fix: Buttons in `HAppBar` no longer go wild by taking full size.
+
 ## 1.8.6
 
 - imp: Add `body` as an option to avoid using `CustomScrollView`.
