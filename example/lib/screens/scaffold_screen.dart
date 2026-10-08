@@ -1,6 +1,5 @@
 import 'package:flutter_code_view/flutter_code_view.dart';
 import 'package:hornbill/hornbill.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 class ScaffoldScreen extends StatefulWidget {
@@ -24,7 +23,12 @@ class _ScaffoldScreenState extends State<ScaffoldScreen> {
         showBackButton: true,
         onBackPressed: () => HToast.show(context, title: 'Back button pressed'),
         actions: [
-          HAppBarAction(label: 'Action 1', icon: Symbols.abc, onPressed: () {}),
+          HButton(
+            label: Text('Action 1'),
+            onPressed: () {
+              HToast.show(context, title: 'Settings button pressed');
+            },
+          ),
         ],
         backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
       ),

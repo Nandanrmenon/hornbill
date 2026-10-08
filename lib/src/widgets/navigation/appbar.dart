@@ -2,37 +2,15 @@ import 'package:hornbill/hornbill.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// A single action item shown in [HAppBar].
-///
-/// On desktop these render as inline icon buttons (with optional tooltip).
-/// On mobile they collapse into a single overflow (three-dot) popup menu,
-/// rendered as icon + label rows.
-class HAppBarAction {
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  /// If false, this action is hidden entirely on mobile (neither shown
-  /// inline nor in the popup menu). Defaults to true.
-  final bool showOnMobile;
-
-  const HAppBarAction({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-    this.showOnMobile = true,
-  });
-}
-
 /// A responsive [SliverAppBar].
 ///
 /// Desktop / wide layout:
 ///   [back button?]  [title]      [search field (centered, if enabled)]      [actions...]
 ///
 /// Mobile / narrow layout:
-///   [drawer or back button?]  [title  -or-  search field (if search is active)]   [overflow menu]
+///   [drawer or back button?]  [title  -or-  search field (if search is active)]   [actions...]
 ///
-/// This is a *sliver* widget now — place it directly inside a
+/// This is a *sliver* widget — place it directly inside a
 /// [CustomScrollView]'s `slivers` list (e.g. via [HScaffold]'s `appBar`
 /// slot). It relies on [SliverAppBar]'s own handling of the top status-bar
 /// inset, so — unlike the old fixed-height [SliverPersistentHeader] wrapper
@@ -76,9 +54,8 @@ class HAppBar extends StatefulWidget {
   /// Max width of the search field on desktop.
   final double desktopSearchWidth;
 
-  /// Actions available on both layouts. On desktop they render inline.
-  /// On mobile they collapse into a single overflow popup menu.
-  final List<HAppBarAction> actions;
+  /// Standard widget actions displayed on the right side of the app bar.
+  final List<Widget> actions;
 
   /// Width breakpoint (in logical pixels) below which the mobile layout
   /// is used. Measured against the sliver's own cross-axis extent, not the
@@ -193,7 +170,6 @@ class _HAppBarState extends State<HAppBar> {
     if (isMobile && widget.searchEnabled && _searchActive) {
       return HButton(
         icon: Symbols.arrow_back_ios_new_rounded,
-        // tooltip: 'Close search',
         onPressed: () => _setSearchActive(false),
       );
     }
@@ -201,7 +177,6 @@ class _HAppBarState extends State<HAppBar> {
     if (wantsBack) {
       return HButton(
         icon: Symbols.arrow_back_ios_new_rounded,
-        // tooltip: 'Back',
         variant: HButtonVariant.light,
         onPressed:
             widget.onBackPressed ??
@@ -213,8 +188,6 @@ class _HAppBarState extends State<HAppBar> {
       );
     }
 
-    // No explicit leading, no back button requested: return null so
-    // AppBar can auto-imply the drawer (hamburger) icon if present.
     return null;
   }
 
@@ -249,7 +222,7 @@ class _HAppBarState extends State<HAppBar> {
       ),
       onChanged: (v) {
         widget.onSearchChanged?.call(v);
-        setState(() {}); // refresh suffix clear icon
+        setState(() {});
       },
       onSubmitted: widget.onSearchSubmitted,
     );
@@ -268,48 +241,8 @@ class _HAppBarState extends State<HAppBar> {
     );
   }
 
-  List<Widget> _buildDesktopActions() {
-    return widget.actions
-        .map(
-          (a) => IconButton(
-            icon: Icon(a.icon),
-            tooltip: a.label,
-            onPressed: a.onPressed,
-          ),
-        )
-        .toList();
-  }
-
-  Widget? _buildMobileOverflowMenu() {
-    final items = widget.actions.where((a) => a.showOnMobile).toList();
-    if (items.isEmpty) return null;
-
-    return PopupMenuButton<HAppBarAction>(
-      icon: const Icon(Icons.more_vert),
-      tooltip: 'More',
-      onSelected: (action) => action.onPressed(),
-      itemBuilder: (context) => items
-          .map(
-            (a) => PopupMenuItem<HAppBarAction>(
-              value: a,
-              child: Row(
-                children: [
-                  Icon(a.icon, size: 20),
-                  const SizedBox(width: 12),
-                  Text(a.label),
-                ],
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    // SliverLayoutBuilder exposes the sliver's own cross-axis extent (the
-    // actual width it will render at — e.g. screen width minus an
-    // HScaffold sidebar), which is what the breakpoint should react to.
     return SliverLayoutBuilder(
       builder: (context, constraints) {
         final isMobile = constraints.crossAxisExtent < widget.mobileBreakpoint;
@@ -344,7 +277,7 @@ class _HAppBarState extends State<HAppBar> {
             const Spacer(),
         ],
       ),
-      actions: _buildDesktopActions(),
+      actions: widget.actions,
       bottom: widget.bottom,
     );
   }
@@ -361,8 +294,6 @@ class _HAppBarState extends State<HAppBar> {
           widget.backgroundColor ?? HColors.of(context).backgroundMuted,
       elevation: widget.elevation,
       scrolledUnderElevation: widget.scrolledUnderElevation,
-      // Leave auto-imply on when we're not overriding leading, so the
-      // Scaffold's drawer icon still appears when relevant.
       automaticallyImplyLeading: leading == null,
       leading: leading == null ? null : UnconstrainedBox(child: leading),
       title: showingSearch
@@ -378,12 +309,10 @@ class _HAppBarState extends State<HAppBar> {
         if (widget.searchEnabled && !showingSearch)
           HButton(
             icon: Symbols.search,
-            // tooltip: 'Search',
             variant: HButtonVariant.light,
             onPressed: () => _setSearchActive(true),
           ),
-        if (!showingSearch && _buildMobileOverflowMenu() != null)
-          _buildMobileOverflowMenu()!,
+        ...widget.actions,
       ],
       bottom: widget.bottom,
     );
