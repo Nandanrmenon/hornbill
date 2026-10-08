@@ -1,7 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:hornbill/src/theme.dart';
 import 'package:material_ui/material_ui.dart';
@@ -9,8 +7,6 @@ import 'package:material_ui/material_ui.dart';
 enum HSelectVariant { flat, faded, bordered, underlined }
 
 enum HSelectSize { sm, md, lg }
-
-enum HSelectLabelPlacement { inside, outside }
 
 /// One option in an [HSelect].
 class HSelectItem<T> {
@@ -40,8 +36,8 @@ class HSelectItem<T> {
   final bool enabled;
 }
 
-///  * four trigger variants, three sizes, inside / outside label
-///  * floating-label animation, description, error message, required marker
+///  * four trigger variants, three sizes, label above the field
+///  * description, error message, required marker
 ///  * a popover list that opens below the field (flips above when there is no
 ///    room), animates in, scrolls, and shows a check next to selected items
 ///  * keyboard support: Enter / Space / Arrow keys open it, Arrow keys move,
@@ -75,8 +71,7 @@ class HSelect<T> extends StatefulWidget {
     this.description,
     this.errorText,
     this.variant = HSelectVariant.flat,
-    this.size,
-    this.labelPlacement = HSelectLabelPlacement.inside,
+    this.size = HSelectSize.md,
     this.radius,
     this.isRequired = false,
     this.isDisabled = false,
@@ -99,8 +94,7 @@ class HSelect<T> extends StatefulWidget {
     this.description,
     this.errorText,
     this.variant = HSelectVariant.flat,
-    this.size,
-    this.labelPlacement = HSelectLabelPlacement.inside,
+    this.size = HSelectSize.md,
     this.radius,
     this.isRequired = false,
     this.isDisabled = false,
@@ -130,11 +124,9 @@ class HSelect<T> extends StatefulWidget {
 
   final HSelectVariant variant;
 
-  /// sm / md / lg. When null (default) it adapts: sm on desktop and wide
-  /// screens, md on mobile (same rule as [HButton]).
-  final HSelectSize? size;
-
-  final HSelectLabelPlacement labelPlacement;
+  /// sm = 32px, md = 40px, lg = 48px tall. These match [HButton]'s heights, and
+  /// like [HButton] the default is md on every platform.
+  final HSelectSize size;
 
   /// Overrides the trigger and menu corner radius (sm 8, md 12, lg 14).
   final double? radius;
@@ -210,24 +202,6 @@ class _HSelectState<T> extends State<HSelect<T>>
     }
     return null;
   }
-
-  bool get _hasValue => _valueText != null;
-
-  HSelectSize _resolveSize(BuildContext context) {
-    final explicit = widget.size;
-    if (explicit != null) return explicit;
-    final isNativeDesktop =
-        !kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.macOS ||
-            defaultTargetPlatform == TargetPlatform.windows ||
-            defaultTargetPlatform == TargetPlatform.linux);
-    final isWideWeb = kIsWeb && MediaQuery.sizeOf(context).width >= 600;
-    return (isNativeDesktop || isWideWeb) ? HSelectSize.sm : HSelectSize.md;
-  }
-
-  bool get _insideLabel =>
-      widget.label != null &&
-      widget.labelPlacement == HSelectLabelPlacement.inside;
 
   // ---------------------------------------------------------------------------
   // Open / close
@@ -420,21 +394,18 @@ class _HSelectState<T> extends State<HSelect<T>>
   // Size / style tokens
   // ---------------------------------------------------------------------------
 
-  double _height(HSelectSize s) {
-    final inside = _insideLabel;
-    return switch (s) {
-      HSelectSize.sm => inside ? 48 : 32,
-      HSelectSize.md => inside ? 56 : 40,
-      HSelectSize.lg => inside ? 64 : 48,
-    };
-  }
+  double _height(HSelectSize s) => switch (s) {
+    HSelectSize.sm => 32,
+    HSelectSize.md => 40,
+    HSelectSize.lg => 48,
+  };
 
   double _radiusFor(HSelectSize s) =>
       widget.radius ??
       switch (s) {
-        HSelectSize.sm => 8,
-        HSelectSize.md => 12,
-        HSelectSize.lg => 14,
+        HSelectSize.sm => kBorderRadiusSmall,
+        HSelectSize.md => kBorderRadiusMedium,
+        HSelectSize.lg => kBorderRadius,
       };
 
   double _valueFont(HSelectSize s) => s == HSelectSize.lg ? 16 : 14;
@@ -446,7 +417,7 @@ class _HSelectState<T> extends State<HSelect<T>>
   @override
   Widget build(BuildContext context) {
     final c = HColors.of(context);
-    final size = _resolveSize(context);
+    final size = widget.size;
     final active = _open || _focused;
     final height = _height(size);
     final radius = _radiusFor(size);
@@ -483,14 +454,9 @@ class _HSelectState<T> extends State<HSelect<T>>
       );
     }
 
-    final labelColor = _invalid
-        ? c.danger.base
-        : (active ? c.foreground : c.neutral[600]!);
-
     final valueFont = _valueFont(size);
-    final floated = _open || _hasValue;
 
-    // ---- Value / label content ----
+    // ---- Value ----
     final text = _valueText;
     final valueWidget = Text(
       text ?? widget.placeholder ?? '',
@@ -502,48 +468,6 @@ class _HSelectState<T> extends State<HSelect<T>>
         color: text != null ? c.foreground : c.mutedForeground,
       ),
     );
-
-    final Widget body;
-    if (_insideLabel) {
-      final floatTop = switch (size) {
-        HSelectSize.sm => 6.0,
-        HSelectSize.md => 8.0,
-        HSelectSize.lg => 10.0,
-      };
-      body = Stack(
-        children: [
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 160),
-            curve: Curves.easeOut,
-            left: 0,
-            right: 0,
-            top: floated ? floatTop : (height - 20) / 2,
-            child: AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 160),
-              curve: Curves.easeOut,
-              style: TextStyle(
-                fontSize: floated ? 12 : valueFont,
-                height: 1.3,
-                color: labelColor,
-              ),
-              child: _labelText(c, inheritColor: true),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: floatTop,
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 160),
-              opacity: floated ? 1 : 0,
-              child: valueWidget,
-            ),
-          ),
-        ],
-      );
-    } else {
-      body = Align(alignment: Alignment.centerLeft, child: valueWidget);
-    }
 
     final trigger = MouseRegion(
       cursor: _enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
@@ -590,7 +514,12 @@ class _HSelectState<T> extends State<HSelect<T>>
                     ),
                     const SizedBox(width: 8),
                   ],
-                  Expanded(child: body),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: valueWidget,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   AnimatedRotation(
                     turns: _open ? 0.5 : 0,
@@ -620,7 +549,7 @@ class _HSelectState<T> extends State<HSelect<T>>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (widget.label != null && !_insideLabel)
+            if (widget.label != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: DefaultTextStyle.merge(
@@ -629,7 +558,7 @@ class _HSelectState<T> extends State<HSelect<T>>
                     fontWeight: FontWeight.w500,
                     color: _invalid ? c.danger.base : c.foreground,
                   ),
-                  child: _labelText(c, inheritColor: true),
+                  child: _labelText(c),
                 ),
               ),
             trigger,
@@ -650,7 +579,7 @@ class _HSelectState<T> extends State<HSelect<T>>
     );
   }
 
-  Widget _labelText(HColors c, {required bool inheritColor}) {
+  Widget _labelText(HColors c) {
     final label = widget.label!;
     if (!widget.isRequired) {
       return Text(label, maxLines: 1, overflow: TextOverflow.ellipsis);
@@ -675,8 +604,7 @@ class _HSelectState<T> extends State<HSelect<T>>
   // ---------------------------------------------------------------------------
 
   Widget _buildOverlay(BuildContext overlayContext) {
-    final size = _resolveSize(context);
-    final radius = _radiusFor(size);
+    final radius = _radiusFor(widget.size);
     final curved = CurvedAnimation(parent: _anim, curve: Curves.easeOutCubic);
 
     return Builder(
@@ -702,7 +630,7 @@ class _HSelectState<T> extends State<HSelect<T>>
                 followerAnchor: _above
                     ? Alignment.bottomLeft
                     : Alignment.topLeft,
-                offset: Offset(0, _above ? -6 : 6),
+                offset: Offset(0, _above ? -6 : 0),
                 child: FadeTransition(
                   opacity: curved,
                   child: ScaleTransition(
@@ -813,7 +741,7 @@ class _OptionTile<T> extends StatelessWidget {
         child: Opacity(
           opacity: item.enabled ? 1 : 0.5,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: (highlighted && item.enabled) ? c.neutral[200]! : null,
               borderRadius: BorderRadius.circular(radius),

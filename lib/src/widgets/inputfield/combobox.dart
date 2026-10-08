@@ -1,15 +1,8 @@
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:hornbill/hornbill.dart'
-    show
-        HColors,
-        HSelectItem,
-        HSelectLabelPlacement,
-        HSelectSize,
-        HSelectVariant;
+    show HColors, HSelectItem, HSelectSize, HSelectVariant, HTextField;
 import 'package:material_ui/material_ui.dart';
 
 /// A HeroUI-style combo box: an [HSelect] you can type into to search.
@@ -18,9 +11,9 @@ import 'package:material_ui/material_ui.dart';
 ///    pass your own [filter] / [onInputChanged] for async search)
 ///  * pick an option with the mouse, or with Arrow keys + Enter
 ///  * a clear button, a chevron toggle, and a "No results" state
-///  * the same variants, sizes, label placement, description, error and
-///    popover as [HSelect] (it reuses [HSelectItem], [HSelectVariant],
-///    [HSelectSize] and [HSelectLabelPlacement])
+///  * the same variants, sizes, label above the field, description, error and
+///    popover as [HSelect] (it reuses [HSelectItem], [HSelectVariant] and
+///    [HSelectSize])
 ///
 /// While you are typing, the list is filtered. If you close the menu without
 /// choosing, the text snaps back to the current selection.
@@ -51,8 +44,7 @@ class HComboBox<T> extends StatefulWidget {
     this.description,
     this.errorText,
     this.variant = HSelectVariant.flat,
-    this.size,
-    this.labelPlacement = HSelectLabelPlacement.inside,
+    this.size = HSelectSize.md,
     this.radius,
     this.isRequired = false,
     this.isDisabled = false,
@@ -83,11 +75,9 @@ class HComboBox<T> extends StatefulWidget {
 
   final HSelectVariant variant;
 
-  /// sm / md / lg. Null (default) adapts: sm on desktop and wide screens,
-  /// md on mobile.
-  final HSelectSize? size;
-
-  final HSelectLabelPlacement labelPlacement;
+  /// sm = 32px, md = 40px, lg = 48px tall. These match [HButton]'s heights, and
+  /// like [HButton] the default is md on every platform.
+  final HSelectSize size;
 
   /// Overrides the field and menu corner radius (sm 8, md 12, lg 14).
   final double? radius;
@@ -182,30 +172,11 @@ class _HComboBoxState<T> extends State<HComboBox<T>>
     ];
   }
 
-  HSelectSize _resolveSize(BuildContext context) {
-    final explicit = widget.size;
-    if (explicit != null) return explicit;
-    final isNativeDesktop =
-        !kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.macOS ||
-            defaultTargetPlatform == TargetPlatform.windows ||
-            defaultTargetPlatform == TargetPlatform.linux);
-    final isWideWeb = kIsWeb && MediaQuery.sizeOf(context).width >= 600;
-    return (isNativeDesktop || isWideWeb) ? HSelectSize.sm : HSelectSize.md;
-  }
-
-  bool get _insideLabel =>
-      widget.label != null &&
-      widget.labelPlacement == HSelectLabelPlacement.inside;
-
-  double _height(HSelectSize s) {
-    final inside = _insideLabel;
-    return switch (s) {
-      HSelectSize.sm => inside ? 48 : 32,
-      HSelectSize.md => inside ? 56 : 40,
-      HSelectSize.lg => inside ? 64 : 48,
-    };
-  }
+  double _height(HSelectSize s) => switch (s) {
+    HSelectSize.sm => 32,
+    HSelectSize.md => 40,
+    HSelectSize.lg => 48,
+  };
 
   double _radiusFor(HSelectSize s) =>
       widget.radius ??
@@ -471,7 +442,7 @@ class _HComboBoxState<T> extends State<HComboBox<T>>
   @override
   Widget build(BuildContext context) {
     final c = HColors.of(context);
-    final size = _resolveSize(context);
+    final size = widget.size;
     final active = _open || _focused;
     final height = _height(size);
     final radius = _radiusFor(size);
@@ -507,80 +478,25 @@ class _HComboBoxState<T> extends State<HComboBox<T>>
       );
     }
 
-    final labelColor = _invalid
-        ? c.danger.base
-        : (active ? c.foreground : c.neutral[600]!);
-
     final valueFont = _valueFont(size);
-    // final hasText = _text.text.isNotEmpty;
     final hasText = _selectedLabel?.isNotEmpty ?? false;
-    final floated = _open || _focused || hasText;
+    // With the label above the field, the placeholder is always visible while
+    // nothing is selected.
+    final triggerText = _selectedLabel ?? widget.placeholder ?? '';
 
-    // final floated = _open || hasText;
-    final triggerText =
-        _selectedLabel ?? (_open ? widget.placeholder ?? '' : '');
-
-    final Widget body;
-    if (_insideLabel) {
-      final floatTop = switch (size) {
-        HSelectSize.sm => 6.0,
-        HSelectSize.md => 8.0,
-        HSelectSize.lg => 10.0,
-      };
-
-      body = Stack(
-        children: [
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 160),
-            curve: Curves.easeOut,
-            left: 0,
-            right: 0,
-            top: floated ? floatTop : (height - 20) / 2,
-            child: IgnorePointer(
-              child: AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 160),
-                curve: Curves.easeOut,
-                style: TextStyle(
-                  fontSize: floated ? 12 : valueFont,
-                  height: 1.3,
-                  color: labelColor,
-                ),
-                child: _labelText(c),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: floatTop,
-            child: Text(
-              triggerText,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: valueFont,
-                height: 1.3,
-                color: hasText ? c.foreground : c.mutedForeground,
-              ),
-            ),
-          ),
-        ],
-      );
-    } else {
-      body = Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          triggerText,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: valueFont,
-            height: 1.3,
-            color: hasText ? c.foreground : c.mutedForeground,
-          ),
+    final body = Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        triggerText,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: valueFont,
+          height: 1.3,
+          color: hasText ? c.foreground : c.mutedForeground,
         ),
-      );
-    }
+      ),
+    );
 
     final showClear = widget.isClearable && _enabled && widget.value != null;
 
@@ -683,7 +599,7 @@ class _HComboBoxState<T> extends State<HComboBox<T>>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (widget.label != null && !_insideLabel)
+              if (widget.label != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
                   child: DefaultTextStyle.merge(
@@ -739,7 +655,7 @@ class _HComboBoxState<T> extends State<HComboBox<T>>
   // ---------------------------------------------------------------------------
 
   Widget _buildOverlay(BuildContext overlayContext) {
-    final radius = _radiusFor(_resolveSize(context));
+    final radius = _radiusFor(widget.size);
     final curved = CurvedAnimation(parent: _anim, curve: Curves.easeOutCubic);
 
     return Builder(
@@ -787,7 +703,7 @@ class _HComboBoxState<T> extends State<HComboBox<T>>
       _itemKeys.add(GlobalKey());
     }
 
-    final searchField = TextField(
+    final searchField = HTextField(
       controller: _text,
       focusNode: _searchFocusNode,
       enabled: _enabled,
@@ -797,21 +713,13 @@ class _HComboBoxState<T> extends State<HComboBox<T>>
       enableSuggestions: false,
       cursorColor: c.primary.base,
       style: TextStyle(fontSize: 14, height: 1.3, color: c.foreground),
-      decoration: InputDecoration(
-        hintText: widget.placeholder ?? 'Search...',
-        hintStyle: TextStyle(fontSize: 14, color: c.mutedForeground),
-        prefixIcon: Icon(
-          Icons.search_rounded,
-          size: 18,
-          color: c.mutedForeground,
-        ),
-        border: InputBorder.none,
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 10,
-        ),
+      hintText: widget.placeholder ?? 'Search...',
+      startContent: Icon(
+        Icons.search_rounded,
+        size: 18,
+        color: c.mutedForeground,
       ),
+      isClearable: true,
       onChanged: _onTextChanged,
     );
 
@@ -839,15 +747,7 @@ class _HComboBoxState<T> extends State<HComboBox<T>>
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: c.neutral[100],
-                      borderRadius: BorderRadius.circular(
-                        math.max(radius - 4, 4),
-                      ),
-                    ),
-                    child: searchField,
-                  ),
+                  child: searchField,
                 ),
                 Flexible(
                   child: list.isEmpty
@@ -941,7 +841,7 @@ class _ComboOption<T> extends StatelessWidget {
         child: Opacity(
           opacity: item.enabled ? 1 : 0.5,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: (highlighted && item.enabled) ? c.neutral[200]! : null,
               borderRadius: BorderRadius.circular(radius),

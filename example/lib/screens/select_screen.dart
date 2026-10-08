@@ -1,5 +1,6 @@
 import 'package:flutter_code_view/flutter_code_view.dart';
 import 'package:hornbill/hornbill.dart';
+import 'package:hornbill_example/widgets/prop_table.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -42,7 +43,7 @@ class _SelectScreenState extends State<SelectScreen> {
 
   String _title(String s) => s[0].toUpperCase() + s.substring(1);
 
-  Widget _card(Widget child, String? title, String? subtitle) => HCard(
+  Widget _card(Widget child, String? title, String? subtitle) => HFilledCard(
     margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
     padding: EdgeInsets.fromLTRB(24, title != null ? 24 : 0, 24, 32),
     child: Column(
@@ -62,7 +63,10 @@ class _SelectScreenState extends State<SelectScreen> {
 
   Widget _text(String text) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-    child: Text(text),
+    child: Text(
+      text,
+      style: TextStyle(color: HColors.of(context).mutedForeground),
+    ),
   );
 
   @override
@@ -73,8 +77,7 @@ class _SelectScreenState extends State<SelectScreen> {
     return HScaffold(
       appBar: HAppBar(title: const Text('Select')),
       slivers: [
-        // ---- Intro ----
-        SliverToBoxAdapter(child: HListHeader(title: 'Select')),
+        SliverToBoxAdapter(child: SizedBox(height: 16)),
         SliverToBoxAdapter(
           child: _text(
             'HSelect lets people pick one or several options from a list. '
@@ -82,9 +85,6 @@ class _SelectScreenState extends State<SelectScreen> {
             'there is no room), and it is fully keyboard accessible.',
           ),
         ),
-
-        // ---- Basic ----
-        SliverToBoxAdapter(child: HListHeader(title: 'Basic')),
         SliverToBoxAdapter(
           child: _card(
             HSelect<String>(
@@ -96,14 +96,6 @@ class _SelectScreenState extends State<SelectScreen> {
             ),
             'Basic',
             null,
-          ),
-        ),
-
-        // ---- Variants ----
-        SliverToBoxAdapter(
-          child: HListHeader(
-            title: 'Variants',
-            subtitle: 'flat (default), faded, bordered and underlined.',
           ),
         ),
         SliverToBoxAdapter(
@@ -124,16 +116,6 @@ class _SelectScreenState extends State<SelectScreen> {
             ),
             'Variants',
             'flat (default), faded, bordered and underlined.',
-          ),
-        ),
-
-        // ---- Sizes ----
-        SliverToBoxAdapter(
-          child: HListHeader(
-            title: 'Sizes',
-            subtitle:
-                'sm, md and lg. When you leave size out, it adapts: small on '
-                'desktop and wide screens, medium on mobile.',
           ),
         ),
         SliverToBoxAdapter(
@@ -168,21 +150,12 @@ class _SelectScreenState extends State<SelectScreen> {
             'sm, md and lg. When you leave size out, it adapts: small on desktop and wide screens, medium on mobile.',
           ),
         ),
-
-        // ---- Label placement ----
-        SliverToBoxAdapter(
-          child: HListHeader(
-            title: 'Label placement',
-            subtitle: 'Inside floats the label above the value (default).',
-          ),
-        ),
         SliverToBoxAdapter(
           child: _card(
             Column(
               spacing: 16,
               children: [
                 HSelect<String>(
-                  labelPlacement: HSelectLabelPlacement.inside,
                   label: 'Inside',
                   placeholder: 'Select an animal',
                   value: _inside,
@@ -190,7 +163,6 @@ class _SelectScreenState extends State<SelectScreen> {
                   items: _animals,
                 ),
                 HSelect<String>(
-                  labelPlacement: HSelectLabelPlacement.outside,
                   label: 'Outside',
                   placeholder: 'Select an animal',
                   value: _outside,
@@ -202,11 +174,6 @@ class _SelectScreenState extends State<SelectScreen> {
             'Label placement',
             'Inside floats the label above the value (default).',
           ),
-        ),
-
-        // ---- Description / error / required ----
-        SliverToBoxAdapter(
-          child: HListHeader(title: 'Description, required and error'),
         ),
         SliverToBoxAdapter(
           child: _card(
@@ -239,14 +206,6 @@ class _SelectScreenState extends State<SelectScreen> {
             null,
           ),
         ),
-
-        // ---- Icons ----
-        SliverToBoxAdapter(
-          child: HListHeader(
-            title: 'Icons',
-            subtitle: 'startContent on the field, icon or leading on items.',
-          ),
-        ),
         SliverToBoxAdapter(
           child: _card(
             HSelect<String>(
@@ -277,14 +236,6 @@ class _SelectScreenState extends State<SelectScreen> {
             'startContent on the field, icon or leading on items.',
           ),
         ),
-
-        // ---- Multiple ----
-        SliverToBoxAdapter(
-          child: HListHeader(
-            title: 'Multiple selection',
-            subtitle: 'The menu stays open while you toggle items.',
-          ),
-        ),
         SliverToBoxAdapter(
           child: _card(
             HSelect<String>.multiple(
@@ -302,9 +253,6 @@ class _SelectScreenState extends State<SelectScreen> {
             'The menu stays open while you toggle items.',
           ),
         ),
-
-        // ---- Disabled ----
-        SliverToBoxAdapter(child: HListHeader(title: 'Disabled')),
         SliverToBoxAdapter(
           child: _card(
             Column(
@@ -332,13 +280,6 @@ class _SelectScreenState extends State<SelectScreen> {
           ),
         ),
 
-        // ---- In a Row ----
-        SliverToBoxAdapter(
-          child: HListHeader(
-            title: 'Inside a Row',
-            subtitle: 'The field fills the available width, so use Expanded.',
-          ),
-        ),
         SliverToBoxAdapter(
           child: _card(
             Row(
@@ -351,8 +292,8 @@ class _SelectScreenState extends State<SelectScreen> {
                 Expanded(
                   flex: 2,
                   child: HSelect<String>(
-                    labelPlacement: HSelectLabelPlacement.outside,
                     label: 'Animal',
+
                     placeholder: 'Select',
                     value: _row,
                     onChanged: (v) => setState(() => _row = v),
@@ -366,11 +307,9 @@ class _SelectScreenState extends State<SelectScreen> {
           ),
         ),
 
-        // ---- Keyboard ----
-        SliverToBoxAdapter(child: HListHeader(title: 'Keyboard')),
         SliverToBoxAdapter(
           child: _card(
-            _PropTable(
+            PropTable(
               colors: colors,
               rows: const [
                 (
@@ -389,17 +328,9 @@ class _SelectScreenState extends State<SelectScreen> {
             'Keyboard shortcuts for the field and the menu.',
           ),
         ),
-
-        // ---- API: HSelect ----
-        SliverToBoxAdapter(
-          child: HListHeader(
-            title: 'HSelect properties',
-            subtitle: 'HSelect.new for one value, HSelect.multiple for many.',
-          ),
-        ),
         SliverToBoxAdapter(
           child: _card(
-            _PropTable(
+            PropTable(
               colors: colors,
               rows: const [
                 ('items', 'List<HSelectItem<T>>', 'The options. Required.'),
@@ -457,12 +388,9 @@ class _SelectScreenState extends State<SelectScreen> {
             'HSelect.new for one value, HSelect.multiple for many.',
           ),
         ),
-
-        // ---- API: HSelectItem ----
-        SliverToBoxAdapter(child: HListHeader(title: 'HSelectItem properties')),
         SliverToBoxAdapter(
           child: _card(
-            _PropTable(
+            PropTable(
               colors: colors,
               rows: const [
                 ('value', 'T', 'The value this option represents. Required.'),
@@ -482,8 +410,6 @@ class _SelectScreenState extends State<SelectScreen> {
           ),
         ),
 
-        // ---- Usage ----
-        SliverToBoxAdapter(child: HListHeader(title: 'Usage')),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
@@ -502,69 +428,6 @@ class _SelectScreenState extends State<SelectScreen> {
             ),
           ),
         ),
-      ],
-    );
-  }
-}
-
-/// A simple name / type / description reference table.
-class _PropTable extends StatelessWidget {
-  const _PropTable({required this.colors, required this.rows});
-
-  final HColors colors;
-
-  /// (name, type, description)
-  final List<(String, String, String)> rows;
-
-  @override
-  Widget build(BuildContext context) {
-    const mono = 'monospace';
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (var i = 0; i < rows.length; i++)
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              border: i == 0
-                  ? null
-                  : Border(top: BorderSide(color: colors.border)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 2,
-              children: [
-                Wrap(
-                  spacing: 8,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      rows[i].$1,
-                      style: TextStyle(
-                        fontFamily: mono,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: colors.foreground,
-                      ),
-                    ),
-                    if (rows[i].$2.isNotEmpty)
-                      Text(
-                        rows[i].$2,
-                        style: TextStyle(
-                          fontFamily: mono,
-                          fontSize: 12,
-                          color: colors.primary.base,
-                        ),
-                      ),
-                  ],
-                ),
-                Text(
-                  rows[i].$3,
-                  style: TextStyle(fontSize: 13, color: colors.mutedForeground),
-                ),
-              ],
-            ),
-          ),
       ],
     );
   }
