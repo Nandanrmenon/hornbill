@@ -17,6 +17,7 @@ class IconsScreen extends StatefulWidget {
 class _IconsScreenState extends State<IconsScreen> {
   String _searchQuery = '';
   SymbolStyle _currentStyle = SymbolStyle.outlined;
+  double _gridExtent = 96.0; // Default grid cell max extent
   Timer? _debounce;
   bool _showOnlyFilled = false;
 
@@ -52,6 +53,62 @@ class _IconsScreenState extends State<IconsScreen> {
   Widget build(BuildContext context) {
     final bodyTextStyle = Theme.of(context).textTheme.bodyMedium!;
     final colorScheme = Theme.of(context).colorScheme;
+    final isLargeScreen = MediaQuery.sizeOf(context).width >= 600;
+
+    // Build the controls widgets for reusability in Row or Column
+    final searchField = HTextField(
+      label: 'Search Icons',
+      hintText: 'Type to search icons...',
+      onChanged: _onSearchChanged,
+    );
+
+    final styleSelect = HSelect<SymbolStyle>(
+      label: 'Style',
+      value: _currentStyle,
+      items: const [
+        HSelectItem(
+          value: SymbolStyle.outlined,
+          label: 'Outlined',
+        ),
+        HSelectItem(
+          value: SymbolStyle.rounded,
+          label: 'Rounded',
+        ),
+        HSelectItem(
+          value: SymbolStyle.sharp,
+          label: 'Sharp',
+        ),
+      ],
+      onChanged: (newStyle) {
+        setState(() {
+          _currentStyle = newStyle;
+        });
+      },
+    );
+
+    final gridSizeSelect = HSelect<double>(
+      label: 'Grid Size',
+      value: _gridExtent,
+      items: const [
+        HSelectItem(
+          value: 80.0,
+          label: 'Compact',
+        ),
+        HSelectItem(
+          value: 96.0,
+          label: 'Default',
+        ),
+        HSelectItem(
+          value: 120.0,
+          label: 'Large',
+        ),
+      ],
+      onChanged: (newSize) {
+        setState(() {
+          _gridExtent = newSize;
+        });
+      },
+    );
 
     return HScaffold(
       appBar: HAppBar(title: Text('Icons')),
@@ -126,64 +183,59 @@ class _IconsScreenState extends State<IconsScreen> {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 24),
 
-                // Controls Bar: Search Field & Style Selector
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: HTextField(
-                        label: 'Search Icons',
-                        hintText: 'Type to search icons...',
-                        onChanged: _onSearchChanged,
+                isLargeScreen
+                    ? Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: searchField,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: styleSelect,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: gridSizeSelect,
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          searchField,
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(child: styleSelect),
+                              const SizedBox(width: 8),
+                              Expanded(child: gridSizeSelect),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: 8,
-                      children: [
-                        const Text('Filled'),
-                        HSwitch(
-                          value: _showOnlyFilled,
-                          onChanged: (value) {
-                            setState(() {
-                              _showOnlyFilled = value;
-                            });
-                          },
-                        ),
-                        DropdownButton<SymbolStyle>(
-                          value: _currentStyle,
-                          items: const [
-                            DropdownMenuItem(
-                              value: SymbolStyle.outlined,
-                              child: Text('Outlined'),
-                            ),
-                            DropdownMenuItem(
-                              value: SymbolStyle.rounded,
-                              child: Text('Rounded'),
-                            ),
-                            DropdownMenuItem(
-                              value: SymbolStyle.sharp,
-                              child: Text('Sharp'),
-                            ),
-                          ],
-                          onChanged: (newStyle) {
-                            if (newStyle != null) {
-                              setState(() {
-                                _currentStyle = newStyle;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                HListHeader(
-                  title: 'Showing ${_filteredEntries.length} symbols',
+                const SizedBox(height: 8),
+                HListTile(
+                  dense: true,
+                  title: Text(
+                    '${_showOnlyFilled ? "Filled" : "Outlined"} ${_filteredEntries.length} symbols',
+                  ),
+                  subtitle: Text('Toggle to show only filled symbols'),
+                  onTap: () {
+                    setState(() {
+                      _showOnlyFilled = !_showOnlyFilled;
+                    });
+                  },
+                  suffix: HSwitch(
+                    value: _showOnlyFilled,
+                    onChanged: (value) {
+                      setState(() {
+                        _showOnlyFilled = value;
+                      });
+                    },
+                  ),
                 ),
               ],
             ),
@@ -194,8 +246,8 @@ class _IconsScreenState extends State<IconsScreen> {
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 96,
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: _gridExtent,
               crossAxisSpacing: 8.0,
               mainAxisSpacing: 8.0,
             ),
@@ -213,6 +265,14 @@ class _IconsScreenState extends State<IconsScreen> {
                 iconData = SymbolsGet.get(iconName, SymbolStyle.outlined);
               }
 
+              // Dynamically scale icon size based on current grid extent
+              final double iconSize = switch (_gridExtent) {
+                80.0 => 24.0,
+                96.0 => 28.0,
+                120.0 => 36.0,
+                _ => 28.0,
+              };
+
               return HFilledCard(
                 padding: const EdgeInsetsGeometry.all(0),
                 child: InkWell(
@@ -228,16 +288,14 @@ class _IconsScreenState extends State<IconsScreen> {
                         title: 'Copied',
                         context,
                         description: 'Copied "$snippet" to clipboard',
-                        // message: 'Copied "$snippet" to clipboard',
-                        // variant: HToastVariant.bordered,
                       );
                     }
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(iconData, size: 28, fill: _showOnlyFilled ? 1 : 0),
-                      const SizedBox(height: 16),
+                      Icon(iconData, size: iconSize, fill: _showOnlyFilled ? 1 : 0),
+                      const SizedBox(height: 12),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: Text(
