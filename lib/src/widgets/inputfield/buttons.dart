@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:hornbill/hornbill.dart' show HColors, HSpinner;
+import 'package:hornbill/hornbill.dart' show HColors, HSpinner, hButtonRadius;
 import 'package:hornbill/src/widgets/feedback/tooltip.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -106,8 +106,9 @@ class _HButtonState extends State<HButton> {
     HButtonSize.md => 80,
     HButtonSize.lg => 96,
   };
-  double get _radius =>
+  double _resolveRadius(BuildContext context) =>
       widget.radius ??
+      hButtonRadius(context)?.value ??
       switch (widget.size) {
         HButtonSize.sm => 8,
         HButtonSize.md => 12,
@@ -267,7 +268,7 @@ class _HButtonState extends State<HButton> {
       padding: EdgeInsets.symmetric(horizontal: _iconOnly ? 0 : _hPad),
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(_radius),
+        borderRadius: BorderRadius.circular(_resolveRadius(context)),
         border: s.border != null
             ? Border.all(color: s.border!, width: 2)
             : null,
@@ -302,7 +303,9 @@ class _HButtonState extends State<HButton> {
               duration: const Duration(milliseconds: 150),
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(_radius + ringOutset),
+                  borderRadius: BorderRadius.circular(
+                    _resolveRadius(context) + ringOutset,
+                  ),
                   border: Border.all(
                     color: _ringColor(context),
                     width: _ringWidth,

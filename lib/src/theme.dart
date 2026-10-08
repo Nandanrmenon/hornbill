@@ -12,12 +12,14 @@ class HTheme {
     this.appBarFontFamily,
     this.fontFamily,
     this.outlined = true,
+    this.buttonRadius,
   });
 
   final HColourScheme colourScheme;
   final String? appBarFontFamily;
   final String? fontFamily;
   final bool outlined;
+  final HRadius? buttonRadius;
 
   ThemeData lightTheme() => _buildTheme(Brightness.light);
 
@@ -37,7 +39,7 @@ class HTheme {
       useMaterial3: true,
       brightness: brightness,
       extensions: [
-        HThemeExtension(outlined: outlined),
+        HThemeExtension(outlined: outlined, buttonRadius: buttonRadius),
         c,
       ],
       fontFamily: fontFamily,
@@ -96,21 +98,32 @@ class HTheme {
 }
 
 class HThemeExtension extends ThemeExtension<HThemeExtension> {
-  const HThemeExtension({this.outlined = true});
+  const HThemeExtension({this.outlined = true, this.buttonRadius});
 
   final bool outlined;
+  final HRadius? buttonRadius;
 
   @override
-  HThemeExtension copyWith({bool? outlined}) {
-    return HThemeExtension(outlined: outlined ?? this.outlined);
+  HThemeExtension copyWith({bool? outlined, HRadius? buttonRadius}) {
+    return HThemeExtension(
+      outlined: outlined ?? this.outlined,
+      buttonRadius: buttonRadius ?? this.buttonRadius,
+    );
   }
 
   @override
   HThemeExtension lerp(ThemeExtension<HThemeExtension>? other, double t) {
-    final otherOutlined = other is HThemeExtension ? other.outlined : outlined;
-    return HThemeExtension(outlined: t < 0.5 ? outlined : otherOutlined);
+    if (other is! HThemeExtension) return this;
+    return HThemeExtension(
+      outlined: t < 0.5 ? outlined : other.outlined,
+      buttonRadius: t < 0.5 ? buttonRadius : other.buttonRadius,
+    );
   }
 }
+
+/// The theme-level button radius, or null if none was set.
+HRadius? hButtonRadius(BuildContext context) =>
+    Theme.of(context).extension<HThemeExtension>()?.buttonRadius;
 
 bool hIsOutlined(BuildContext context) {
   final extension = Theme.of(context).extension<HThemeExtension>();
