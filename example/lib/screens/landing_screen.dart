@@ -15,6 +15,7 @@ class LandingScreen extends StatefulWidget {
 }
 
 class _LandingScreenState extends State<LandingScreen> {
+  final scaffoldKey = GlobalKey<HScaffoldState>();
   final Uri _hornbillPackageUrl = Uri.parse(
     'https://pub.dev/packages/hornbill',
   );
@@ -27,7 +28,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget _phoneContent(ThemeData theme) {
     return Expanded(
       child: HScaffold(
-        appBar: HAppBar(title: Text('Hi there!!!')),
+        appBar: const HAppBar(title: Text('Hi there!!!')),
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,
@@ -41,15 +42,19 @@ class _LandingScreenState extends State<LandingScreen> {
                     children: [
                       Text(
                         'A practical Flutter component library for expressive, accessible interfaces.',
-                        style: theme.textTheme.headlineSmall,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: context.hColors.foreground,
+                        ),
                       ),
                       Text(
                         'Explore live examples, inspect the implementation, and find the right building block for your next screen.',
-                        style: theme.textTheme.bodyLarge,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: context.hColors.mutedForeground,
+                        ),
                       ),
                     ],
                   ),
-                  Column(
+                  const Column(
                     spacing: 8.0,
                     children: [
                       _Feature(
@@ -78,7 +83,7 @@ class _LandingScreenState extends State<LandingScreen> {
           ),
         ],
         bottomNavigationBar: HNavigationBar(
-          items: [
+          items: const [
             HNavigationBarItem(icon: Symbols.home_rounded, label: 'Home'),
             HNavigationBarItem(icon: Symbols.search_rounded, label: 'Search'),
             HNavigationBarItem(
@@ -98,228 +103,335 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
+  List<Widget> _buildButtons() {
+    return [
+      HButton(
+        color: .primary,
+        onPressed: widget.onExplore,
+        icon: Symbols.widgets_rounded,
+        label: const Text('Explore components'),
+      ),
+      HButton(
+        variant: .flat,
+        color: .primary,
+        onPressed: () async {
+          if (!await launchUrl(_hornbillPackageUrl)) {
+            throw Exception('Could not launch $_hornbillPackageUrl');
+          }
+        },
+        icon: Symbols.download,
+        label: const Text('Install from pub.dev'),
+      ),
+      HButton(
+        onPressed: () async {
+          if (!await launchUrl(_hornbillCodeUrl)) {
+            throw Exception('Could not launch $_hornbillCodeUrl');
+          }
+        },
+        variant: .light,
+        color: .primary,
+        icon: Symbols.code_rounded,
+        label: const Text('View Source Code'),
+      ),
+    ];
+  }
+
+  Widget _buildPhone(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: Container(
+          width: 400,
+          height: 850,
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: context.hColors.border,
+              width: 4,
+              strokeAlign: BorderSide.strokeAlignOutside,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            children: [
+              Material(
+                color: context.hColors.background,
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Text('12:30', style: TextStyle(fontSize: 14)),
+                      Spacer(),
+                      Icon(Symbols.wifi, size: 14),
+                      Icon(Symbols.battery_3_bar_rounded, size: 14),
+                    ],
+                  ),
+                ),
+              ),
+              _phoneContent(theme),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: 128,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: context.hColors.foreground,
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colours = HColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isLargeScreen = MediaQuery.sizeOf(context).width >= 960;
     return HScaffold(
+      key: scaffoldKey,
       slivers: [
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(48, 48, 48, 48),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 960),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 24,
-                children: [
-                  Icon(Symbols.flare, size: 48, color: colours.primary.base),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 4.0,
+          child: Material(
+            color: context.hColors.primary.soft,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(48, 48, 48, 32),
+                  child: Row(
+                    spacing: isLargeScreen ? 24.0 : 8.0,
                     children: [
-                      Text(
-                        'Hornbill UI',
-                        style: TextStyle(
-                          fontFamily: GoogleFonts.googleSansFlex().fontFamily,
-                          fontSize: 64,
-                          fontVariations: [
-                            FontVariation('ital', 0),
-                            FontVariation('slnt', 0),
-                            FontVariation('wdth', 100),
-                            FontVariation('wght', 900),
-                            FontVariation('GRAD', 0),
-                            FontVariation('ROND', 100),
-                          ],
-                        ),
+                      Icon(
+                        Symbols.flare,
+                        size: 48,
+                        color: context.hColors.primary.base,
                       ),
-                      Text(
-                        'Flutter component library for expressive, accessible interfaces for both mobile and desktop.',
-                        style: theme.textTheme.headlineSmall,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: .start,
+                        children: [
+                          Text(
+                            'Hornbill UI',
+                            style: TextStyle(
+                              fontFamily:
+                                  GoogleFonts.googleSansFlex().fontFamily,
+                              color: context.hColors.primary.onSoft,
+                              fontSize: isLargeScreen ? 64 : 48,
+                              fontVariations: const [
+                                FontVariation('ital', 0),
+                                FontVariation('slnt', 0),
+                                FontVariation('wdth', 100),
+                                FontVariation('wght', 900),
+                                FontVariation('GRAD', 0),
+                                FontVariation('ROND', 100),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            'Flutter component library for expressive, accessible interfaces for both mobile and desktop.',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              color: context.hColors.primary.onSoft,
+                              fontSize: isLargeScreen ? 24 : 18,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
         ),
         SliverToBoxAdapter(
           child: Material(
-            color: colours.backgroundMuted,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 48.0,
-                vertical: 32.0,
-              ),
-              child: Column(
-                crossAxisAlignment: .start,
-                spacing: 24.0,
-                children: [
-                  Column(
-                    spacing: 8.0,
-                    children: [
-                      Text(
-                        'A practical Flutter component library for expressive, accessible interfaces.',
-                        style: theme.textTheme.headlineSmall,
-                      ),
-                      Text(
-                        'Explore live examples, inspect the implementation, and find the right building block for your next screen.',
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                    ],
+            color: context.hColors.backgroundSubtle,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 48.0,
+                    vertical: 32.0,
                   ),
-                  Row(
-                    spacing: 8.0,
-                    children: [
-                      HButton(
-                        color: HButtonColor.primary,
-                        iconPosition: HButtonIconPosition.right,
-                        onPressed: widget.onExplore,
-                        icon: Symbols.arrow_forward_rounded,
-                        label: Text('Explore components'),
-                      ),
-                      HButton(
-                        variant: HButtonVariant.flat,
-                        iconPosition: HButtonIconPosition.right,
-                        onPressed: () async {
-                          if (!await launchUrl(_hornbillPackageUrl)) {
-                            throw Exception(
-                              'Could not launch $_hornbillPackageUrl',
-                            );
-                          }
-                        },
-                        icon: Symbols.download,
-                        label: Text('Install from pub.dev'),
-                      ),
-                      HButton(
-                        iconPosition: HButtonIconPosition.right,
-                        onPressed: () async {
-                          if (!await launchUrl(_hornbillCodeUrl)) {
-                            throw Exception(
-                              'Could not launch $_hornbillCodeUrl',
-                            );
-                          }
-                        },
-                        icon: Symbols.code_rounded,
-                        label: Text('View Source Code'),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Container(
-                        width: 450,
-                        height: 850,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: colours.border,
-                            width: 4,
-                            strokeAlign: BorderSide.strokeAlignOutside,
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
+                  child: isLargeScreen
+                      ? Row(
+                          spacing: 24.0,
                           children: [
-                            Material(
-                              color: colours.background,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      '12:30',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                    Spacer(),
-                                    Icon(Symbols.wifi, size: 14),
-                                    Icon(
-                                      Symbols.battery_3_bar_rounded,
-                                      size: 14,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            _phoneContent(theme),
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                            _buildPhone(theme),
+                            Expanded(
+                              // <-- Wrap this Column in Expanded so it gets bounded horizontal space
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                spacing: 24.0,
                                 children: [
-                                  Container(
-                                    width: 128,
-                                    height: 4,
-                                    decoration: BoxDecoration(
-                                      color: colours.foreground,
-                                      borderRadius: BorderRadius.circular(99),
-                                    ),
+                                  Column(
+                                    spacing: 8.0,
+                                    children: [
+                                      // Removed `Flexible` here since the parent Column is now bounded
+                                      Text(
+                                        'A practical Flutter component library for expressive, accessible interfaces.',
+                                        style: theme.textTheme.headlineSmall,
+                                      ),
+                                      Text(
+                                        'Explore live examples, inspect the implementation, and find the right building block for your next screen.',
+                                        style: theme.textTheme.bodyLarge,
+                                      ),
+                                    ],
                                   ),
-                                  // Icon(Symbols.arrow_back_2_rounded, fill: 1),
-                                  // Icon(Symbols.circle, size: 16, fill: 1),
-                                  // Icon(
-                                  //   Symbols.square_rounded,
-                                  //   size: 16,
-                                  //   fill: 1,
-                                  // ),
+                                  Wrap(
+                                    spacing: 8.0,
+                                    runSpacing: 8.0,
+                                    children: _buildButtons(),
+                                  ),
+                                  Divider(
+                                    color: context.hColors.border,
+                                    thickness: 1,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    spacing: 24,
+                                    children: [
+                                      Column(
+                                        spacing: 4.0,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Get started',
+                                            style:
+                                                theme.textTheme.headlineSmall,
+                                          ),
+                                          Text(
+                                            'Hornbill UI is available on pub.dev. Add it to your project and start building.',
+                                            style: theme.textTheme.bodyLarge,
+                                          ),
+                                        ],
+                                      ),
+                                      FlutterCodeView(
+                                        source: installCode,
+                                        themeType: isDark
+                                            ? ThemeType.vs2015
+                                            : ThemeType.githubGist,
+                                        language: Languages.bash,
+                                        autoDetection: true,
+                                        borderColor: Theme.of(
+                                          context,
+                                        ).colorScheme.outlineVariant,
+                                        paddingBorder: const EdgeInsets.all(1),
+                                        borderRadiusCodeView:
+                                            BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
+                                        showLineNumbers: false,
+                                        width: double.infinity,
+                                        fontSize: 16,
+                                        selectionColor: Theme.of(context)
+                                            .colorScheme
+                                            .tertiary
+                                            .withOpacity(0.3), // Fixed
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
                           ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start, // Fixed
+                          spacing: 24.0,
+                          children: [
+                            Column(
+                              spacing: 8.0,
+                              children: [
+                                Text(
+                                  'A practical Flutter component library for expressive, accessible interfaces.',
+                                  style: theme.textTheme.headlineSmall,
+                                ),
+                                Text(
+                                  'Explore live examples, inspect the implementation, and find the right building block for your next screen.',
+                                  style: theme.textTheme.bodyLarge,
+                                ),
+                              ],
+                            ),
+                            _buildPhone(theme),
+                            Column(
+                              spacing: 8.0,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: _buildButtons(),
+                            ),
+                          ],
                         ),
-                      ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (!isLargeScreen)
+          SliverToBoxAdapter(
+            child: Material(
+              color: context.hColors.backgroundMuted,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(48, 32, 48, 72),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 24,
+                      children: [
+                        Column(
+                          spacing: 4.0,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Get started',
+                              style: theme.textTheme.headlineSmall,
+                            ),
+                            Text(
+                              'Hornbill UI is available on pub.dev. Add it to your project and start building.',
+                              style: theme.textTheme.bodyLarge,
+                            ),
+                          ],
+                        ),
+                        FlutterCodeView(
+                          source: installCode,
+                          themeType: isDark
+                              ? ThemeType.vs2015
+                              : ThemeType.githubGist,
+                          language: Languages.bash,
+                          autoDetection: true,
+                          borderColor: Theme.of(
+                            context,
+                          ).colorScheme.outlineVariant,
+                          paddingBorder: const EdgeInsets.all(1),
+                          borderRadiusCodeView: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8),
+                          showLineNumbers: false,
+                          width: double.infinity,
+                          fontSize: 16,
+                          selectionColor: Theme.of(
+                            context,
+                          ).colorScheme.tertiary.withOpacity(0.3), // Fixed
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(48, 32, 48, 72),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 960),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 24,
-                children: [
-                  Column(
-                    spacing: 4.0,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Get started', style: theme.textTheme.headlineSmall),
-                      Text(
-                        'Hornbill UI is available on pub.dev. Add it to your project and start building.',
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-                  FlutterCodeView(
-                    source: installCode,
-                    themeType: isDark ? ThemeType.vs2015 : ThemeType.githubGist,
-                    language: Languages.bash,
-                    autoDetection: true,
-                    borderColor: Theme.of(context).colorScheme.outlineVariant,
-                    paddingBorder: EdgeInsets.all(1),
-                    borderRadiusCodeView: BorderRadius.circular(8),
-                    borderRadius: BorderRadius.circular(8),
-                    showLineNumbers: false,
-                    width: double.infinity,
-                    fontSize: 16,
-                    selectionColor: Theme.of(
-                      context,
-                    ).colorScheme.tertiary.withValues(alpha: 0.3),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -339,27 +451,33 @@ class _Feature extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colours = theme.colorScheme;
-    return HCard(
+    return HFilledCard(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 12,
         children: [
-          Material(
-            color: colours.primaryContainer,
-            borderRadius: BorderRadius.circular(99),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(icon, color: Theme.of(context).colorScheme.primary),
-            ),
+          HAvatar(
+            backgroundColor: context.hColors.neutral[300],
+            foregroundColor: context.hColors.neutral[900],
+            child: Icon(icon, fill: 1),
           ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 4,
+              spacing: 2,
               children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
-                Text(description),
+                Text(
+                  title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: context.hColors.foreground,
+                  ),
+                ),
+                Text(
+                  description,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: context.hColors.mutedForeground,
+                  ),
+                ),
               ],
             ),
           ),

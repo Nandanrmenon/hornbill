@@ -24,6 +24,7 @@ class _MyAppState extends State<MyApp> {
   /// [ThemeScreen] so the user can change it and see the whole app
   /// re-theme live.
   final HThemeController _themeController = HThemeController();
+  bool get _isDesktop => MediaQuery.of(context).size.width >= 600;
 
   @override
   void dispose() {
@@ -48,23 +49,22 @@ class _MyAppState extends State<MyApp> {
           ).darkTheme(),
           themeMode: ThemeMode.system,
           initialRoute: '/',
+          debugShowCheckedModeBanner: false,
           onGenerateRoute: (settings) {
             final path = settings.name ?? '/';
             return MaterialPageRoute(
               settings: settings,
               builder: (context) {
                 if (path == '/') {
-                  if (MediaQuery.sizeOf(context).width >= 600) {
-                    return LandingScreen(
-                      onExplore: () => Navigator.pushReplacementNamed(
-                        context,
-                        '/components/themes',
-                      ),
-                    );
-                  }
-                  return HornbilExampleApp(
-                    themeController: _themeController,
-                    routePath: path,
+                  return LandingScreen(
+                    onExplore: () {
+                      _isDesktop
+                          ? Navigator.pushReplacementNamed(
+                              context,
+                              '/components/themes',
+                            )
+                          : Navigator.pushNamed(context, '/components/themes');
+                    },
                   );
                 }
                 return HornbilExampleApp(

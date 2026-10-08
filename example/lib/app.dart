@@ -337,7 +337,9 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                   title: const Text('Icons'),
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => IconsScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const IconsScreen(),
+                    ),
                   ),
                 ),
               ],
@@ -616,12 +618,12 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isDesktop && widget.routePath != '/') {
-      return _buildSelectedScreen();
-    }
+    // if (!_isDesktop && widget.routePath != '/') {
+    //   return _buildSelectedScreen();
+    // }
 
     return HScaffold(
-      appBar: _isDesktop ? null : HAppBar(title: Text('Hornbill Example App')),
+      appBar: _isDesktop ? null : HAppBar(title: Text('Components')),
       sidebar: _isDesktop ? _buildDesktopSidebar(context) : null,
       slivers: _isDesktop
           ? _buildDesktopSlivers()
