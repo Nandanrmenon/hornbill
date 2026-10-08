@@ -12,7 +12,7 @@ export 'src/widgets/feedback/spinner.dart';
 export 'src/widgets/feedback/tooltip.dart';
 export 'src/widgets/inputfield/buttons.dart';
 export 'src/widgets/inputfield/checkbox.dart';
-export 'src/widgets/inputfield/dropdown_input_field.dart';
+export 'src/widgets/inputfield/combobox.dart';
 export 'src/widgets/inputfield/switch.dart';
 export 'src/widgets/inputfield/text_input_field.dart';
 export 'src/widgets/layout/scaffold.dart';
@@ -24,6 +24,7 @@ export 'src/widgets/navigation/sidebar.dart';
 export 'src/widgets/navigation/tab.dart';
 export 'src/widgets/overlay/dialog.dart';
 export 'src/widgets/overlay/toast.dart';
+export 'src/widgets/inputfield/select.dart';
 
 class Hornbill {
   Future<String?> getPlatformVersion() {

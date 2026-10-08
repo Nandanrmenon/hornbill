@@ -44,46 +44,6 @@ class _TextinputfieldScreenState extends State<TextinputfieldScreen> {
                   ),
                   onFieldSubmitted: (p0) {},
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: HTextField(
-                        label: 'Label w/ trailing widget',
-                        hintText: 'Hint Text',
-                        suffix: IconButton(
-                          onPressed: () {},
-                          icon: Icon(Symbols.date_range),
-                        ),
-                        onFieldSubmitted: (p0) {},
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: HDropDownField(
-                        // icon: Icon(Symbols.person),
-                        label: 'Label',
-                        hintText: 'Hint Text',
-                        dropdownMenuEntries: [
-                          DropdownMenuEntry(
-                            value: 'Option 1',
-                            label: 'Option 1',
-                          ),
-                          DropdownMenuEntry(
-                            value: 'Option 2',
-                            label: 'Option 2',
-                          ),
-                          DropdownMenuEntry(
-                            value: 'Option 3',
-                            label: 'Option 3',
-                          ),
-                        ],
-                        initialSelection: 'Option 1',
-                        onSelected: (value) {},
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),

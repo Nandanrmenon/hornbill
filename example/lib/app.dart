@@ -5,6 +5,7 @@ import 'package:hornbill_example/screens/buttons_screen.dart';
 import 'package:hornbill_example/screens/cards_screen.dart';
 import 'package:hornbill_example/screens/checkbox_screen.dart';
 import 'package:hornbill_example/screens/chips_screen.dart';
+import 'package:hornbill_example/screens/combobox_screen.dart';
 import 'package:hornbill_example/screens/datatable_screen.dart';
 import 'package:hornbill_example/screens/dialog_screen.dart';
 import 'package:hornbill_example/screens/icons_screen.dart';
@@ -12,6 +13,7 @@ import 'package:hornbill_example/screens/listview_screen.dart';
 import 'package:hornbill_example/screens/navigationbar_screen.dart';
 import 'package:hornbill_example/screens/progressindicator_screen.dart';
 import 'package:hornbill_example/screens/scaffold_screen.dart';
+import 'package:hornbill_example/screens/select_screen.dart';
 import 'package:hornbill_example/screens/sidebar_screen.dart';
 import 'package:hornbill_example/screens/spinner_screen.dart';
 import 'package:hornbill_example/screens/switch.dart';
@@ -71,6 +73,8 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       'checkbox': 'checkbox',
       'tabbar': 'tabbar',
       'spinner': 'spinner',
+      'select': 'select',
+      'combobox': 'combobox',
     };
     final slug = path.startsWith('/components/')
         ? path.substring('/components/'.length)
@@ -99,6 +103,8 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
       'checkbox': 'checkbox',
       'tabbar': 'tabbar',
       'spinner': 'spinner',
+      'select': 'select',
+      'combobox': 'combobox',
     };
     return '/components/${paths[screenKey] ?? 'themes'}';
   }
@@ -182,6 +188,12 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         initiallyExpanded: true,
         children: [
           HSideBarItem(
+            icon: Symbols.arrow_drop_down,
+            label: 'ComboBox',
+            selected: _activeScreenKey == 'combobox',
+            onTap: () => _selectScreen('combobox'),
+          ),
+          HSideBarItem(
             icon: Symbols.text_fields_alt_rounded,
             label: 'TextField',
             selected: _activeScreenKey == 'textfield',
@@ -192,6 +204,12 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             label: 'Button',
             selected: _activeScreenKey == 'button',
             onTap: () => _selectScreen('button'),
+          ),
+          HSideBarItem(
+            icon: Symbols.dropdown_menu_rounded,
+            label: 'Select',
+            selected: _activeScreenKey == 'select',
+            onTap: () => _selectScreen('select'),
           ),
           HSideBarItem(
             icon: Symbols.toggle_on_rounded,
@@ -393,6 +411,16 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
             HListView(
               items: [
                 HListItemData(
+                  leading: const Icon(Symbols.arrow_drop_down),
+                  title: const Text('ComboBox'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ComboBoxScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
                   leading: const Icon(Symbols.text_fields_alt_rounded),
                   title: const Text('Text Input Field'),
                   onTap: () => Navigator.push(
@@ -409,6 +437,16 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const ButtonsScreen(),
+                    ),
+                  ),
+                ),
+                HListItemData(
+                  leading: const Icon(Symbols.dropdown_menu_rounded),
+                  title: const Text('Select'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SelectScreen(),
                     ),
                   ),
                 ),
@@ -561,6 +599,10 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         return const TabbarScreen();
       case 'spinner':
         return const SpinnerScreen();
+      case 'select':
+        return const SelectScreen();
+      case 'combobox':
+        return const ComboBoxScreen();
       default:
         return ThemeScreen(themeController: widget.themeController);
     }
