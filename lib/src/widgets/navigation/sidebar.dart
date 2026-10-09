@@ -268,7 +268,7 @@ class _HSideBarState extends State<HSideBar> {
 
     final toggleButton = widget.collapsible
         ? HButton(
-            // tooltip: _collapsed ? 'Expand' : 'Collapse',
+            tooltip: _collapsed ? 'Expand' : 'Collapse',
             variant: HButtonVariant.light,
             icon: _collapsed
                 ? Symbols.left_panel_close_rounded
@@ -786,7 +786,7 @@ class _HSideBarItemState extends State<HSideBarItem> {
     }
 
     final row = collapsed
-        ? Tooltip(message: widget.label, child: padded)
+        ? HTooltip(message: widget.label, position: .right, child: padded)
         : padded;
 
     if (!_isGroup || collapsed) {
@@ -1152,6 +1152,8 @@ class _HSideBarAccountTileState extends State<HSideBarAccountTile> {
       child: tile,
     );
 
-    return collapsed ? Tooltip(message: widget.title, child: padded) : padded;
+    return collapsed
+        ? HTooltip(message: widget.title, position: .right, child: padded)
+        : padded;
   }
 }
