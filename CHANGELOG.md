@@ -1,3 +1,12 @@
+## 2.1.0
+- feat: Add `HComboBox` and `HSelect`
+- feat: A much better Landing page for both desktop and mobile screens
+- feat: Add `HRadius` for HButton to allow users to set universal radius in `HTheme`
+- feat: labels for `HTextField`, `HComboBox`, `HSelect` are now outside the textbox
+- imp: removed `HAppBarAction` from `HAppBar`
+- imp: Add more options to improve icon viewing experience
+- fix: Use `HTooltip` in `HSideBar`
+
 ## 2.0.1
 - imp: Change `HListView` style from M3E to Hornbill style
 - fix: `HCheckbox` skip painting checkmark when there's nothing to draw
