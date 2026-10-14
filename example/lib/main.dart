@@ -2,6 +2,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hornbill/hornbill.dart';
 import 'package:hornbill_example/app.dart';
 import 'package:hornbill_example/screens/landing_screen.dart';
+import 'package:hornbill_example/screens/showcase_dashboard_screen.dart';
+import 'package:hornbill_example/screens/showcase_settings_screen.dart';
+import 'package:hornbill_example/screens/showcases_screen.dart';
 import 'package:hornbill_example/theme_controller.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -65,7 +68,18 @@ class _MyAppState extends State<MyApp> {
                             )
                           : Navigator.pushNamed(context, '/components/themes');
                     },
+                    onShowcases: () =>
+                        Navigator.pushReplacementNamed(context, '/showcases'),
                   );
+                }
+                if (path == '/showcases') {
+                  return const ShowcasesScreen();
+                }
+                if (path == '/showcases/dashboard') {
+                  return const ShowcaseDashboardScreen();
+                }
+                if (path == '/showcases/settings') {
+                  return const ShowcaseSettingsScreen();
                 }
                 return HornbilExampleApp(
                   themeController: _themeController,

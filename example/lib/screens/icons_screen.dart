@@ -66,18 +66,9 @@ class _IconsScreenState extends State<IconsScreen> {
       label: 'Style',
       value: _currentStyle,
       items: const [
-        HSelectItem(
-          value: SymbolStyle.outlined,
-          label: 'Outlined',
-        ),
-        HSelectItem(
-          value: SymbolStyle.rounded,
-          label: 'Rounded',
-        ),
-        HSelectItem(
-          value: SymbolStyle.sharp,
-          label: 'Sharp',
-        ),
+        HSelectItem(value: SymbolStyle.outlined, label: 'Outlined'),
+        HSelectItem(value: SymbolStyle.rounded, label: 'Rounded'),
+        HSelectItem(value: SymbolStyle.sharp, label: 'Sharp'),
       ],
       onChanged: (newStyle) {
         setState(() {
@@ -90,18 +81,9 @@ class _IconsScreenState extends State<IconsScreen> {
       label: 'Grid Size',
       value: _gridExtent,
       items: const [
-        HSelectItem(
-          value: 80.0,
-          label: 'Compact',
-        ),
-        HSelectItem(
-          value: 96.0,
-          label: 'Default',
-        ),
-        HSelectItem(
-          value: 120.0,
-          label: 'Large',
-        ),
+        HSelectItem(value: 80.0, label: 'Compact'),
+        HSelectItem(value: 96.0, label: 'Default'),
+        HSelectItem(value: 120.0, label: 'Large'),
       ],
       onChanged: (newSize) {
         setState(() {
@@ -189,18 +171,11 @@ class _IconsScreenState extends State<IconsScreen> {
                 isLargeScreen
                     ? Row(
                         children: [
-                          Expanded(
-                            flex: 2,
-                            child: searchField,
-                          ),
+                          Expanded(flex: 2, child: searchField),
                           const SizedBox(width: 8),
-                          Expanded(
-                            child: styleSelect,
-                          ),
+                          Expanded(child: styleSelect),
                           const SizedBox(width: 8),
-                          Expanded(
-                            child: gridSizeSelect,
-                          ),
+                          Expanded(child: gridSizeSelect),
                         ],
                       )
                     : Column(
@@ -294,7 +269,11 @@ class _IconsScreenState extends State<IconsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(iconData, size: iconSize, fill: _showOnlyFilled ? 1 : 0),
+                      Icon(
+                        iconData,
+                        size: iconSize,
+                        fill: _showOnlyFilled ? 1 : 0,
+                      ),
                       const SizedBox(height: 12),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),

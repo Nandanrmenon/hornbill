@@ -128,6 +128,19 @@ class _HornbilExampleAppState extends State<HornbilExampleApp> {
         },
       ),
       HSideBarItem(
+        label: 'Components',
+        icon: Symbols.widgets_rounded,
+        onTap: () =>
+            Navigator.pushReplacementNamed(context, '/components/themes'),
+      ),
+      HSideBarItem(
+        label: 'Showcases',
+        icon: Symbols.photo_prints_rounded,
+        onTap: () {
+          Navigator.pushReplacementNamed(context, '/showcases');
+        },
+      ),
+      HSideBarItem(
         label: 'Themes',
         icon: Symbols.palette_rounded,
         selected: _activeScreenKey == 'themes',

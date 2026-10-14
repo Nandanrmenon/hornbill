@@ -6,9 +6,14 @@ import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LandingScreen extends StatefulWidget {
-  const LandingScreen({super.key, required this.onExplore});
+  const LandingScreen({
+    super.key,
+    required this.onExplore,
+    required this.onShowcases,
+  });
 
   final VoidCallback onExplore;
+  final VoidCallback onShowcases;
 
   @override
   State<LandingScreen> createState() => _LandingScreenState();
@@ -114,6 +119,18 @@ class _LandingScreenState extends State<LandingScreen> {
       HButton(
         variant: .flat,
         color: .primary,
+        onPressed: widget.onShowcases,
+        icon: Symbols.gallery_thumbnail_rounded,
+        label: const Text('View showcases'),
+      ),
+    ];
+  }
+
+  List<Widget> _buildCodeButtons() {
+    return [
+      HButton(
+        variant: .flat,
+        color: .primary,
         onPressed: () async {
           if (!await launchUrl(_hornbillPackageUrl)) {
             throw Exception('Could not launch $_hornbillPackageUrl');
@@ -208,45 +225,36 @@ class _LandingScreenState extends State<LandingScreen> {
                 constraints: const BoxConstraints(maxWidth: 1200),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(48, 48, 48, 32),
-                  child: Row(
-                    spacing: isLargeScreen ? 24.0 : 8.0,
-                    children: [
-                      Icon(
-                        Symbols.flare,
-                        size: 48,
-                        color: context.hColors.primary.base,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: .start,
-                        children: [
-                          Text(
-                            'Hornbill UI',
-                            style: TextStyle(
-                              fontFamily:
-                                  GoogleFonts.googleSansFlex().fontFamily,
-                              color: context.hColors.primary.onSoft,
-                              fontSize: isLargeScreen ? 64 : 48,
-                              fontVariations: const [
-                                FontVariation('ital', 0),
-                                FontVariation('slnt', 0),
-                                FontVariation('wdth', 100),
-                                FontVariation('wght', 900),
-                                FontVariation('GRAD', 0),
-                                FontVariation('ROND', 100),
-                              ],
-                            ),
+                  child: Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: .start,
+                      children: [
+                        Text(
+                          'Hornbill UI',
+                          style: TextStyle(
+                            fontFamily: GoogleFonts.googleSansFlex().fontFamily,
+                            color: context.hColors.primary.onSoft,
+                            fontSize: isLargeScreen ? 64 : 48,
+                            fontVariations: const [
+                              FontVariation('ital', 0),
+                              FontVariation('slnt', 0),
+                              FontVariation('wdth', 100),
+                              FontVariation('wght', 900),
+                              FontVariation('GRAD', 0),
+                              FontVariation('ROND', 100),
+                            ],
                           ),
-                          Text(
-                            'Flutter component library for expressive, accessible interfaces for both mobile and desktop.',
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              color: context.hColors.primary.onSoft,
-                              fontSize: isLargeScreen ? 24 : 18,
-                            ),
+                        ),
+                        Text(
+                          'Flutter component library for expressive, accessible interfaces for both mobile and desktop.',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            color: context.hColors.primary.onSoft,
+                            fontSize: isLargeScreen ? 24 : 18,
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -341,6 +349,10 @@ class _LandingScreenState extends State<LandingScreen> {
                                             .tertiary
                                             .withOpacity(0.3), // Fixed
                                       ),
+                                      Row(
+                                        spacing: 8.0,
+                                        children: _buildCodeButtons(),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -421,9 +433,12 @@ class _LandingScreenState extends State<LandingScreen> {
                           showLineNumbers: false,
                           width: double.infinity,
                           fontSize: 16,
-                          selectionColor: Theme.of(
-                            context,
-                          ).colorScheme.tertiary.withOpacity(0.3), // Fixed
+                          selectionColor: context.hColors.primary.soft, // Fixed
+                        ),
+                        Column(
+                          spacing: 8.0,
+                          crossAxisAlignment: .stretch,
+                          children: _buildCodeButtons(),
                         ),
                       ],
                     ),
