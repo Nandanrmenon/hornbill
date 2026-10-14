@@ -225,36 +225,34 @@ class _LandingScreenState extends State<LandingScreen> {
                 constraints: const BoxConstraints(maxWidth: 1200),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(48, 48, 48, 32),
-                  child: Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: .start,
-                      children: [
-                        Text(
-                          'Hornbill UI',
-                          style: TextStyle(
-                            fontFamily: GoogleFonts.googleSansFlex().fontFamily,
-                            color: context.hColors.primary.onSoft,
-                            fontSize: isLargeScreen ? 64 : 48,
-                            fontVariations: const [
-                              FontVariation('ital', 0),
-                              FontVariation('slnt', 0),
-                              FontVariation('wdth', 100),
-                              FontVariation('wght', 900),
-                              FontVariation('GRAD', 0),
-                              FontVariation('ROND', 100),
-                            ],
-                          ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: .start,
+                    children: [
+                      Text(
+                        'Hornbill UI',
+                        style: TextStyle(
+                          fontFamily: GoogleFonts.googleSansFlex().fontFamily,
+                          color: context.hColors.primary.onSoft,
+                          fontSize: isLargeScreen ? 64 : 48,
+                          fontVariations: const [
+                            FontVariation('ital', 0),
+                            FontVariation('slnt', 0),
+                            FontVariation('wdth', 100),
+                            FontVariation('wght', 900),
+                            FontVariation('GRAD', 0),
+                            FontVariation('ROND', 100),
+                          ],
                         ),
-                        Text(
-                          'Flutter component library for expressive, accessible interfaces for both mobile and desktop.',
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            color: context.hColors.primary.onSoft,
-                            fontSize: isLargeScreen ? 24 : 18,
-                          ),
+                      ),
+                      Text(
+                        'Flutter component library for expressive, accessible interfaces for both mobile and desktop.',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: context.hColors.primary.onSoft,
+                          fontSize: isLargeScreen ? 24 : 18,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
