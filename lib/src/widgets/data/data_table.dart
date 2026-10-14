@@ -457,7 +457,6 @@ class _HDataTableState extends State<HDataTable> {
             : null,
         borderRadius: BorderRadius.circular(kBorderRadiusSmall),
       ),
-      margin: const EdgeInsets.only(bottom: 32),
       child: body,
     );
   }
