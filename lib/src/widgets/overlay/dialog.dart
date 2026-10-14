@@ -377,6 +377,7 @@ Future<T?> showHDialog<T>(
   Color barrierColor = const Color(0x8A000000),
   Duration transitionDuration = const Duration(milliseconds: 220),
   String barrierLabel = 'Dismiss',
+  bool useRootNavigator = true,
 }) {
   HDialogPosition dialogPosition = HDialogPosition.auto;
 
@@ -386,6 +387,7 @@ Future<T?> showHDialog<T>(
     barrierLabel: barrierLabel,
     barrierColor: barrierColor,
     transitionDuration: transitionDuration,
+    useRootNavigator: useRootNavigator,
     pageBuilder: (context, animation, secondaryAnimation) {
       final dialog = builder(context);
       assert(
