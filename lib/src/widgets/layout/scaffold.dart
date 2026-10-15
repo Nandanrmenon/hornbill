@@ -98,7 +98,9 @@ class HScaffoldState extends State<HScaffold> {
   void toggleDrawer() => _drawerOpen ? closeDrawer() : openDrawer();
 
   bool isDesktop(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+    // sizeOf only subscribes to size changes, so unrelated MediaQuery
+    // changes (e.g. the keyboard's viewInsets) don't rebuild the scaffold.
+    final width = MediaQuery.sizeOf(context).width;
     return width >= 600; // Adjust the threshold as needed
   }
 
@@ -121,6 +123,14 @@ class HScaffoldState extends State<HScaffold> {
         break;
     }
     return false;
+  }
+
+  void _onBottomBarHeightChanged(double height) {
+    // Called after the frame, so the scaffold may have been disposed.
+    if (!mounted) return;
+    if (height != _bottomBarHeight) {
+      setState(() => _bottomBarHeight = height);
+    }
   }
 
   Color get _scaffoldBackgroundColor =>
@@ -213,11 +223,7 @@ class HScaffoldState extends State<HScaffold> {
                 right: 0,
                 bottom: 0,
                 child: _MeasureSize(
-                  onChange: (height) {
-                    if (height != _bottomBarHeight) {
-                      setState(() => _bottomBarHeight = height);
-                    }
-                  },
+                  onChange: _onBottomBarHeightChanged,
                   child: AnimatedSlide(
                     duration: const Duration(milliseconds: 250),
                     curve: Curves.easeOutCubic,
@@ -282,39 +288,45 @@ class HScaffoldState extends State<HScaffold> {
   }
 }
 
-/// Reports the rendered height of [child] via [onChange] after every layout,
-/// used to replicate what `Scaffold` did automatically for `extendBody`.
-class _MeasureSize extends StatefulWidget {
-  const _MeasureSize({required this.onChange, required this.child});
+/// Reports the rendered height of [child] via [onChange] whenever it
+/// actually changes, used to replicate what `Scaffold` did automatically
+/// for `extendBody`.
+///
+/// The size is read inside the render object's own `performLayout`, so it
+/// can never be read before layout has happened (unlike querying
+/// `BuildContext.size` from a post-frame callback, which throws if the
+/// subtree hasn't been laid out yet).
+class _MeasureSize extends SingleChildRenderObjectWidget {
+  const _MeasureSize({required this.onChange, required super.child});
 
   final ValueChanged<double> onChange;
-  final Widget child;
 
   @override
-  State<_MeasureSize> createState() => _MeasureSizeState();
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderMeasureSize(onChange);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    covariant _RenderMeasureSize renderObject,
+  ) {
+    renderObject.onChange = onChange;
+  }
 }
 
-class _MeasureSizeState extends State<_MeasureSize> {
-  final _key = GlobalKey();
+class _RenderMeasureSize extends RenderProxyBox {
+  _RenderMeasureSize(this.onChange);
+
+  ValueChanged<double> onChange;
+  double? _lastHeight;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+  void performLayout() {
+    super.performLayout();
+    final height = size.height;
+    if (height == _lastHeight) return;
+    _lastHeight = height;
+    // Never call setState during layout; defer until the frame is done.
+    WidgetsBinding.instance.addPostFrameCallback((_) => onChange(height));
   }
-
-  @override
-  void didUpdateWidget(covariant _MeasureSize oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
-  }
-
-  void _measure() {
-    final size = _key.currentContext?.size;
-    if (size != null) widget.onChange(size.height);
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      KeyedSubtree(key: _key, child: widget.child);
 }
