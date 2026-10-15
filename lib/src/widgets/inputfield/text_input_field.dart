@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:hornbill/hornbill.dart';
-import 'package:hornbill/src/theme.dart';
 import 'package:material_ui/material_ui.dart';
 
 enum HTextFieldVariant { flat, faded, bordered, underlined }
@@ -706,6 +705,7 @@ class _HTextFieldState extends State<HTextField> {
     return Text.rich(
       TextSpan(
         text: label,
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         children: [
           TextSpan(
             text: ' *',
