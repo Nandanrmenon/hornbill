@@ -564,8 +564,11 @@ class _HTextFieldState extends State<HTextField> {
         curve: Curves.easeOut,
         height: _multiline ? null : height,
         constraints: _multiline ? BoxConstraints(minHeight: height) : null,
-        padding: EdgeInsets.symmetric(
-          horizontal: underlined ? 0 : (size == HTextFieldSize.sm ? 10 : 12),
+        padding: EdgeInsets.fromLTRB(
+          underlined ? 0 : (size == HTextFieldSize.sm ? 10 : 12),
+          0,
+          underlined ? 0 : (size == HTextFieldSize.sm ? 4 : 6),
+          0,
         ),
         decoration: BoxDecoration(
           color: bg,
